@@ -1,5 +1,5 @@
 {
-  "name": "nextjs",
+  "name": "musicalbasics-concerts",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.1",
     "eslint": "8.40.0",
     "eslint-config-next": "13.4.3",
+    "mapbox-gl": "^2.14.1",
     "next": "13.4.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-globe": "^5.0.2"
   }
 }
