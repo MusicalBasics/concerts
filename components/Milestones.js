@@ -14,6 +14,7 @@ export default function Milestones({ venues, presales }) {
       position="alternate"
       sx={{
         margin: "2rem 0",
+        color: "white",
       }}
     >
       {venues.map((venue) => (
@@ -22,7 +23,6 @@ export default function Milestones({ venues, presales }) {
             sx={{ m: "auto 0" }}
             align="right"
             variant="body2"
-            color="text.secondary"
           >
             Level {venue.level}: {venue.threshold} presales
           </TimelineOppositeContent>

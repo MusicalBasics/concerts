@@ -91,7 +91,22 @@ export default function City({ params }) {
             color: "white",
           }}
         >
-          <Typography variant="h3">{city.name}</Typography>
+          <Typography
+            variant="h3"
+            sx={{
+              fontWeight: "bold",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              map.current.flyTo({
+                center: coordinates,
+                zoom: zoom,
+                essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+              });
+            }}
+          >
+            {city.name}
+          </Typography>
           <Typography variant="caption">{city.timeFrame}</Typography>
           <Typography variant="body">Current Presales: {presales}</Typography>
         </Stack>
