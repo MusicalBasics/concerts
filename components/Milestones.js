@@ -17,7 +17,7 @@ export default function Milestones({ venues, presales }) {
       }}
     >
       {venues.map((venue) => (
-        <TimelineItem>
+        <TimelineItem key={venue.name}>
           <TimelineOppositeContent
             sx={{ m: "auto 0" }}
             align="right"
