@@ -1,0 +1,125 @@
+export const HQ = [-115.1398, 36.1699];
+export const NYC = [-74.006, 40.7128];
+export const Singapore = [103.8198, 1.3521];
+export const Amsterdam = [4.8952, 52.3702];
+
+export const CITIES = [
+  {
+    id: 1,
+    name: "New York City",
+    slug: "nyc",
+    coordinates: NYC,
+    timeFrame: "July 2023 - August 2023",
+    link: "https://musicalbasics.com/products/golden-ticket-new-york-city",
+    venues: [
+      {
+        city: "New York City",
+        level: 1,
+        threshold: 250,
+        name: "Carnegie Hall Zankel Hall",
+        address: "881 7th Ave, New York, NY 10019",
+        coordinates: [-73.9801, 40.764945],
+      },
+      {
+        city: "New York City",
+        level: 2,
+        threshold: 450,
+        name: "Alice Tully Hall Lincoln Center",
+        address: "1941 Broadway at, W 65th St, New York, NY 10023",
+        coordinates: [-73.98232, 40.773],
+      },
+      {
+        city: "New York City",
+        level: 3,
+        threshold: 600,
+        name: "The Town Hall",
+        address: "123 W 43rd St, New York, NY 10036",
+        coordinates: [-73.98456, 40.75602],
+      },
+      {
+        city: "New York City",
+        level: 4,
+        threshold: 1000,
+        name: "Carnegie Hall Stern Auditorium",
+        address: "881 7th Ave, New York, NY 10019",
+        coordinates: [-73.9801, 40.764945],
+      },
+    ],
+  },
+  {
+    id: 2,
+    name: "Singapore",
+    slug: "singapore",
+    coordinates: Singapore,
+    timeFrame: "Augst 2023 - October 2023",
+    link: "https://musicalbasics.com/products/golden-ticket-singapore",
+    venues: [
+      {
+        city: "Singapore",
+        level: 1,
+        threshold: 200,
+        name: "SOTA Concert Hall",
+        address: "1 Zubir Said Dr, Singapore 227968",
+        coordinates: [103.848714, 1.299336],
+      },
+      {
+        city: "Singapore",
+        level: 2,
+        threshold: 300,
+        name: "Victoria Concert Hall",
+        address: "11 Empress Pl, #01-02, Singapore 179558",
+        coordinates: [103.851912, 1.288278],
+      },
+      {
+        city: "Singapore",
+        level: 3,
+        threshold: 700,
+        name: "Esplanade Concert Hall",
+        address: "1 Esplanade Dr, Singapore 038981",
+        coordinates: [103.855308, 1.289822],
+      },
+    ],
+  },
+  {
+    id: 3,
+    name: "Amsterdam",
+    slug: "amsterdam",
+    coordinates: Amsterdam,
+    timeFrame: "July 2023 - September 2023",
+    link: "https://musicalbasics.com/products/golden-tickets-amsterdam",
+    venues: [
+      {
+        city: "Amsterdam",
+        level: 1,
+        threshold: 200,
+        name: "De Kleine Komedie",
+        address: "Amstel 56 -58, 1017 AC Amsterdam, Netherlands",
+        coordinates: [4.899, 52.366],
+      },
+      {
+        city: "Amsterdam",
+        level: 2,
+        threshold: 200,
+        name: "Muziekgebouw aan 't IJ",
+        address: "Piet Heinkade 1, 1019 BR Amsterdam, Netherlands",
+        coordinates: [4.913, 52.378],
+      },
+      {
+        city: "Amsterdam",
+        level: 2,
+        threshold: 500,
+        name: "Koninklijk Theater Carre",
+        address: "Amstel 115 /125, 1018 EM Amsterdam, Netherlands",
+        coordinates: [4.906, 52.362],
+      },
+      {
+        city: "Amsterdam",
+        level: 3,
+        threshold: 800,
+        name: "Royal Concertgebouw Orchestra",
+        address: "Gabriël Metsustraat 16, 1071 EB Amsterdam, Netherlands",
+        coordinates: [4.879106999999999, 52.356292999999994],
+      },
+    ],
+  },
+];
