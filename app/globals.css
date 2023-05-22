@@ -116,7 +116,7 @@ a {
 }
 
 .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-attrib {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
+  /* position: absolute; */
+  /* bottom: 10px; */
+  /* right: 10px; */
 }

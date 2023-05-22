@@ -43,7 +43,7 @@ export default function City({ params }) {
   const mapContainer = useRef(null);
   const [lng, setLng] = useState(coordinates[0]);
   const [lat, setLat] = useState(coordinates[1]);
-  const [zoom, setZoom] = useState(12);
+  const [zoom, setZoom] = useState(10);
 
   useLayoutEffect(() => {
     if (map.current) return; // initialize map only once
@@ -77,7 +77,7 @@ export default function City({ params }) {
   }, [city]);
 
   // TODO: Get sold from API
-  const presales = 300;
+  const presales = 121;
 
   // Use MUI Box component to wrap the content
   return (
@@ -118,14 +118,9 @@ export default function City({ params }) {
           </Link>
         </Box>
         <Milestones venues={city.venues} presales={presales} />
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
-          <VenueList venues={city.venues} map={map} />
-          <Box
-            ref={mapContainer}
-            sx={{
-              flex: 1,
-            }}
-          />
+        <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
+          <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
+          <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
         </Stack>
       </Container>
     </ThemeProvider>
