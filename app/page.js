@@ -6,7 +6,6 @@ import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { ThemeProvider } from "@emotion/react";
 import { Box, createTheme } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
-import Loading from "./loading";
 import styles from "./page.module.css";
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
@@ -71,9 +70,7 @@ export default function HomePage() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box ref={mapContainer} className={styles.mapContainer}>
-        {isLoading && <Loading />}
-      </Box>
+      <Box ref={mapContainer} className={styles.mapContainer}></Box>
       <ResponsiveAppBar map={map} />
       <CityList map={map} />
     </ThemeProvider>

@@ -17,7 +17,7 @@ export default function CityListItem({ city, onSelect, isSelected }) {
         display: "flex",
         zIndex: 1,
         backgroundColor: [
-          isSelected ? "rgba(255,255,255,0.8)" : "rgba(255,255,255,0.3)",
+          isSelected ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,0.6)",
         ],
         border: [
           isSelected ? "2px solid rgba(255,255,255)" : "1px solid transparent",

@@ -2,15 +2,20 @@ export const HQ = [-115.1398, 36.1699];
 export const NYC = [-74.006, 40.7128];
 export const Singapore = [103.8198, 1.3521];
 export const Amsterdam = [4.8952, 52.3702];
+export const LosAngeles = [-118.2437, 34.0522];
+export const Sydney = [151.2093, -33.8688];
+export const Munich = [11.5819, 48.1351];
 
 export const CITIES = [
   {
     id: 1,
-    name: "New York City",
+    name: "New York",
     slug: "nyc",
     coordinates: NYC,
-    timeFrame: "July 2023 - August 2023",
+    timeFrame: "November 2023 - December 2023",
     link: "https://musicalbasics.com/products/golden-ticket-new-york-city",
+    totalTickets: 1000,
+    variantGID: 40784543612971,
     venues: [
       {
         city: "New York City",
@@ -51,8 +56,10 @@ export const CITIES = [
     name: "Singapore",
     slug: "singapore",
     coordinates: Singapore,
-    timeFrame: "Augst 2023 - October 2023",
+    timeFrame: "January 2024 - February 2024",
     link: "https://musicalbasics.com/products/golden-ticket-singapore",
+    totalTickets: 1000,
+    variantGID: 40784543645739,
     venues: [
       {
         city: "Singapore",
@@ -85,8 +92,10 @@ export const CITIES = [
     name: "Amsterdam",
     slug: "amsterdam",
     coordinates: Amsterdam,
-    timeFrame: "July 2023 - September 2023",
+    timeFrame: "November 2023 - December 2023",
     link: "https://musicalbasics.com/products/golden-tickets-amsterdam",
+    totalTickets: 1000,
+    variantGID: 40784543514667,
     venues: [
       {
         city: "Amsterdam",
@@ -121,5 +130,38 @@ export const CITIES = [
         coordinates: [4.879106999999999, 52.356292999999994],
       },
     ],
+  },
+  {
+    id: 4,
+    name: "Los Angeles",
+    slug: "la",
+    coordinates: LosAngeles,
+    timeFrame: "December 2023 - January 2024",
+    link: "https://musicalbasics.com/products/golden-ticket-los-angeles",
+    totalTickets: 1000,
+    variantGID: null,
+    venues: [],
+  },
+  {
+    id: 5,
+    name: "Sydney",
+    slug: "sydney",
+    coordinates: Sydney,
+    timeFrame: "December 2023 - January 2024",
+    link: "https://musicalbasics.com/products/golden-ticket-sydney",
+    totalTickets: 1000,
+    variantGID: null,
+    venues: [],
+  },
+  {
+    id: 6,
+    name: "Munich",
+    slug: "munich",
+    coordinates: Munich,
+    timeFrame: "January 2024 - February 2024",
+    link: "https://musicalbasics.com/products/golden-ticket-munich",
+    totalTickets: 1000,
+    variantGID: null,
+    venues: [],
   },
 ];

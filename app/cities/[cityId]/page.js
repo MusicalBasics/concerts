@@ -4,7 +4,7 @@ import Milestones from "@/components/Milestones";
 import ResponsiveAppBar from "@/components/ResponsiveAppBar";
 import VenueList from "@/components/VenueList";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { CITIES } from "@/constants/cities";
+import { CITIES } from "@/data/cities";
 import {
   Box,
   Button,
@@ -125,4 +125,23 @@ export default function City({ params }) {
       </Container>
     </ThemeProvider>
   );
+}
+
+export async function getStaticPaths() {
+  const queryString = `query {
+    productVariant(id: "gid://shopify/ProductVariant/43729076") {
+      displayName
+      inventoryQuantity
+    }
+  }`;
+  const client = new shopify.clients.Graphql({ session });
+  const data = await client.query({
+    data: queryString,
+  });
+
+  const paths = CITIES.map((city) => ({
+    params: { cityId: city.id.toString() },
+  }));
+
+  return { paths, fallback: false };
 }

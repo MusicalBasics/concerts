@@ -1,5 +1,5 @@
 "use client";
-import { HQ } from "@/constants/cities";
+import { HQ } from "@/data/cities";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -18,7 +18,10 @@ const pages = [
   { name: "Home", link: "/" },
   { name: "Subscribe", link: "https://musicalbasics.com/pages/concerts" },
   { name: "Main Site", link: "https://musicalbasics.com" },
-  { name: "Rules", link: "https://musicalbasics.com/pages/golden-tickets" },
+  {
+    name: "How It Works",
+    link: "https://musicalbasics.com/pages/golden-tickets",
+  },
 ];
 
 function ResponsiveAppBar({ map }) {
