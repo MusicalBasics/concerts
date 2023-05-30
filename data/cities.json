@@ -5,12 +5,14 @@
     "slug": "nyc",
     "coordinates": [-74.006, 40.7128],
     "timeFrame": "November 2023 - December 2023",
-    "link": "https://musicalbasics.com/products/golden-ticket-new-york-city",
+    "startDate": "Nov 2023",
+    "endDate": "Dec 2023",
+    "link": "https://musicalbasics.com/products/golden-ticket-new-york",
     "totalTickets": 1000,
     "variantGID": 40784543612971,
     "venues": [
       {
-        "city": "New York City",
+        "city": "New York",
         "level": 1,
         "threshold": 250,
         "name": "Carnegie Hall Zankel Hall",
@@ -18,7 +20,7 @@
         "coordinates": [-73.9801, 40.764945]
       },
       {
-        "city": "New York City",
+        "city": "New York",
         "level": 2,
         "threshold": 450,
         "name": "Alice Tully Hall Lincoln Center",
@@ -26,7 +28,7 @@
         "coordinates": [-73.98232, 40.773]
       },
       {
-        "city": "New York City",
+        "city": "New York",
         "level": 3,
         "threshold": 600,
         "name": "The Town Hall",
@@ -34,7 +36,7 @@
         "coordinates": [-73.98456, 40.75602]
       },
       {
-        "city": "New York City",
+        "city": "New York",
         "level": 4,
         "threshold": 1000,
         "name": "Carnegie Hall Stern Auditorium",
@@ -49,6 +51,8 @@
     "slug": "singapore",
     "coordinates": [103.8198, 1.3521],
     "timeFrame": "January 2024 - February 2024",
+    "startDate": "Jan 2024",
+    "endDate": "Feb 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-singapore",
     "totalTickets": 1000,
     "variantGID": 40784543645739,
@@ -85,6 +89,8 @@
     "slug": "amsterdam",
     "coordinates": [4.8952, 52.3702],
     "timeFrame": "November 2023 - December 2023",
+    "startDate": "Nov 2023",
+    "endDate": "Dec 2023",
     "link": "https://musicalbasics.com/products/golden-tickets-amsterdam",
     "totalTickets": 1000,
     "variantGID": 40784543514667,
@@ -129,6 +135,8 @@
     "slug": "la",
     "coordinates": [-118.2437, 34.0522],
     "timeFrame": "December 2023 - January 2024",
+    "startDate": "Dec 2023",
+    "endDate": "Jan 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-los-angeles",
     "totalTickets": 1000,
     "variantGID": null,
@@ -140,6 +148,8 @@
     "slug": "sydney",
     "coordinates": [151.2093, -33.8688],
     "timeFrame": "December 2023 - January 2024",
+    "startDate": "Dec 2023",
+    "endDate": "Jan 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-sydney",
     "totalTickets": 1000,
     "variantGID": null,
@@ -151,6 +161,8 @@
     "slug": "munich",
     "coordinates": [11.5819, 48.1351],
     "timeFrame": "January 2024 - February 2024",
+    "startDate": "Jan 2024",
+    "endDate": "Feb 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-munich",
     "totalTickets": 1000,
     "variantGID": null,
