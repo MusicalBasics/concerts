@@ -21,6 +21,10 @@ const pages = [
     name: "How It Works",
     link: "https://musicalbasics.com/pages/golden-tickets",
   },
+  {
+    name: "We Are One",
+    link: "https://www.youtube.com/@We_Are_One_Official",
+  },
 ];
 
 function ResponsiveAppBar() {
