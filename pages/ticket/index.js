@@ -8,14 +8,15 @@ import xss from "xss";
 import { saveAs } from "file-saver";
 import { Typography, Button, Stack } from "@mui/material";
 import Layout from "@/components/layout";
+import validator from "validator";
 
-function TicketPage({ city, number, imageUrl, errorMessage }) {
+function TicketPage({ city, number, imageUrl, error }) {
   // If there's an error message, display it and don't render the rest of the component
-  if (errorMessage) {
+  if (error) {
     return (
       <Layout>
-        <Typography variant="h4" gutterBottom>
-          {errorMessage}
+        <Typography variant="h5" gutterBottom>
+          Error: {error}
         </Typography>
       </Layout>
     );
@@ -61,15 +62,39 @@ export default TicketPage;
 
 // server-side
 export async function getServerSideProps(context) {
-  const { number } = context.query;
-  const cityId = number.substring(0, 3);
+  let { number } = context.query;
 
+  if (!number) {
+    return {
+      props: {
+        error: "Missing ticket number",
+      },
+    };
+  }
+
+  // Ensure it's a string and it's exactly 9 characters long and only contains digits
+  if (
+    !validator.isLength(number, { min: 9, max: 9 }) ||
+    !validator.isNumeric(number)
+  ) {
+    return {
+      props: {
+        error: "Invalid ticket number",
+      },
+    };
+  }
+
+  const cityId = number.substring(0, 3);
   const sanitizedCity = xss(cityId).substring(0, 3);
   const sanitizedTicket = xss(number).substring(0, 9);
 
   const city = getCity(sanitizedCity);
   if (!city) {
-    return { notFound: true };
+    return {
+      props: {
+        error: "City not found",
+      },
+    };
   }
 
   const filePath = path.join(process.cwd(), "public/images/gt_template.svg");
