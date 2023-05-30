@@ -1,9 +1,8 @@
-" use client";
 import { CITIES, HQ } from "@/data/cities";
 import { Box, Button, Stack } from "@mui/material";
 import { useState } from "react";
-import CityListItem from "./CityListItem";
-import styles from "./ConcertList.module.css";
+import CityListItem from "./city-list-item.js";
+import styles from "./concert-list.module.css";
 
 export default function CityList({ map }) {
   const [selectedCity, setSelectedCity] = useState(null);

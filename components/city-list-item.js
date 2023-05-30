@@ -1,4 +1,3 @@
-"use client";
 import { Button } from "@mui/material";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
@@ -45,7 +44,7 @@ export default function CityListItem({ city, onSelect, isSelected }) {
           >
             {city.timeFrame}
           </Typography>
-          <Button variant="contained" borderRadius="50px">
+          <Button variant="contained">
             <Link href={`/cities/${city.id}`}>Preorder</Link>
           </Button>
         </CardContent>

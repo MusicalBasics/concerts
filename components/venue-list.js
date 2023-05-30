@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import styles from "./VenueList.module.css";
+import styles from "./venue-list.module.css";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function VenueList({ map, venues }) {

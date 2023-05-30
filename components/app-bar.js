@@ -12,7 +12,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import * as React from "react";
-import Logo from "./Logo";
+import Logo from "./logo";
 
 const pages = [
   { name: "Home", link: "/" },

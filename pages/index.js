@@ -1,25 +1,12 @@
-"use client";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import CityList from "@/components/CityList";
-import ResponsiveAppBar from "@/components/ResponsiveAppBar";
+import CityList from "@/components/city-list";
+import ResponsiveAppBar from "@/components/app-bar";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { ThemeProvider } from "@emotion/react";
 import { Box, createTheme } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
-import styles from "./page.module.css";
+import styles from "./index.module.css";
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#232323",
-    },
-    secondary: {
-      main: "#ffffff",
-    },
-  },
-});
 
 export default function HomePage() {
   const map = useRef(null);
@@ -69,10 +56,10 @@ export default function HomePage() {
   }, []);
 
   return (
-    <ThemeProvider theme={theme}>
+    <>
       <Box ref={mapContainer} className={styles.mapContainer}></Box>
       <ResponsiveAppBar map={map} />
       <CityList map={map} />
-    </ThemeProvider>
+    </>
   );
 }

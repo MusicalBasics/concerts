@@ -1,8 +1,7 @@
-"use client";
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import Milestones from "@/components/Milestones";
-import ResponsiveAppBar from "@/components/ResponsiveAppBar";
-import VenueList from "@/components/VenueList";
+import Milestones from "@/components/milestones";
+import ResponsiveAppBar from "@/components/app-bar";
+import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { CITIES } from "@/data/cities";
 import {
@@ -128,20 +127,12 @@ export default function City({ params }) {
 }
 
 export async function getStaticPaths() {
-  const queryString = `query {
-    productVariant(id: "gid://shopify/ProductVariant/43729076") {
-      displayName
-      inventoryQuantity
-    }
-  }`;
-  const client = new shopify.clients.Graphql({ session });
-  const data = await client.query({
-    data: queryString,
-  });
-
   const paths = CITIES.map((city) => ({
     params: { cityId: city.id.toString() },
   }));
-
   return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  return { props: { params } };
 }

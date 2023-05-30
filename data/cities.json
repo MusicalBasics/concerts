@@ -1,0 +1,159 @@
+[
+  {
+    "id": 1,
+    "name": "New York",
+    "slug": "nyc",
+    "coordinates": [-74.006, 40.7128],
+    "timeFrame": "November 2023 - December 2023",
+    "link": "https://musicalbasics.com/products/golden-ticket-new-york-city",
+    "totalTickets": 1000,
+    "variantGID": 40784543612971,
+    "venues": [
+      {
+        "city": "New York City",
+        "level": 1,
+        "threshold": 250,
+        "name": "Carnegie Hall Zankel Hall",
+        "address": "881 7th Ave, New York, NY 10019",
+        "coordinates": [-73.9801, 40.764945]
+      },
+      {
+        "city": "New York City",
+        "level": 2,
+        "threshold": 450,
+        "name": "Alice Tully Hall Lincoln Center",
+        "address": "1941 Broadway at, W 65th St, New York, NY 10023",
+        "coordinates": [-73.98232, 40.773]
+      },
+      {
+        "city": "New York City",
+        "level": 3,
+        "threshold": 600,
+        "name": "The Town Hall",
+        "address": "123 W 43rd St, New York, NY 10036",
+        "coordinates": [-73.98456, 40.75602]
+      },
+      {
+        "city": "New York City",
+        "level": 4,
+        "threshold": 1000,
+        "name": "Carnegie Hall Stern Auditorium",
+        "address": "881 7th Ave, New York, NY 10019",
+        "coordinates": [-73.9801, 40.764945]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Singapore",
+    "slug": "singapore",
+    "coordinates": [103.8198, 1.3521],
+    "timeFrame": "January 2024 - February 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-singapore",
+    "totalTickets": 1000,
+    "variantGID": 40784543645739,
+    "venues": [
+      {
+        "city": "Singapore",
+        "level": 1,
+        "threshold": 200,
+        "name": "SOTA Concert Hall",
+        "address": "1 Zubir Said Dr, Singapore 227968",
+        "coordinates": [103.848714, 1.299336]
+      },
+      {
+        "city": "Singapore",
+        "level": 2,
+        "threshold": 300,
+        "name": "Victoria Concert Hall",
+        "address": "11 Empress Pl, #01-02, Singapore 179558",
+        "coordinates": [103.851912, 1.288278]
+      },
+      {
+        "city": "Singapore",
+        "level": 3,
+        "threshold": 700,
+        "name": "Esplanade Concert Hall",
+        "address": "1 Esplanade Dr, Singapore 038981",
+        "coordinates": [103.855308, 1.289822]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Amsterdam",
+    "slug": "amsterdam",
+    "coordinates": [4.8952, 52.3702],
+    "timeFrame": "November 2023 - December 2023",
+    "link": "https://musicalbasics.com/products/golden-tickets-amsterdam",
+    "totalTickets": 1000,
+    "variantGID": 40784543514667,
+    "venues": [
+      {
+        "city": "Amsterdam",
+        "level": 1,
+        "threshold": 200,
+        "name": "De Kleine Komedie",
+        "address": "Amstel 56 -58, 1017 AC Amsterdam, Netherlands",
+        "coordinates": [4.899, 52.366]
+      },
+      {
+        "city": "Amsterdam",
+        "level": 2,
+        "threshold": 200,
+        "name": "Muziekgebouw aan 't IJ",
+        "address": "Piet Heinkade 1, 1019 BR Amsterdam, Netherlands",
+        "coordinates": [4.913, 52.378]
+      },
+      {
+        "city": "Amsterdam",
+        "level": 2,
+        "threshold": 500,
+        "name": "Koninklijk Theater Carre",
+        "address": "Amstel 115 /125, 1018 EM Amsterdam, Netherlands",
+        "coordinates": [4.906, 52.362]
+      },
+      {
+        "city": "Amsterdam",
+        "level": 3,
+        "threshold": 800,
+        "name": "Royal Concertgebouw Orchestra",
+        "address": "Gabriël Metsustraat 16, 1071 EB Amsterdam, Netherlands",
+        "coordinates": [4.879106999999999, 52.356292999999994]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Los Angeles",
+    "slug": "la",
+    "coordinates": [-118.2437, 34.0522],
+    "timeFrame": "December 2023 - January 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-los-angeles",
+    "totalTickets": 1000,
+    "variantGID": null,
+    "venues": []
+  },
+  {
+    "id": 5,
+    "name": "Sydney",
+    "slug": "sydney",
+    "coordinates": [151.2093, -33.8688],
+    "timeFrame": "December 2023 - January 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-sydney",
+    "totalTickets": 1000,
+    "variantGID": null,
+    "venues": []
+  },
+  {
+    "id": 6,
+    "name": "Munich",
+    "slug": "munich",
+    "coordinates": [11.5819, 48.1351],
+    "timeFrame": "January 2024 - February 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-munich",
+    "totalTickets": 1000,
+    "variantGID": null,
+    "venues": []
+  }
+]
