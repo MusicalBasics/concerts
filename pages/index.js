@@ -2,7 +2,7 @@ import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-load
 import CityList from "@/components/city-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Container } from "@mui/material";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import RootLayout from "@/components/root-layout";
 import ResponsiveAppBar from "@/components/app-bar";
@@ -17,7 +17,7 @@ export default function HomePage() {
   const [zoom, setZoom] = useState(2);
   const [isLoading, setIsLoading] = useState(true);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,

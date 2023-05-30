@@ -43,7 +43,7 @@ function TicketPage({ city, number, imageUrl, error }) {
         <Stack
           spacing={2}
           direction="row"
-          className="no-print"
+          displayPrint={false}
           justifyContent="center"
         >
           <Button variant="contained" color="primary" onClick={handleDownload}>
