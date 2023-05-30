@@ -1,5 +1,4 @@
 "use client";
-import { HQ } from "@/data/cities";
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -24,7 +23,7 @@ const pages = [
   },
 ];
 
-function ResponsiveAppBar({ map }) {
+function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = (event) => {
@@ -33,13 +32,6 @@ function ResponsiveAppBar({ map }) {
 
   const handleCloseNavMenu = (link) => {
     setAnchorElNav(null);
-  };
-
-  const flyToHQ = () => {
-    map.current.flyTo({
-      center: HQ,
-      zoom: 2,
-    });
   };
 
   return (
@@ -67,7 +59,7 @@ function ResponsiveAppBar({ map }) {
             }}
           >
             <Link href="/">
-              <Logo onClick={flyToHQ} />
+              <Logo />
             </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -123,7 +115,7 @@ function ResponsiveAppBar({ map }) {
             }}
           >
             <Link href="/">
-              <Logo onClick={flyToHQ} />
+              <Logo />
             </Link>
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>

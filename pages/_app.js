@@ -21,9 +21,7 @@ export default function MyApp({ Component, pageProps }) {
 
   return getLayout(
     <ThemeProvider theme={theme}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <Component {...pageProps} />
     </ThemeProvider>
   );
 }

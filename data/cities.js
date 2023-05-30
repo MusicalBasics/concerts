@@ -6,3 +6,7 @@ export const LosAngeles = [-118.2437, 34.0522];
 export const Sydney = [151.2093, -33.8688];
 export const Munich = [11.5819, 48.1351];
 export const CITIES = require("./cities.json");
+
+export function getCity(id) {
+  return CITIES.find((city) => city.id == id);
+}

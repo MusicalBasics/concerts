@@ -1,10 +1,11 @@
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import CityList from "@/components/city-list";
-import ResponsiveAppBar from "@/components/app-bar";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, createTheme } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { useLayoutEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
+import RootLayout from "@/components/root-layout";
+import ResponsiveAppBar from "@/components/app-bar";
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -56,10 +57,12 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
+    <RootLayout>
       <Box ref={mapContainer} className={styles.mapContainer}></Box>
-      <ResponsiveAppBar map={map} />
-      <CityList map={map} />
-    </>
+      <ResponsiveAppBar />
+      <Container maxWidth="xl">
+        <CityList map={map} />
+      </Container>
+    </RootLayout>
   );
 }

@@ -15,23 +15,13 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
+import Layout from "@/components/layout";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 function getCity(id) {
   const city = CITIES.find((city) => city.id == id);
   return city;
 }
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#232323",
-    },
-    secondary: {
-      main: "#ffffff",
-    },
-  },
-});
 
 export default function City({ params }) {
   const { cityId } = params;
@@ -80,49 +70,40 @@ export default function City({ params }) {
 
   // Use MUI Box component to wrap the content
   return (
-    <ThemeProvider theme={theme}>
-      <Container maxWidth="xl">
-        <ResponsiveAppBar map={map} />
-        <Stack
-          textAlign="center"
-          mt={5}
+    <Layout>
+      <Stack textAlign="center" mt={5}>
+        <Typography
+          variant="h3"
           sx={{
-            color: "white",
+            fontWeight: "bold",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            map.current.flyTo({
+              center: coordinates,
+              zoom: zoom,
+              essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+            });
           }}
         >
-          <Typography
-            variant="h3"
-            sx={{
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              map.current.flyTo({
-                center: coordinates,
-                zoom: zoom,
-                essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-              });
-            }}
-          >
-            {city.name}
-          </Typography>
-          <Typography variant="caption">{city.timeFrame}</Typography>
-          <Typography variant="body">Current Presales: {presales}</Typography>
-        </Stack>
-        <Box mt={3} mb={3} textAlign="center">
-          <Link href={city.link}>
-            <Button variant="outlined" color="secondary">
-              Buy Tickets
-            </Button>
-          </Link>
-        </Box>
-        <Milestones venues={city.venues} presales={presales} />
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
-          <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
-          <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
-        </Stack>
-      </Container>
-    </ThemeProvider>
+          {city.name}
+        </Typography>
+        <Typography variant="caption">{city.timeFrame}</Typography>
+        <Typography variant="body">Current Presales: {presales}</Typography>
+      </Stack>
+      <Box mt={3} mb={3} textAlign="center">
+        <Link href={city.link}>
+          <Button variant="outlined" color="secondary">
+            Buy Tickets
+          </Button>
+        </Link>
+      </Box>
+      <Milestones venues={city.venues} presales={presales} />
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
+        <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
+        <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
+      </Stack>
+    </Layout>
   );
 }
 
