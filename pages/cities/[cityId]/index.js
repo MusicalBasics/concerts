@@ -1,31 +1,16 @@
 import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import Milestones from "@/components/milestones";
-import ResponsiveAppBar from "@/components/app-bar";
 import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { CITIES } from "@/data/cities";
-import {
-  Box,
-  Button,
-  Container,
-  Stack,
-  ThemeProvider,
-  Typography,
-  createTheme,
-} from "@mui/material";
+import { getCity } from "@/data/cities";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/layout";
+import { getInventory } from "@/utils/shopify-utils";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-function getCity(id) {
-  const city = CITIES.find((city) => city.id == id);
-  return city;
-}
-
-export default function City({ params }) {
-  const { cityId } = params;
-  const city = getCity(cityId);
+export default function City({ city }) {
   const coordinates = city.coordinates;
 
   const map = useRef(null);
@@ -34,7 +19,7 @@ export default function City({ params }) {
   const [lat, setLat] = useState(coordinates[1]);
   const [zoom, setZoom] = useState(10);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
@@ -65,9 +50,6 @@ export default function City({ params }) {
     return () => map.current.remove();
   }, [city]);
 
-  // TODO: Get sold from API
-  const presales = 121;
-
   // Use MUI Box component to wrap the content
   return (
     <Layout>
@@ -89,7 +71,9 @@ export default function City({ params }) {
           {city.name}
         </Typography>
         <Typography variant="caption">{city.timeFrame}</Typography>
-        <Typography variant="body">Current Presales: {presales}</Typography>
+        <Typography variant="body">
+          Current Presales: {city.ticketsSold}
+        </Typography>
       </Stack>
       <Box mt={3} mb={3} textAlign="center">
         <Link href={city.link}>
@@ -98,7 +82,7 @@ export default function City({ params }) {
           </Button>
         </Link>
       </Box>
-      <Milestones venues={city.venues} presales={presales} />
+      <Milestones venues={city.venues} presales={city.ticketsSold} />
       <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
         <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
         <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
@@ -107,13 +91,34 @@ export default function City({ params }) {
   );
 }
 
-export async function getStaticPaths() {
-  const paths = CITIES.map((city) => ({
-    params: { cityId: city.id.toString() },
-  }));
-  return { paths, fallback: false };
-}
+export async function getServerSideProps(context) {
+  // Get cityId from the URL
+  const { cityId } = context.query;
 
-export async function getStaticProps({ params }) {
-  return { props: { params } };
+  if (!cityId) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const city = getCity(cityId);
+
+  if (!city) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const inventoryTickets = await getInventory(city.productId);
+
+  // DEBUG
+  // console.log("inventoryTickets", inventoryTickets);
+
+  city.ticketsSold = city.totalTickets - inventoryTickets;
+
+  return {
+    props: {
+      city,
+    },
+  };
 }

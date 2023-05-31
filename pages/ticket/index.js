@@ -46,11 +46,11 @@ function TicketPage({ city, number, imageUrl, error }) {
           displayPrint={false}
           justifyContent="center"
         >
+          <Button variant="contained" color="primary" onClick={handlePrint}>
+            Export to PDF / Print
+          </Button>
           <Button variant="contained" color="primary" onClick={handleDownload}>
             Download Your Ticket
-          </Button>
-          <Button variant="contained" color="primary" onClick={handlePrint}>
-            Print Your Ticket
           </Button>
         </Stack>
       </Stack>

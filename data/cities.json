@@ -9,7 +9,8 @@
     "endDate": "Dec 2023",
     "link": "https://musicalbasics.com/products/golden-ticket-new-york",
     "totalTickets": 1000,
-    "variantGID": 40784543612971,
+    "productId": "7109988024363",
+    "variantGID": "40784543612971",
     "venues": [
       {
         "city": "New York",
@@ -55,7 +56,8 @@
     "endDate": "Feb 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-singapore",
     "totalTickets": 1000,
-    "variantGID": 40784543645739,
+    "productId": "7109988057131",
+    "variantGID": "40784543645739",
     "venues": [
       {
         "city": "Singapore",
@@ -93,7 +95,8 @@
     "endDate": "Dec 2023",
     "link": "https://musicalbasics.com/products/golden-tickets-amsterdam",
     "totalTickets": 1000,
-    "variantGID": 40784543514667,
+    "productId": "7109987926059",
+    "variantGID": "40784543514667",
     "venues": [
       {
         "city": "Amsterdam",
@@ -139,6 +142,7 @@
     "endDate": "Jan 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-los-angeles",
     "totalTickets": 1000,
+    "productId": "7112957329451",
     "variantGID": null,
     "venues": []
   },
@@ -152,6 +156,7 @@
     "endDate": "Jan 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-sydney",
     "totalTickets": 1000,
+    "productId": "7112957558827",
     "variantGID": null,
     "venues": []
   },
@@ -165,6 +170,7 @@
     "endDate": "Feb 2024",
     "link": "https://musicalbasics.com/products/golden-ticket-munich",
     "totalTickets": 1000,
+    "productId": "7114069934123",
     "variantGID": null,
     "venues": []
   }
