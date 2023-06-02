@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import RootLayout from "@/components/root-layout";
 import ResponsiveAppBar from "@/components/app-bar";
+import Subscribe from "@/components/subscribe";
 
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -35,7 +36,7 @@ export default function HomePage() {
         top: 0,
         right: 0,
         bottom: 0,
-        left: 300,
+        left: 400,
       });
 
       // manually add attribution control on the bottom-right
@@ -58,10 +59,17 @@ export default function HomePage() {
 
   return (
     <RootLayout>
-      <Box ref={mapContainer} className={styles.mapContainer}></Box>
+      <Box
+        ref={mapContainer}
+        className={styles.mapContainer}
+        width="100%"
+        height="100vh"
+        overflow={"hidden"}
+      ></Box>
       <ResponsiveAppBar />
-      <Container maxWidth="xl">
+      <Container maxWidth="xl" className={styles.contentContainer}>
         <CityList map={map} />
+        <Subscribe />
       </Container>
     </RootLayout>
   );

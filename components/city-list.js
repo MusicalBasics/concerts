@@ -8,12 +8,7 @@ export default function CityList({ map }) {
   const [selectedCity, setSelectedCity] = useState(null);
 
   return (
-    <Box
-      sx={{
-        maxHeight: "70vh",
-        overflowY: "scroll",
-      }}
-    >
+    <Box overflow={{ xs: "scroll" }} height={{ xs: "60vh" }}>
       <Stack spacing={2} className={styles.container}>
         <Button
           variant="contained"
@@ -39,6 +34,7 @@ export default function CityList({ map }) {
                 essential: true, // this animation is considered essential with respect to prefers-reduced-motion
               });
             }}
+            isSoldOut={city.isSoldOut}
           />
         ))}
       </Stack>

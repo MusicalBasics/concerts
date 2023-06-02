@@ -40,8 +40,12 @@ export default function City({ city }) {
       const marker = new mapboxgl.Marker()
         .setLngLat(venue.coordinates)
         .setPopup(
+          // font color: dark grey
           new mapboxgl.Popup({ offset: 25 }).setHTML(
-            `<h3>${venue.name}</h3><p>${venue.address}</p>`
+            `<div style="color: #333">
+              <h3>${venue.name}</h3>
+              <p>${venue.address}</p>
+            </div>`
           )
         )
         .addTo(map.current);

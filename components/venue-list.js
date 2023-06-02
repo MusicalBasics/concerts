@@ -33,7 +33,7 @@ export default function VenueList({ map, venues }) {
                 </Avatar>
               }
               title={venue.name}
-              subheader={`${venue.threshold} sold`}
+              subheader={`${venue.threshold} tickets sold`}
             />
             <CardContent>
               <Typography variant="body2" color="text.secondary">

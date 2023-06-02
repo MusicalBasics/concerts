@@ -15,7 +15,6 @@ import Logo from "./logo";
 
 const pages = [
   { name: "Home", link: "/" },
-  { name: "Subscribe", link: "https://musicalbasics.com/pages/concerts" },
   { name: "Main Site", link: "https://musicalbasics.com" },
   {
     name: "How It Works",
@@ -124,14 +123,20 @@ function ResponsiveAppBar() {
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
-              <Button
-                key={page.name}
-                onClick={handleCloseNavMenu}
+              <Link
                 href={page.link}
-                sx={{ my: 2, color: "white", display: "block" }}
+                passHref
+                target="_blank"
+                rel="noopener noreferrer"
+                key={page.name}
               >
-                {page.name}
-              </Button>
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: "white", display: "block" }}
+                >
+                  {page.name}
+                </Button>
+              </Link>
             ))}
           </Box>
         </Toolbar>
