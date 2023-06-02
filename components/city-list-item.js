@@ -5,7 +5,12 @@ import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 
-export default function CityListItem({ city, onSelect, isSelected }) {
+export default function CityListItem({
+  city,
+  onSelect,
+  isSelected,
+  isSoldOut,
+}) {
   function onCityClick() {
     onSelect(city.id);
   }
@@ -44,8 +49,10 @@ export default function CityListItem({ city, onSelect, isSelected }) {
           >
             {city.timeFrame}
           </Typography>
-          <Button variant="contained">
-            <Link href={`/cities/${city.id}`}>Preorder</Link>
+          <Button variant="contained" disabled={isSoldOut}>
+            <Link href={`/cities/${city.id}`}>
+              {isSoldOut ? "Sold Out" : "Preorder"}
+            </Link>
           </Button>
         </CardContent>
       </Box>
