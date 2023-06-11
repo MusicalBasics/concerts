@@ -1,6 +1,7 @@
 import Layout from "@/components/layout";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme } from "@mui/material";
+import { Analytics } from "@vercel/analytics/react";
 import "mapbox-gl/dist/mapbox-gl.css";
 import "../styles/globals.css";
 
@@ -22,6 +23,7 @@ export default function MyApp({ Component, pageProps }) {
   return getLayout(
     <ThemeProvider theme={theme}>
       <Component {...pageProps} />
+      <Analytics />
     </ThemeProvider>
   );
 }
