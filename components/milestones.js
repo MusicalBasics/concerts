@@ -9,6 +9,7 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import { Box, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
+import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 
 export default function Milestones({ venues, presales }) {
   return (
@@ -35,7 +36,7 @@ export default function Milestones({ venues, presales }) {
             <TimelineSeparator>
               <TimelineConnector />
               <TimelineDot color={isReached ? "primary" : "grey"}>
-                <BusinessIcon fontSize="large" />
+                <TheaterComedyIcon fontSize="large" />
               </TimelineDot>
               <TimelineConnector />
             </TimelineSeparator>
