@@ -14,15 +14,17 @@ import * as React from "react";
 import Logo from "./logo";
 
 const pages = [
-  { name: "Home", link: "/" },
-  { name: "Main Site", link: "https://musicalbasics.com" },
+  { name: "Home", link: "/", newTab: false },
+  { name: "Main Site", link: "https://musicalbasics.com", newTab: true },
   {
     name: "How It Works",
     link: "https://musicalbasics.com/pages/golden-tickets",
+    newTab: true,
   },
   {
     name: "We Are One",
     link: "https://www.youtube.com/@We_Are_One_Official",
+    newTab: true,
   },
 ];
 
@@ -97,7 +99,13 @@ function ResponsiveAppBar() {
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
-                    <Link href={page.link}>{page.name}</Link>
+                    <Link
+                      href={page.link}
+                      target={page.newTab ? "_blank" : undefined}
+                      rel={page.newTab ? "noopener noreferrer" : undefined}
+                    >
+                      {page.name}
+                    </Link>
                   </Typography>
                 </MenuItem>
               ))}
@@ -124,11 +132,11 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Link
-                href={page.link}
-                passHref
-                target="_blank"
-                rel="noopener noreferrer"
                 key={page.name}
+                passHref
+                href={page.link}
+                target={page.newTab ? "_blank" : undefined}
+                rel={page.newTab ? "noopener noreferrer" : undefined}
               >
                 <Button
                   onClick={handleCloseNavMenu}
