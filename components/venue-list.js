@@ -42,8 +42,28 @@ export default function VenueList({ map, venues }) {
   return (
     <Box
       sx={{
-        maxHeight: "500px", // Change this to your desired height
+        maxHeight: {
+          xs: "220px",
+          sm: "calc(20vh + 200px)",
+        },
         overflowY: "auto",
+        "&::-webkit-scrollbar": {
+          width: "8px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "transparent",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#888",
+          borderRadius: "20px",
+          border: "2px solid transparent",
+          backgroundClip: "content-box",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#555",
+        },
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(136, 136, 136, 0.3) transparent",
       }}
     >
       <Stack spacing={2} className={styles.container}>

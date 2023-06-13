@@ -30,7 +30,7 @@ export default function Milestones({ venues, presales }) {
               align="right"
               variant="body2"
             >
-              <Typography variant="h5">Level {venue.level}</Typography>
+              <Typography variant="h6">Level {venue.level}</Typography>
               <Typography variant="body2">{venue.threshold} Minimum</Typography>
             </TimelineOppositeContent>
             <TimelineSeparator>

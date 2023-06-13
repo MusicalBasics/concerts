@@ -3,12 +3,13 @@ import Milestones from "@/components/milestones";
 import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { getCity } from "@/data/cities";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
+import FloatingCityList from "@/components/floating-city-list";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function City({ city }) {
@@ -69,7 +70,10 @@ export default function City({ city }) {
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <Stack textAlign="center" my={5}>
+      {/* A floating box on the left */}
+
+      <FloatingCityList cityLinks={require("@/data/city_links.json")} />
+      <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
           <Image src={`/images/${city.image}`} width={360} height={240} />
         </Box>

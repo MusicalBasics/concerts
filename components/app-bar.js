@@ -50,6 +50,7 @@ function ResponsiveAppBar() {
     >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
+          {/* Mobile */}
           <Typography
             variant="h6"
             noWrap
@@ -67,7 +68,12 @@ function ResponsiveAppBar() {
               <Logo />
             </Link>
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "flex", md: "none" },
+            }}
+          >
             <IconButton
               size="large"
               aria-label="menu"
@@ -98,7 +104,7 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">
+                  <Typography textAlign="center" color="black">
                     <Link
                       href={page.link}
                       target={page.newTab ? "_blank" : undefined}
@@ -129,6 +135,7 @@ function ResponsiveAppBar() {
               <Logo />
             </Link>
           </Typography>
+          {/* Desktop */}
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Link
