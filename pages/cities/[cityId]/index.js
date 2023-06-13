@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
+import Image from "next/image";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 export default function City({ city }) {
@@ -19,6 +20,8 @@ export default function City({ city }) {
   const [lat, setLat] = useState(coordinates[1]);
   const [zoom, setZoom] = useState(10);
 
+  console.log("Current sold:", city.ticketsSold);
+
   useEffect(() => {
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
@@ -29,26 +32,35 @@ export default function City({ city }) {
       attributionControl: false,
     });
 
+    // Disable user interactions
+    map.current.dragPan.disable();
+    map.current.scrollZoom.disable();
+    map.current.boxZoom.disable();
+    map.current.dragRotate.disable();
+    map.current.keyboard.disable();
+    map.current.doubleClickZoom.disable();
+    map.current.touchZoomRotate.disableRotation();
+
     // Set isLoading to false when the map finishes loading
     map.current.on("load", () => {
-      // manually add attribution control on the bottom-right
-      map.current.addControl(new mapboxgl.AttributionControl(), "bottom-right");
-    });
-
-    // Add markers for all venues, simple markers
-    city.venues.forEach((venue) => {
-      const marker = new mapboxgl.Marker()
-        .setLngLat(venue.coordinates)
-        .setPopup(
-          // font color: dark grey
-          new mapboxgl.Popup({ offset: 25 }).setHTML(
-            `<div style="color: #333">
+      // Add markers for all venues, simple markers
+      city.venues.forEach((venue) => {
+        const marker = new mapboxgl.Marker()
+          .setLngLat(venue.coordinates)
+          .setPopup(
+            new mapboxgl.Popup().setHTML(
+              `
+              <div style="color: black;">
               <h3>${venue.name}</h3>
               <p>${venue.address}</p>
-            </div>`
+              <p>${venue.threshold} minimum</p>
+              </div>
+              `
+            )
           )
-        )
-        .addTo(map.current);
+          .addTo(map.current);
+        venue.marker = marker;
+      });
     });
 
     return () => map.current.remove();
@@ -57,7 +69,10 @@ export default function City({ city }) {
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <Stack textAlign="center" mt={5}>
+      <Stack textAlign="center" my={5}>
+        <Box p={2}>
+          <Image src={`/images/${city.image}`} width={360} height={240} />
+        </Box>
         <Typography
           variant="h3"
           sx={{
@@ -76,18 +91,23 @@ export default function City({ city }) {
         </Typography>
         <Typography variant="caption">{city.timeFrame}</Typography>
         <Typography variant="body">
-          Current Presales: {city.ticketsSold}
+          {/* Current Presales: {city.ticketsSold} */}
         </Typography>
       </Stack>
       <Box mt={3} mb={3} textAlign="center">
         <Link href={city.link}>
-          <Button variant="outlined" color="secondary">
+          <Button size="large" variant="outlined" color="secondary">
             Buy Tickets
           </Button>
         </Link>
       </Box>
       <Milestones venues={city.venues} presales={city.ticketsSold} />
-      <Stack direction={{ xs: "column", md: "row" }} spacing={2} width="100%">
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        width="100%"
+        mb={10}
+      >
         <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
         <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
       </Stack>

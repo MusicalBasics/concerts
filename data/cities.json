@@ -12,7 +12,7 @@
     "productId": "7109988024363",
     "variantGID": "40784543612971",
     "isSoldOut": false,
-
+    "image": "new-york-golden-ticket.jpg",
     "venues": [
       {
         "city": "New York",
@@ -20,7 +20,8 @@
         "threshold": 250,
         "name": "Carnegie Hall Zankel Hall",
         "address": "881 7th Ave, New York, NY 10019",
-        "coordinates": [-73.97988949269504, 40.76514001528422]
+        "coordinates": [-73.97988949269504, 40.76514001528422],
+        "image": "new-york-carnegie-zankel-hall.jpg"
       },
       {
         "city": "New York",
@@ -28,7 +29,8 @@
         "threshold": 450,
         "name": "Alice Tully Hall Lincoln Center",
         "address": "1941 Broadway at, W 65th St, New York, NY 10023",
-        "coordinates": [-73.98466194042574, 40.77384069605872]
+        "coordinates": [-73.98466194042574, 40.77384069605872],
+        "image": "new-york-alice-tully-hall.jpg"
       },
       {
         "city": "New York",
@@ -36,7 +38,8 @@
         "threshold": 600,
         "name": "The Town Hall",
         "address": "123 W 43rd St, New York, NY 10036",
-        "coordinates": [-73.98439729756501, 40.75608829523772]
+        "coordinates": [-73.98439729756501, 40.75608829523772],
+        "image": "new-york-town-hall.jpg"
       },
       {
         "city": "New York",
@@ -44,7 +47,8 @@
         "threshold": 1000,
         "name": "Carnegie Hall Stern Auditorium",
         "address": "881 7th Ave, New York, NY 10019",
-        "coordinates": [-73.97988631580307, 40.76517041162466]
+        "coordinates": [-73.97988631580307, 40.76517041162466],
+        "image": "new-york-carnegie-stern-auditorium.jpg"
       }
     ]
   },
@@ -61,7 +65,7 @@
     "productId": "7109988057131",
     "variantGID": "40784543645739",
     "isSoldOut": false,
-
+    "image": "singapore-golden-ticket.jpg",
     "venues": [
       {
         "city": "Singapore",
@@ -69,7 +73,8 @@
         "threshold": 200,
         "name": "SOTA Concert Hall",
         "address": "1 Zubir Said Dr, Singapore 227968",
-        "coordinates": [103.84878671084874, 1.29920190864617]
+        "coordinates": [103.84878671084874, 1.29920190864617],
+        "image": "singapore-sota-concert-hall.jpg"
       },
       {
         "city": "Singapore",
@@ -77,7 +82,8 @@
         "threshold": 300,
         "name": "Victoria Concert Hall",
         "address": "11 Empress Pl, #01-02, Singapore 179558",
-        "coordinates": [103.85159297381063, 1.288262680858892]
+        "coordinates": [103.85159297381063, 1.288262680858892],
+        "image": "singapore-victoria-concert-hall.jpg"
       },
       {
         "city": "Singapore",
@@ -85,7 +91,8 @@
         "threshold": 700,
         "name": "Esplanade Concert Hall",
         "address": "1 Esplanade Dr, Singapore 038981",
-        "coordinates": [103.85483738112751, 1.2894714241555953]
+        "coordinates": [103.85483738112751, 1.2894714241555953],
+        "image": "singapore-esplanade-concert-hall.jpg"
       }
     ]
   },
@@ -102,7 +109,7 @@
     "productId": "7109987926059",
     "variantGID": "40784543514667",
     "isSoldOut": false,
-
+    "image": "amsterdam-golden-ticket.jpg",
     "venues": [
       {
         "city": "Amsterdam",
@@ -110,7 +117,8 @@
         "threshold": 200,
         "name": "De Kleine Komedie",
         "address": "Amstel 56 -58, 1017 AC Amsterdam, Netherlands",
-        "coordinates": [4.8959680595523185, 52.36694486780849]
+        "coordinates": [4.8959680595523185, 52.36694486780849],
+        "image": "amsterdam-de-kleine-komedie.jpg"
       },
       {
         "city": "Amsterdam",
@@ -118,7 +126,8 @@
         "threshold": 200,
         "name": "Muziekgebouw aan 't IJ",
         "address": "Piet Heinkade 1, 1019 BR Amsterdam, Netherlands",
-        "coordinates": [4.913207734505715, 52.37826446354494]
+        "coordinates": [4.913207734505715, 52.37826446354494],
+        "image": "amsterdam-muziekgebouw-aan-t-ij.jpg"
       },
       {
         "city": "Amsterdam",
@@ -126,7 +135,8 @@
         "threshold": 500,
         "name": "Koninklijk Theater Carre",
         "address": "Amstel 115 /125, 1018 EM Amsterdam, Netherlands",
-        "coordinates": [4.904259630780601, 52.36240276891393]
+        "coordinates": [4.904259630780601, 52.36240276891393],
+        "image": "amsterdam-koninklijk-theater-carre.jpg"
       },
       {
         "city": "Amsterdam",
@@ -134,7 +144,8 @@
         "threshold": 800,
         "name": "Royal Concertgebouw Orchestra",
         "address": "Gabriël Metsustraat 16, 1071 EB Amsterdam, Netherlands",
-        "coordinates": [4.8791436395519865, 52.35635841141152]
+        "coordinates": [4.8791436395519865, 52.35635841141152],
+        "image": "amsterdam-royal-concertgebouw-orchestra.jpg"
       }
     ]
   },
@@ -150,7 +161,7 @@
     "totalTickets": 1000,
     "productId": "7112957329451",
     "isSoldOut": false,
-
+    "image": "los-angeles-golden-ticket.jpg",
     "variantGID": null,
     "venues": [
       {
@@ -159,7 +170,8 @@
         "threshold": 200,
         "name": "The Broad Stage Santa Monica",
         "address": "1310 11th St, Santa Monica, CA 90401",
-        "coordinates": [-118.49018968515519, 34.022392286624225]
+        "coordinates": [-118.49018968515519, 34.022392286624225],
+        "image": "los-angeles-the-broad-stage-santa-monica.jpg"
       },
       {
         "city": "Los Angeles",
@@ -167,7 +179,8 @@
         "threshold": 450,
         "name": "The Belasco Theater",
         "address": "1050 S Hill St, Los Angeles, CA 90015",
-        "coordinates": [-118.2592994444573, 34.04025928192396]
+        "coordinates": [-118.2592994444573, 34.04025928192396],
+        "image": "los-angeles-the-belasco-theater.jpg"
       },
       {
         "city": "Los Angeles",
@@ -175,7 +188,8 @@
         "threshold": 1000,
         "name": "Walt Disney Concert Hall",
         "address": "111 S Grand Ave, Los Angeles, CA 90012",
-        "coordinates": [-118.2498574494997, 34.05532617532124]
+        "coordinates": [-118.2498574494997, 34.05532617532124],
+        "image": "los-angeles-walt-disney-concert-hall.jpg"
       }
     ]
   },
@@ -192,7 +206,7 @@
     "productId": "7112957558827",
     "variantGID": null,
     "isSoldOut": false,
-
+    "image": "sydney-golden-ticket.jpg",
     "venues": [
       {
         "city": "Sydney",
@@ -200,7 +214,8 @@
         "threshold": 200,
         "name": "Verbrugghen Hall",
         "address": "1 Conservatorium Rd, Sydney NSW 2000, Australia",
-        "coordinates": [151.21429444727167, -33.8634146741673]
+        "coordinates": [151.21429444727167, -33.8634146741673],
+        "image": "sydney-verbrugghen-hall.jpg"
       },
       {
         "city": "Sydney",
@@ -208,7 +223,8 @@
         "threshold": 500,
         "name": "City Recital Hall",
         "address": "2 Angel Pl, Sydney NSW 2000, Australia",
-        "coordinates": [151.20802823046148, -33.866957608190475]
+        "coordinates": [151.20802823046148, -33.866957608190475],
+        "image": "sydney-city-recital-hall.jpg"
       },
       {
         "city": "Sydney",
@@ -216,7 +232,8 @@
         "threshold": 900,
         "name": "Sydney Opera House Concert Hall",
         "address": "Bennelong Point, Sydney NSW 2000, Australia",
-        "coordinates": [151.2152989873136, -33.856744611911516]
+        "coordinates": [151.2152989873136, -33.856744611911516],
+        "image": "sydney-sydney-opera-house-concert-hall.jpg"
       }
     ]
   },
@@ -233,6 +250,7 @@
     "productId": "7114069934123",
     "isSoldOut": false,
     "variantGID": null,
+    "image": "munich-golden-ticket.jpg",
     "venues": [
       {
         "city": "Munich",
@@ -240,7 +258,8 @@
         "threshold": 200,
         "name": "Konzerthaus München Small Hall",
         "address": "Atelierstraße, 81671 München, Germany",
-        "coordinates": [11.60745798412087, 48.124264141569974]
+        "coordinates": [11.60745798412087, 48.124264141569974],
+        "image": "munich-konzerthaus-munchen-small-hall.jpg"
       },
       {
         "city": "Munich",
@@ -248,7 +267,8 @@
         "threshold": 450,
         "name": "Herkulesaal Hall",
         "address": "Hofgartenstraße, 80539 München, Germany",
-        "coordinates": [11.579391897998866, 48.141857449327084]
+        "coordinates": [11.579391897998866, 48.141857449327084],
+        "image": "munich-herkulesaal-hall.jpg"
       },
       {
         "city": "Munich",
@@ -256,7 +276,8 @@
         "threshold": 800,
         "name": "Konzerthaus München Large Hall",
         "address": "Atelierstraße, 81671 München, Germany",
-        "coordinates": [11.60745798412087, 48.124264141569974]
+        "coordinates": [11.60745798412087, 48.124264141569974],
+        "image": "munich-konzerthaus-munchen-large-hall.jpg"
       },
       {
         "city": "Munich",
@@ -264,7 +285,8 @@
         "threshold": 1000,
         "name": "Gasteig HP8 Isarphilharmonie",
         "address": "Hans-Preißinger-Straße 8, 81379 München, Germany",
-        "coordinates": [11.55394608042677, 48.11180085360424]
+        "coordinates": [11.55394608042677, 48.11180085360424],
+        "image": "munich-gasteig-hp8-isarphilharmonie.jpg"
       }
     ]
   }

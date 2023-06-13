@@ -36,7 +36,7 @@ export default function HomePage() {
         top: 0,
         right: 0,
         bottom: 0,
-        left: 400,
+        left: 250,
       });
 
       // manually add attribution control on the bottom-right
