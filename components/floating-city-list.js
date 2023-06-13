@@ -12,7 +12,6 @@ export default function FloatingCityList({ cityLinks }) {
     <Box
       component={Paper}
       elevation={3}
-      height={300}
       display={{ xs: "none", md: "block" }}
       position={{ md: "fixed" }}
       sx={{
@@ -30,7 +29,7 @@ export default function FloatingCityList({ cityLinks }) {
           bgcolor: "rgba(255, 255, 255, 0)",
           position: "relative",
           overflow: "auto",
-          maxHeight: 300,
+          maxHeight: 250,
           "& ul": { padding: 0 },
           "&::-webkit-scrollbar": {
             width: "8px",
