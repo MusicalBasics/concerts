@@ -5,7 +5,7 @@ import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { getCity } from "@/data/cities";
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
@@ -42,7 +42,11 @@ export default function City({ city }) {
     map.current.doubleClickZoom.disable();
     map.current.touchZoomRotate.disableRotation();
 
-    // Set isLoading to false when the map finishes loading
+    return () => map.current.remove();
+  }, []);
+
+  useEffect(() => {
+    if (!map.current) return; // wait for map to initialize
     map.current.on("load", () => {
       // Add markers for all venues, simple markers
       city.venues.forEach((venue) => {
@@ -51,12 +55,12 @@ export default function City({ city }) {
           .setPopup(
             new mapboxgl.Popup().setHTML(
               `
-              <div style="color: black;">
-              <h3>${venue.name}</h3>
-              <p>${venue.address}</p>
-              <p>${venue.threshold} minimum</p>
-              </div>
-              `
+            <div style="color: black;">
+            <h3>${venue.name}</h3>
+            <p>${venue.address}</p>
+            <p>${venue.threshold} minimum</p>
+            </div>
+            `
             )
           )
           .addTo(map.current);
@@ -64,14 +68,15 @@ export default function City({ city }) {
       });
     });
 
-    return () => map.current.remove();
+    map.current.flyTo({
+      center: [lng, lat],
+      zoom: zoom,
+    });
   }, [city]);
 
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      {/* A floating box on the left */}
-
       <FloatingCityList cityLinks={require("@/data/city_links.json")} />
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
