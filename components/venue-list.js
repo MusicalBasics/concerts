@@ -71,7 +71,14 @@ export default function VenueList({ map, venues }) {
           <Card
             key={venue.name}
             variant="elevation"
-            sx={{ backgroundColor: "rgba(255, 255, 255, 0.3)" }}
+            sx={{
+              backgroundColor: "rgba(255, 255, 255, 0.3)",
+              "&:hover": {
+                cursor: "pointer",
+                backgroundColor: "rgba(255, 255, 255, 0.5)",
+              },
+            }}
+            onClick={() => onNavigationClick(venue)}
           >
             <CardHeader
               avatar={

@@ -17,6 +17,7 @@ export default function City({ city }) {
 
   const map = useRef(null);
   const mapContainer = useRef(null);
+  const markers = useRef([]);
   const [lng, setLng] = useState(coordinates[0]);
   const [lat, setLat] = useState(coordinates[1]);
   const [zoom, setZoom] = useState(10);
@@ -46,33 +47,44 @@ export default function City({ city }) {
   }, []);
 
   useEffect(() => {
+    setLng(city.coordinates[0]);
+    setLat(city.coordinates[1]);
+  }, [city]);
+
+  useEffect(() => {
     if (!map.current) return; // wait for map to initialize
-    map.current.on("load", () => {
-      // Add markers for all venues, simple markers
-      city.venues.forEach((venue) => {
-        const marker = new mapboxgl.Marker()
-          .setLngLat(venue.coordinates)
-          .setPopup(
-            new mapboxgl.Popup().setHTML(
-              `
-            <div style="color: black;">
-            <h3>${venue.name}</h3>
-            <p>${venue.address}</p>
-            <p>${venue.threshold} minimum</p>
-            </div>
+
+    // Remove previous markers
+    markers.current.forEach((marker) => marker.remove());
+    markers.current = [];
+
+    // Add markers for all venues
+    city.venues.forEach((venue) => {
+      const marker = new mapboxgl.Marker()
+        .setLngLat(venue.coordinates)
+        .setPopup(
+          new mapboxgl.Popup().setHTML(
             `
-            )
+          <div style="color: black;">
+          <h3>${venue.name}</h3>
+          <p>${venue.address}</p>
+          <p>${venue.threshold} minimum</p>
+          </div>
+          `
           )
-          .addTo(map.current);
-        venue.marker = marker;
-      });
+        )
+        .addTo(map.current);
+
+      markers.current.push(marker);
+      venue.marker = marker;
     });
 
+    // Update the map center
     map.current.flyTo({
       center: [lng, lat],
       zoom: zoom,
     });
-  }, [city]);
+  }, [city, lng, lat, zoom]);
 
   // Use MUI Box component to wrap the content
   return (
@@ -116,6 +128,7 @@ export default function City({ city }) {
         spacing={2}
         width="100%"
         mb={10}
+        display="flex"
       >
         <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
         <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
