@@ -19,7 +19,7 @@ export default function CityList({ map }) {
             });
           }}
         >
-          Back to All Concerts
+          We Are One / Lionel Yu World Tour
         </Button>
         {CITIES.map((city) => (
           <CityListItem
