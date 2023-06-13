@@ -16,7 +16,7 @@ export default function FloatingCityList({ cityLinks }) {
       position={{ md: "fixed" }}
       sx={{
         top: "calc(5% + 120px)",
-        left: "calc(2% + 20px)",
+        left: "calc(1%)",
         zIndex: 1000,
         overflow: "auto",
         bgcolor: "transparent",
