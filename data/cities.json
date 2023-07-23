@@ -289,5 +289,57 @@
         "image": "munich-gasteig-hp8-isarphilharmonie.jpg"
       }
     ]
+  },
+  {
+    "id": 7,
+    "name": "Paris",
+    "slug": "paris",
+    "coordinates": [2.3522, 48.8566],
+    "timeFrame": "February 2024 - March 2024",
+    "startDate": "Feb 2024",
+    "endDate": "Mar 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-paris",
+    "totalTickets": 1000,
+    "productId": "7130972880939",
+    "isSoldOut": false,
+    "image": "paris-golden-ticket.jpg",
+    "venues": [
+      {
+        "city": "Paris",
+        "level": 1,
+        "threshold": 250,
+        "name": "Salle Gaveau",
+        "address": "45 Rue La Boétie, 75008 Paris, France",
+        "coordinates": [2.314084649106944, 48.87362725471182],
+        "image": "paris-salle-gaveau.jpeg"
+      },
+      {
+        "city": "Paris",
+        "level": 2,
+        "threshold": 450,
+        "name": "La Seine Musicale",
+        "address": "La Seine Musicale, Île Seguin, 92100 Boulogne-Billancourt, France",
+        "coordinates": [2.2294724696666726, 48.826368499787456],
+        "image": "paris-la-seine-musicale.jpeg"
+      },
+      {
+        "city": "Paris",
+        "level": 3,
+        "threshold": 800,
+        "name": "Théâtre des Champs-Elysées",
+        "address": "15 Av. Montaigne, 75008 Paris, France",
+        "coordinates": [2.303057950624541, 48.86574819058107],
+        "image": "paris-theatre-des-champs-elysees.jpeg"
+      },
+      {
+        "city": "Paris",
+        "level": 4,
+        "threshold": 1000,
+        "name": "Cité de la Musique",
+        "address": "221 Av. Jean Jaurès, 75019 Paris, France",
+        "coordinates": [2.3940321254917487, 48.88982005756505],
+        "image": "paris-cite-de-la-musique.jpg"
+      }
+    ]
   }
 ]
