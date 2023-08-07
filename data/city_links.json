@@ -46,5 +46,14 @@
                 "link": "/cities/7"
             }
         ]
+    },
+    {
+        "dateRange": "Mar 2024 - Apr 2024",
+        "cities": [
+            {
+                "name": "Toronto",
+                "link": "/cities/8"
+            }
+        ]
     }
 ]
