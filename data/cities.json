@@ -341,5 +341,48 @@
         "image": "paris-cite-de-la-musique.jpg"
       }
     ]
+  }, 
+  {
+    "id": 8,
+    "name": "Toronto",
+    "slug": "toronto",
+    "coordinates": [-79.3832, 43.6532],
+    "timeFrame": "March 2024 - April 2024",
+    "startDate": "Mar 2024",
+    "endDate": "Apr 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-toronto",
+    "totalTickets": 1000,
+    "productId": "7135172198443",
+    "isSoldOut": false,
+    "image": "toronto-golden-ticket.jpg",
+    "venues": [
+      {
+        "city": "Toronto",
+        "level": 1,
+        "threshold": 200,
+        "name": "Walter Hall",
+        "address": "University of Toronto, Faculty of Music, 80 Queen's Park Toronto Ontario M5S 2C5 Canada",
+        "coordinates": [-79.39432467251287, 43.666734157105786],
+        "image": "toronto-walter-hall.jpeg"
+      },
+      {
+        "city": "Toronto",
+        "level": 2,
+        "threshold": 450,
+        "name": "George Weston Hall",
+        "address": "5040 Yonge St, North York, ON M2N 6R8, Canada",
+        "coordinates": [-79.41331993214175, 43.77185008670756], 
+        "image": "toronto-george-weston-hall.jpeg"
+      },
+      {
+        "city": "Toronto",
+        "level": 3,
+        "threshold": 800,
+        "name": "Roy Thomson Hall",
+        "address": "60 Simcoe St, Toronto, ON M5J 2H5, Canada",
+        "coordinates": [-79.38637471705894, 43.64674651394432],
+        "image": "toronto-roy-thomson-hall.jpg"
+      }
+    ]
   }
 ]
