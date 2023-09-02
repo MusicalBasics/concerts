@@ -44,6 +44,10 @@
             {
                 "name": "Paris",
                 "link": "/cities/7"
+            },
+            {
+                "name": "Hong Kong",
+                "link": "/cities/10"
             }
         ]
     },

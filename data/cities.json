@@ -427,5 +427,48 @@
         "image": "seattle-benaroya-hall.jpeg"
       }
     ]
+  },
+  {
+    "id": 10,
+    "name": "Hong Kong",
+    "slug": "hk",
+    "coordinates": [114.23800296142647, 22.35138861955891],
+    "timeFrame": "February 2024 - March 2024",
+    "startDate": "Feb 2024",
+    "endDate": "Mar 2024",
+    "link": "https://musicalbasics.com/products/golden-ticket-hong-kong",
+    "totalTickets": 1000,
+    "productId": "7144390983723",
+    "isSoldOut": false,
+    "image": "hong-kong-golden-ticket.jpg",
+    "venues": [
+      {
+        "city": "Hong Kong",
+        "level": 1,
+        "threshold": 150,
+        "name": "North District Hall",
+        "address": "2 Lung Wan St, Sheung Shui, Hong Kong",
+        "coordinates": [114.12933468538226, 22.503725746444665],
+        "image": "hong-kong-north-district.jpeg"
+      },
+      {
+        "city": "Hong Kong",
+        "level": 2,
+        "threshold": 350,
+        "name": "Yuen Long Theatre",
+        "address": "Yuen Long Theatre, 9 Yuen Long Tai Yuk Rd, Yuen Long, Hong Kong",
+        "coordinates": [114.02256071059661, 22.441610669927886], 
+        "image": "hong-kong-yuen-long.jpeg"
+      },
+      {
+        "city": "Hong Kong",
+        "level": 3,
+        "threshold": 800,
+        "name": "Hong Kong Cultural Centre",
+        "address": "Hong Kong Cultural Centre, L5, Auditoria Building, 10 Salisbury Rd, Tsim Sha Tsui, Hong Kong",
+        "coordinates": [114.1703124653013, 22.294048116668524],
+        "image": "hong-kong-cultural-centre.jpeg"
+      }
+    ]
   }
 ]
