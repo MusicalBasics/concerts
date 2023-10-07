@@ -1,0 +1,96 @@
+[
+  {
+    "cityId": "1",
+    "sections": [
+      {
+        "sectionName": "Left",
+        "rows": [
+          [
+            { "number": "1", "isReserved": false, "isReservable": true },
+            {
+              "number": "2",
+              "isReserved": true,
+              "isReservable": true,
+              "name": "John Doe",
+              "email": "john.doe@example.com"
+            }
+          ],
+          [
+            { "number": "3", "isReserved": false, "isReservable": true },
+            { "number": "4", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "5", "isReserved": false, "isReservable": true },
+            { "number": "6", "isReserved": false, "isReservable": true }
+          ]
+        ],
+        "rowIdentifiers": ["B", "C", "D"]
+      },
+      {
+        "sectionName": "Center",
+        "rows": [
+          [
+            { "number": "1", "isReserved": false, "isReservable": true },
+            { "number": "2", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "3", "isReserved": false, "isReservable": true },
+            { "number": "4", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "5", "isReserved": false, "isReservable": true },
+            { "number": "6", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "7", "isReserved": false, "isReservable": true },
+            { "number": "8", "isReserved": false, "isReservable": true }
+          ]
+        ],
+        "rowIdentifiers": ["A", "B", "C", "D"]
+      },
+      {
+        "sectionName": "Right",
+        "rows": [
+          [
+            { "number": "1", "isReserved": false, "isReservable": true },
+            { "number": "2", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "3", "isReserved": false, "isReservable": true },
+            { "number": "4", "isReserved": false, "isReservable": true }
+          ],
+          [
+            { "number": "5", "isReserved": false, "isReservable": true },
+            { "number": "6", "isReserved": false, "isReservable": true }
+          ]
+        ],
+        "rowIdentifiers": ["B", "C", "D"]
+      }
+    ]
+  },
+  {
+    "cityId": "2",
+    "sections": [
+      {
+        "sectionName": "Left",
+        "rows": [
+          [
+            { "number": "1", "isReserved": false, "isReservable": false },
+            { "number": "2", "isReserved": false, "isReservable": true }
+          ]
+        ],
+        "rowIdentifiers": ["A", "B", "C", "D"]
+      },
+      {
+        "sectionName": "Right",
+        "rows": [
+          [
+            { "number": "1", "isReserved": false, "isReservable": true },
+            { "number": "2", "isReserved": false, "isReservable": true }
+          ]
+        ],
+        "rowIdentifiers": ["A", "B", "C", "D"]
+      }
+    ]
+  }
+]
