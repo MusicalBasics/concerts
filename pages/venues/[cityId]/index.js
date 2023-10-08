@@ -1,85 +1,61 @@
 import React, { useState } from "react";
 import { getCity } from "@/data/cities";
-import {
-  Box,
-  Button,
-  Stack,
-  Typography,
-  TextField,
-  IconButton,
-} from "@mui/material";
+import { Box, Button, Stack, Typography, TextField } from "@mui/material";
 import Layout from "@/components/layout";
 import Image from "next/image";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import { useRouter } from "next/router";
 
 export default function Redeem({ city }) {
   const router = useRouter();
 
-  const [ticketCount, setTicketCount] = useState(1);
-  const [ticketNumbers, setTicketNumbers] = useState([""]);
+  const [email, setEmail] = useState("");
 
-  const handleIncrement = () => {
-    if (ticketCount < 8) {
-      setTicketCount(ticketCount + 1);
-      setTicketNumbers([...ticketNumbers, ""]);
-    }
+  const handleInputChange = (event) => {
+    setEmail(event.target.value);
   };
 
-  const handleDecrement = () => {
-    if (ticketCount > 1) {
-      setTicketCount(ticketCount - 1);
-      setTicketNumbers(ticketNumbers.slice(0, -1));
-    }
-  };
+  const handleSubmit = async () => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleInputChange = (index, event) => {
-    const newTicketNumbers = [...ticketNumbers];
-    newTicketNumbers[index] = event.target.value;
-    setTicketNumbers(newTicketNumbers);
-  };
-
-  const handleSubmit = () => {
-    // 1. Check for duplicate ticket numbers
-    const hasDuplicates =
-      new Set(ticketNumbers.filter((ticket) => ticket)).size !==
-      ticketNumbers.filter((ticket) => ticket).length;
-
-    if (hasDuplicates) {
-      alert("Duplicate ticket numbers are not allowed.");
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
       return;
     }
 
-    // 2. Check the first three digits of each ticket number
-    const paddedCityId = String(city.id).padStart(3, "0");
-    const hasInvalidCityId = ticketNumbers.some(
-      (ticket) => ticket.slice(0, 3) !== paddedCityId
-    );
+    try {
+      const response = await fetch("/api/checkEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          cityId: city.id,
+        }),
+      });
 
-    if (hasInvalidCityId) {
-      alert(
-        "One or more ticket numbers do not match the city ID. Please check your input."
-      );
-      return;
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.ticketCount === 0) {
+        alert("No tickets found for this email.");
+        return;
+      }
+
+      // TODO Redirect to the seat picker page
+      console.log(`Found ${data.ticketCount} tickets for ${email}.`);
+
+      router.push(`/pick/${city.id}`);
+    } catch (error) {
+      console.error(error);
+      alert("There was an error checking the email.");
     }
-
-    // 3. Check if the ticket numbers have exactly 9 digits
-    const hasInvalidLength = ticketNumbers.some(
-      (ticket) => ticket.length !== 9
-    );
-
-    if (hasInvalidLength) {
-      alert("All ticket numbers must have exactly 9 digits.");
-      return;
-    }
-
-    // TODO 4. Check if the ticket numbers are valid, check against the database
-
-    // If both validations pass, proceed with desired action
-    console.log("Valid tickets. Proceeding...");
-    const ticketQueryString = ticketNumbers.join(",");
-    router.push(`/pick/${city.id}?tickets=${ticketQueryString}`);
   };
 
   return (
@@ -91,44 +67,32 @@ export default function Redeem({ city }) {
         <Typography variant="h4">{city.concert?.venue}</Typography>
         <Typography variant="body">{city.concert?.address}</Typography>
         <Typography variant="caption">{city.concert?.date}</Typography>
-        <Box mt={5}>
-          <IconButton
-            onClick={handleDecrement}
+      </Stack>
+      <Stack textAlign="center">
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 2,
+          }}
+        >
+          <TextField
+            value={email}
+            onChange={handleInputChange}
+            type="email"
+            variant="outlined"
             color="secondary"
-            aria-label="Reduce ticket number"
-          >
-            <RemoveCircleOutlineIcon />
-          </IconButton>
-          <IconButton
-            onClick={handleIncrement}
-            color="secondary"
-            aria-label="Increase ticket number"
-          >
-            <AddCircleOutlineIcon />
-          </IconButton>
+            label="Email"
+            sx={{ width: 300, borderRadius: 4 }}
+          />
         </Box>
-        {ticketNumbers.map((ticketNumber, index) => (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              mt: 2,
-              mb: 2,
-            }}
-            key={index}
-          >
-            <TextField
-              value={ticketNumber}
-              onChange={(event) => handleInputChange(index, event)}
-              variant="outlined"
-              color="secondary"
-              label={`Ticket Number ${index + 1}`}
-              sx={{ width: 300, borderRadius: 4 }}
-            />
-          </Box>
-        ))}
         <Box mt={3}>
-          <Button variant="contained" color="secondary" onClick={handleSubmit}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleSubmit}
+            disabled={!city.concert?.venue}
+          >
             Submit
           </Button>
         </Box>
