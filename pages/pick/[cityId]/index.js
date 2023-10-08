@@ -1,14 +1,39 @@
-import Milestones from "@/components/milestones";
 import { getCity } from "@/data/cities";
 import { Box, Button, Paper, Stack, Typography } from "@mui/material";
-import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Layout from "@/components/layout";
 import Image from "next/image";
 import SeatPicker from "@/components/seat-picker";
 import seatData from "@/data/seats.json";
+import { useRouter } from "next/router";
 
-export default function Seats({ sections, city }) {
+const name = "Lionel Yu";
+const email = "lionel@musicalbasics.com";
+
+export default function Pick({ sections, city }) {
+  const router = useRouter();
+  const ticketNumbers = (router.query.tickets || "").split(",");
+
+  const handleSubmit = async (selectedSeats) => {
+    try {
+      const response = await axios.post("/api/reserve", {
+        name,
+        email,
+        selectedSeats,
+        cityId: city.id,
+        ticketNumbers,
+      });
+      if (response.data.success) {
+        alert("Seats reserved successfully!");
+      } else {
+        alert("There was an error reserving your seats.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("There was an error reserving your seats.");
+    }
+  };
+
   // Use MUI Box component to wrap the content
   return (
     <Layout>
@@ -16,15 +41,16 @@ export default function Seats({ sections, city }) {
         <Box p={2}>
           <Image src={`/images/${city.image}`} width={360} height={240} />
         </Box>
-        <Typography variant="caption">{city.timeFrame}</Typography>
-        <Typography variant="body">
-          {/* Current Presales: {city.ticketsSold} */}
-        </Typography>
+        <Typography variant="h4">{city.concert?.venue}</Typography>
+        <Typography variant="body">{city.concert?.address}</Typography>
+        <Typography variant="caption">{city.concert?.date}</Typography>
       </Stack>
 
-      <Box mt={10}>
-        <SeatPicker sections={sections} />
-      </Box>
+      <SeatPicker
+        sections={sections}
+        ticketCount={ticketNumbers.length > 0 ? ticketNumbers.length : 1}
+        onSubmit={handleSubmit}
+      />
     </Layout>
   );
 }

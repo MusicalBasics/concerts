@@ -27,6 +27,18 @@ export default function Layout({ children }) {
         className={inter.className}
         sx={{
           color: "white",
+          overflowX: "auto",
+          "&::-webkit-scrollbar": {
+            width: "12px",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Change this to your preferred color
+            borderRadius: "10px",
+          },
+          "&::-webkit-scrollbar-track": {
+            backgroundColor: "rgba(0, 0, 0, 0.1)", // Change this to your preferred color
+          },
+          mb: 10,
         }}
       >
         {children}

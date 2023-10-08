@@ -13,6 +13,12 @@
     "variantGID": "40784543612971",
     "isSoldOut": false,
     "image": "new-york-golden-ticket.jpg",
+    "concert": {
+      "date": "December 21, 2023",
+      "venue": "Symphony Space Peter J Sharp Theater",
+      "address": "2537 Broadway, New York, NY 10025",
+      "coordinates": [-73.9725, 40.7944]
+    },
     "venues": [
       {
         "city": "New York",
@@ -341,7 +347,7 @@
         "image": "paris-cite-de-la-musique.jpg"
       }
     ]
-  }, 
+  },
   {
     "id": 8,
     "name": "Toronto",
@@ -371,7 +377,7 @@
         "threshold": 450,
         "name": "George Weston Hall",
         "address": "5040 Yonge St, North York, ON M2N 6R8, Canada",
-        "coordinates": [-79.41331993214175, 43.77185008670756], 
+        "coordinates": [-79.41331993214175, 43.77185008670756],
         "image": "toronto-george-weston-hall.jpeg"
       },
       {
@@ -414,7 +420,7 @@
         "threshold": 350,
         "name": "Town Hall",
         "address": "1119 8th Ave, Seattle, WA 98101",
-        "coordinates": [-122.330053175349, 47.60917300196207], 
+        "coordinates": [-122.330053175349, 47.60917300196207],
         "image": "seattle-town-hall.jpeg"
       },
       {
@@ -457,7 +463,7 @@
         "threshold": 350,
         "name": "Yuen Long Theatre",
         "address": "Yuen Long Theatre, 9 Yuen Long Tai Yuk Rd, Yuen Long, Hong Kong",
-        "coordinates": [114.02256071059661, 22.441610669927886], 
+        "coordinates": [114.02256071059661, 22.441610669927886],
         "image": "hong-kong-yuen-long.jpeg"
       },
       {

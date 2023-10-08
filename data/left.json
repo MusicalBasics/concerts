@@ -1,0 +1,225 @@
+{
+  "sectionName": "left",
+  "rows": [
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ],
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "9",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ],
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "9",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "11",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ],
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "9",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "11",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "13",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ],
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "9",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "11",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "13",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "15",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ],
+    [
+      {
+        "number": "1",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "3",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "5",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "7",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "9",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "11",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "13",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "15",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "17",
+        "isReserved": false,
+        "isReservable": true
+      },
+      {
+        "number": "19",
+        "isReserved": false,
+        "isReservable": true
+      }
+    ]
+  ],
+  "rowIdentifiers": [
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H"
+  ]
+}

@@ -1,5 +1,15 @@
 import React, { useState } from "react";
-import { Grid, IconButton, SvgIcon, Typography, Box } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
 
 const Seat = ({ number, isReserved, isSelected, onSelect }) => (
   <Box
@@ -17,62 +27,149 @@ const Seat = ({ number, isReserved, isSelected, onSelect }) => (
     }}
     onClick={!isReserved ? onSelect : undefined}
   >
-    <Typography variant="body2">{number}</Typography>
+    <Typography variant="caption">{number}</Typography>
   </Box>
 );
 
-const SeatPicker = ({ sections }) => {
+const getAlignment = (sectionName) => {
+  switch (sectionName) {
+    case "left":
+      return "flex-end";
+    case "center":
+      return "center";
+    case "right":
+      return "flex-start";
+    default:
+      return "center";
+  }
+};
+
+const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSeatClick = (sectionIndex, rowIndex, seatIndex) => {
     const seatId = `${sections[sectionIndex].rowIdentifiers[rowIndex]}${sections[sectionIndex].rows[rowIndex][seatIndex].number}`;
-    setSelectedSeats((prev) =>
-      prev.includes(seatId)
-        ? prev.filter((id) => id !== seatId)
-        : [...prev, seatId]
-    );
+    setSelectedSeats((prev) => {
+      if (prev.includes(seatId)) {
+        // Allow deselection of already selected seat
+        return prev.filter((id) => id !== seatId);
+      } else if (prev.length < ticketCount) {
+        // Allow selection if ticketCount is not yet reached
+        return [...prev, seatId];
+      }
+      return prev; // No change if ticketCount is reached
+    });
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleDialogSubmit = () => {
+    onSubmit(selectedSeats);
+    setDialogOpen(false);
   };
 
   return (
-    <Grid container spacing={1}>
-      <Grid item xs={12}>
-        <Typography variant="h4" align="center" color="white" sx={{ mb: 2 }}>
-          Stage
-        </Typography>
-      </Grid>
-      {sections.map((section, sectionIndex) => (
-        <Grid container item key={sectionIndex} xs spacing={1}>
-          {section.rows.map((row, rowIndex) => (
-            <Grid container item key={rowIndex} alignItems="center">
-              <Grid item>
-                <Typography variant="body1" sx={{ mr: 2 }}>
-                  {section.rowIdentifiers[rowIndex]}
-                </Typography>
-              </Grid>
-              {row.map((seat, seatIndex) => (
-                <Grid item key={seatIndex}>
-                  <Seat
-                    number={seat.number}
-                    isReserved={seat.isReserved}
-                    isSelected={selectedSeats.includes(
-                      `${section.rowIdentifiers[rowIndex]}${seat.number}`
-                    )}
-                    onSelect={() =>
-                      handleSeatClick(sectionIndex, rowIndex, seatIndex)
-                    }
-                  />
+    <Box sx={{ width: "1250px" }} mb={3}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Available Tickets: {ticketCount - selectedSeats.length}
+      </Typography>
+      <Typography variant="h6" sx={{ mt: 2 }}>
+        Selected Seats: {selectedSeats.join(", ")}
+      </Typography>
+      <Typography variant="h2" align="center" color="white" sx={{ mb: 3 }}>
+        Stage
+      </Typography>
+      <Grid container spacing={1}>
+        {sections.map((section, sectionIndex) => (
+          <Grid container item key={sectionIndex} xs spacing={1}>
+            {section.rows.map((row, rowIndex) => (
+              <Grid
+                container
+                item
+                key={rowIndex}
+                alignItems="flex-end"
+                justifyContent={getAlignment(section.sectionName)}
+              >
+                <Grid item>
+                  <Typography variant="body1" sx={{ mr: 1 }}>
+                    {section.rowIdentifiers[rowIndex]}
+                  </Typography>
                 </Grid>
-              ))}
-            </Grid>
-          ))}
-        </Grid>
-      ))}
-      <Grid item xs={12}>
-        <Typography variant="h6">
-          Selected Seats: {selectedSeats.join(", ")}
-        </Typography>
+                {row.map((seat, seatIndex) => (
+                  <Grid item key={seatIndex}>
+                    <Seat
+                      number={seat.number}
+                      isReserved={seat.isReserved}
+                      isSelected={selectedSeats.includes(
+                        `${section.rowIdentifiers[rowIndex]}${seat.number}`
+                      )}
+                      onSelect={() =>
+                        handleSeatClick(sectionIndex, rowIndex, seatIndex)
+                      }
+                    />
+                  </Grid>
+                ))}
+              </Grid>
+            ))}
+          </Grid>
+        ))}
       </Grid>
-    </Grid>
+
+      <Button
+        variant="outlined"
+        color="secondary"
+        onClick={handleDialogOpen}
+        disabled={selectedSeats.length === 0} // Disable the button if no seats are selected
+        sx={{
+          mt: 3,
+          width: "200px", // Set a width
+          height: "60px", // Set a height
+          fontSize: "1.5rem", // Increase font size
+          mx: "auto", // Center the button
+          display: "block", // Necessary for mx: auto to work
+        }}
+      >
+        Submit
+      </Button>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Are You Sure?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Seat Selections Are Final
+            <br />
+            Your Selected Seats Are:
+            <br />
+            <b>{selectedSeats.join(", ")}</b>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleDialogSubmit}
+            color="primary"
+            autoFocus
+            disabled={selectedSeats.length === 0} // Disable the button if no seats are selected
+          >
+            Yes, agreed
+          </Button>
+          <Button onClick={handleDialogClose} color="primary">
+            No, take me back
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 
