@@ -1,0 +1,235 @@
+{
+  "sectionName": "right",
+  "rows": [
+    {
+      "id": "C",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    },
+    {
+      "id": "D",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "10",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    },
+    {
+      "id": "E",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "10",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "12",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    },
+    {
+      "id": "F",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "10",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "12",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "14",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    },
+    {
+      "id": "G",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "10",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "12",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "14",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "16",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    },
+    {
+      "id": "H",
+      "seats": [
+        {
+          "number": "2",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "4",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "6",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "8",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "10",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "12",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "14",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "16",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "18",
+          "isReserved": false,
+          "isReservable": true
+        },
+        {
+          "number": "20",
+          "isReserved": false,
+          "isReservable": true
+        }
+      ]
+    }
+  ]
+}

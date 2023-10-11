@@ -18,7 +18,20 @@ import page from './documents/page'
 import product from './documents/product'
 import productVariant from './documents/productVariant'
 
-const documents = [collection, colorTheme, page, product, productVariant]
+import customer from './customer'
+import concert from './concert'
+import ticket from './ticket'
+
+const documents = [
+  collection,
+  colorTheme,
+  page,
+  product,
+  productVariant,
+  customer,
+  concert,
+  ticket, // added
+]
 
 // Singleton document types
 import home from './singletons/home'
@@ -78,6 +91,9 @@ import shopifyCollectionRule from './objects/shopify/shopifyCollectionRule'
 import shopifyProduct from './objects/shopify/shopifyProduct'
 import shopifyProductVariant from './objects/shopify/shopifyProductVariant'
 
+import venue from './venue'
+import city from './city'
+
 // Collections
 import collectionGroup from './objects/collection/group'
 import collectionLinks from './objects/collection/links'
@@ -130,6 +146,8 @@ const objects = [
   shopifyProductVariant,
   collectionGroup,
   collectionLinks,
+  venue,
+  city,
 ]
 
 export const schemaTypes = [...annotations, ...singletons, ...objects, ...blocks, ...documents]
