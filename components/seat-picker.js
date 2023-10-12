@@ -49,7 +49,7 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSeatClick = (sectionIndex, rowIndex, seatIndex) => {
-    const seatId = `${sections[sectionIndex].rowIdentifiers[rowIndex]}${sections[sectionIndex].rows[rowIndex][seatIndex].number}`;
+    const seatId = `${sections[sectionIndex].rows[rowIndex].id}${sections[sectionIndex].rows[rowIndex].seats[seatIndex].number}`;
     setSelectedSeats((prev) => {
       if (prev.includes(seatId)) {
         // Allow deselection of already selected seat
@@ -76,7 +76,7 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
   };
 
   return (
-    <Box sx={{ width: "1250px" }} mb={3}>
+    <Box sx={{ width: "1300px" }} mb={3}>
       <Typography variant="h6" sx={{ mb: 2 }}>
         Available Tickets: {ticketCount - selectedSeats.length}
       </Typography>
@@ -99,16 +99,16 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
               >
                 <Grid item>
                   <Typography variant="body1" sx={{ mr: 1 }}>
-                    {section.rowIdentifiers[rowIndex]}
+                    {row.id || "N/A"}
                   </Typography>
                 </Grid>
-                {row.map((seat, seatIndex) => (
+                {row.seats.map((seat, seatIndex) => (
                   <Grid item key={seatIndex}>
                     <Seat
                       number={seat.number}
                       isReserved={seat.isReserved}
                       isSelected={selectedSeats.includes(
-                        `${section.rowIdentifiers[rowIndex]}${seat.number}`
+                        `${row.id}${seat.number}`
                       )}
                       onSelect={() =>
                         handleSeatClick(sectionIndex, rowIndex, seatIndex)

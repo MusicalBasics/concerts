@@ -1,24 +1,22 @@
-import { getCity } from "@/data/cities";
-import {
-  Box,
-  Button,
-  Paper,
-  Stack,
-  Typography,
-  ToggleButton,
-  ToggleButtonGroup,
-} from "@mui/material";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createClient } from "next-sanity";
+import { Box, Stack, Typography, ToggleButton } from "@mui/material";
+import { useState } from "react";
 import Layout from "@/components/layout";
 import Image from "next/image";
 import SeatPicker from "@/components/seat-picker";
-import seatData from "@/data/seats.json";
 import { useRouter } from "next/router";
 
-const name = "Lionel Yu";
-const email = "lionel@musicalbasics.com";
 
-export default function Pick({ sections, city }) {
+// 4f4b9063-70e7-457f-b4b4-8494eadb85c1
+
+export default function Pick({ concert }) {
+  const city = concert.city;
+  const venue = concert.venue;
+  const seatingChart = concert.seatingChart;
+
+  console.log(city.image.asset.url);
+  console.log(seatingChart.referenceImage);
+
   const router = useRouter();
   // TODO: get from query params
   const ticketNumbers = (router.query.tickets || "").split(",");
@@ -56,11 +54,11 @@ export default function Pick({ sections, city }) {
     <Layout>
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
-          <Image src={`/images/${city.image}`} width={360} height={240} />
+          <Image src={city.image.asset.url} width={360} height={240} />
         </Box>
-        <Typography variant="h4">{city.concert?.venue}</Typography>
-        <Typography variant="body">{city.concert?.address}</Typography>
-        <Typography variant="caption">{city.concert?.date}</Typography>
+        <Typography variant="h4">{venue.name}</Typography>
+        <Typography variant="body">{venue.address}</Typography>
+        <Typography variant="caption">{concert.date}</Typography>
       </Stack>
 
       <Box sx={{ my: 3, textAlign: "center" }}>
@@ -76,7 +74,7 @@ export default function Pick({ sections, city }) {
       </Box>
 
       <SeatPicker
-        sections={sections}
+        sections={seatingChart.sections}
         ticketCount={ticketCount}
         onSubmit={handleSubmit}
       />
@@ -108,7 +106,7 @@ export default function Pick({ sections, city }) {
             }}
           />
           <Image
-            src="/images/nyc-venue-seating-map.png"
+            src={seatingChart.referenceImage.asset.url}
             width={800}
             height={617}
             alt="Seating Map"
@@ -119,38 +117,67 @@ export default function Pick({ sections, city }) {
   );
 }
 
+const client = createClient({
+  projectId: "zqcyefig",
+  dataset: "production",
+  apiVersion: "2022-03-25",
+  useCdn: false,
+});
+
 export async function getServerSideProps(context) {
   // Get cityId from the URL
-  const { cityId } = context.query;
+  const { concertId } = context.query;
 
-  if (!cityId) {
+  if (!concertId) {
     return {
       notFound: true,
     };
   }
 
-  // Use getCity function to obtain city data
-  const city = getCity(cityId);
+  const concerts = await client.fetch(
+    `*[_type == "concert" && _id == "${concertId}"]{
+      name,
+      city->{
+        name,
+        image {
+          asset-> {
+            url
+          }
+        },
+        _id
+      },
+      venue->{
+        name,
+        address,
+        _id
+      },
+      date,
+      seatingChart {
+        sections[],
+        referenceImage {
+          asset-> {
+            url
+          }
+        },
+      },
+    }
+  `,
+    { concertId }
+  );
 
-  if (!city) {
+  console.log(concertId);
+
+  if (!concerts || concerts.length === 0) {
     return {
       notFound: true,
     };
   }
 
-  // Find the seat data based on the cityId
-  const seatCity = seatData.find((seatCity) => seatCity.cityId === cityId);
-
-  if (!seatCity) {
-    return {
-      notFound: true,
-    };
-  }
+  const concert = concerts[0];
 
   return {
     props: {
-      city,
-      sections: seatCity.sections, // Passing sections data to the component
+      concert, // now concert includes dereferenced city and venue
     },
   };
 }

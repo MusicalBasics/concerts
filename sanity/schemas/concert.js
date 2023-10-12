@@ -102,6 +102,11 @@ export default {
             },
           ],
         },
+        {
+          name: 'referenceImage',
+          title: 'Reference',
+          type: 'image',
+        },
       ],
     },
   ],
