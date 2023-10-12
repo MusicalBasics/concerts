@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
 import Layout from "@/components/layout";
@@ -33,6 +34,7 @@ export default function Pick({ concert }) {
   const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [reservationSuccess, setReservationSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // If there are no ticket numbers, available seats is 0, otherwise it's the number of tickets
   const [showMap, setShowMap] = useState(false);
@@ -54,11 +56,13 @@ export default function Pick({ concert }) {
   };
 
   const handleSubmitEmail = async () => {
+    setLoading(true);
     // Regular expression for basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!emailRegex.test(email)) {
       alert("Please enter a valid email address.");
+      setLoading(false);
       return;
     }
 
@@ -84,6 +88,7 @@ export default function Pick({ concert }) {
 
       if (data.totalTicketCount === 0) {
         alert("No tickets found for this email.");
+        setLoading(false);
         return;
       }
 
@@ -99,9 +104,11 @@ export default function Pick({ concert }) {
       console.error(error);
       alert("There was an error checking the email.");
     }
+    setLoading(false);
   };
 
   const handleReserve = async (selectedSeats) => {
+    setLoading(true);
     try {
       const response = await axios.post("/api/reserve", {
         concertId: concert._id,
@@ -122,11 +129,30 @@ export default function Pick({ concert }) {
       console.error(error);
       alert("There was an error reserving your seats.");
     }
+    setLoading(false);
   };
 
   // Use MUI Box component to wrap the content
   return (
     <Layout>
+      {loading && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: for a semi-transparent background
+          }}
+        >
+          <CircularProgress color="secondary" />
+        </Box>
+      )}
+
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
           <Image src={city.image.asset.url} width={360} height={240} />
@@ -248,20 +274,26 @@ export default function Pick({ concert }) {
           <DialogContent>
             <DialogContentText>
               You are all set. You have selected seats{" "}
-              {selectedSeats
-                .map((seat) => `${seat.rowId}${seat.seatNumber}`)
-                .join(", ")}
+              <b>
+                {selectedSeats
+                  .map((seat) => `${seat.rowId}${seat.seatNumber}`)
+                  .join(", ")}
+              </b>
               <Stack spacing={2}>
                 <Typography variant="body1">
                   Please print or screenshot this page for your own reference.
                 </Typography>
                 <Typography variant="body1">
-                  You will receive the tickets from the Symphony Space Venue
+                  You will receive the tickets from the
+                  <b>{` ${venue.name} `}</b>
                   once we have processed it on our end. Please stay updated.
                 </Typography>
                 <Typography variant="body1">
                   For any issues or changes related to your order, please
-                  contact us support@musicalbasics.com
+                  contact us at{" "}
+                  <a href="mailto:support@musicalbasics.com>">
+                    <b>support@musicalbasics.com</b>
+                  </a>
                 </Typography>
               </Stack>
             </DialogContentText>
