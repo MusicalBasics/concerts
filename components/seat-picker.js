@@ -44,7 +44,13 @@ const getAlignment = (sectionName) => {
   }
 };
 
-const SeatPicker = ({ sections, ticketCount, onSubmit, selectedSeats, setSelectedSeats }) => {
+const SeatPicker = ({
+  sections,
+  ticketCount,
+  onSubmit,
+  selectedSeats,
+  setSelectedSeats,
+}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   console.log(selectedSeats);
@@ -150,7 +156,7 @@ const SeatPicker = ({ sections, ticketCount, onSubmit, selectedSeats, setSelecte
         variant="outlined"
         color="secondary"
         onClick={handleDialogOpen}
-        disabled={selectedSeats.length === 0} // Disable the button if no seats are selected
+        disabled={selectedSeats.length < ticketCount} // Disable the button if no seats are selected
         sx={{
           mt: 3,
           width: "200px", // Set a width
