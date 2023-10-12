@@ -162,7 +162,7 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
             autoFocus
             disabled={selectedSeats.length === 0} // Disable the button if no seats are selected
           >
-            Yes, agreed
+            Yes, reserve
           </Button>
           <Button onClick={handleDialogClose} color="primary">
             No, take me back

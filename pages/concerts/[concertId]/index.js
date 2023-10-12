@@ -1,11 +1,17 @@
 import { createClient } from "next-sanity";
-import { Box, Stack, Typography, ToggleButton } from "@mui/material";
+import {
+  Box,
+  Stack,
+  Typography,
+  ToggleButton,
+  TextField,
+  Button,
+} from "@mui/material";
 import { useState } from "react";
 import Layout from "@/components/layout";
 import Image from "next/image";
 import SeatPicker from "@/components/seat-picker";
 import { useRouter } from "next/router";
-
 
 // 4f4b9063-70e7-457f-b4b4-8494eadb85c1
 
@@ -18,9 +24,10 @@ export default function Pick({ concert }) {
   console.log(seatingChart.referenceImage);
 
   const router = useRouter();
-  // TODO: get from query params
-  const ticketNumbers = (router.query.tickets || "").split(",");
-  const ticketCount = 0;
+  const [ticketCount, setTicketCount] = useState(0);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
 
   // If there are no ticket numbers, available seats is 0, otherwise it's the number of tickets
   const [showMap, setShowMap] = useState(false);
@@ -29,14 +36,67 @@ export default function Pick({ concert }) {
     setShowMap((prev) => !prev);
   };
 
-  const handleSubmit = async (selectedSeats) => {
+  const handleInputChange = (event) => {
+    setEmail(event.target.value);
+  };
+
+  const handleSubmitEmail = async () => {
+    // Regular expression for basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/checkEmail", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          concertId: concert._id,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        alert("No tickets found for this email.");
+        return;
+      }
+
+      // Assuming only one customer record is returned per email and concertId
+      const customer = data[0];
+      console.log(
+        `Found ${customer.ticketCount} tickets for ${customer.email}.`
+      );
+      setIsVerified(true); // set isVerified to true once email is verified and name is pulled
+
+      // Update state with the found customer data
+      setTicketCount(customer.ticketCount);
+      setName(customer.name);
+      setEmail(customer.email); // This line will overwrite the email state with the email from the customer document
+    } catch (error) {
+      console.error(error);
+      alert("There was an error checking the email.");
+    }
+  };
+
+  const handleReserve = async (selectedSeats) => {
     try {
       const response = await axios.post("/api/reserve", {
         name,
         email,
         selectedSeats,
-        cityId: city.id,
-        ticketNumbers,
       });
       if (response.data.success) {
         alert("Seats reserved successfully!");
@@ -61,23 +121,63 @@ export default function Pick({ concert }) {
         <Typography variant="caption">{concert.date}</Typography>
       </Stack>
 
-      <Box sx={{ my: 3, textAlign: "center" }}>
-        <ToggleButton
-          value={showMap}
-          onChange={handleToggle}
-          color="secondary"
-          size="large"
-          sx={{ color: "white", borderColor: "white" }}
-        >
-          {showMap ? "Hide Seating Map" : "Show Official Seating Map"}
-        </ToggleButton>
-      </Box>
+      <Stack textAlign="center">
+        {isVerified ? (
+          <Box>
+            <Typography variant="h4">Hello, {name}</Typography>
+          </Box>
+        ) : (
+          <Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mt: 2,
+              }}
+            >
+              <TextField
+                value={email}
+                onChange={handleInputChange}
+                type="email"
+                variant="outlined"
+                color="secondary"
+                label="Email"
+                sx={{ width: 300, borderRadius: 4 }}
+              />
+            </Box>
+            <Box mt={3}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={handleSubmitEmail}
+              >
+                Submit
+              </Button>
+            </Box>
+          </Box>
+        )}
+      </Stack>
 
-      <SeatPicker
-        sections={seatingChart.sections}
-        ticketCount={ticketCount}
-        onSubmit={handleSubmit}
-      />
+      {isVerified && (
+        <Stack>
+          <Box sx={{ my: 3, textAlign: "center" }}>
+            <ToggleButton
+              value={showMap}
+              onChange={handleToggle}
+              color="secondary"
+              size="large"
+              sx={{ color: "white", borderColor: "white" }}
+            >
+              {showMap ? "Hide Seating Map" : "Show Official Seating Map"}
+            </ToggleButton>
+          </Box>
+          <SeatPicker
+            sections={seatingChart.sections}
+            ticketCount={ticketCount}
+            onSubmit={handleSubmitEmail}
+          />
+        </Stack>
+      )}
 
       {showMap && (
         <Box
@@ -136,6 +236,7 @@ export async function getServerSideProps(context) {
 
   const concerts = await client.fetch(
     `*[_type == "concert" && _id == "${concertId}"]{
+      _id,
       name,
       city->{
         name,
@@ -164,8 +265,6 @@ export async function getServerSideProps(context) {
   `,
     { concertId }
   );
-
-  console.log(concertId);
 
   if (!concerts || concerts.length === 0) {
     return {
