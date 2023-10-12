@@ -1,65 +1,88 @@
-import fs from "fs";
-import path from "path";
+import { createClient } from "next-sanity";
 import { HttpStatusCode } from "axios";
 
-export default async function handler(req, res) {
-  if (req.method === "POST") {
-    const { name, email, selectedSeats, cityId, ticketNumbers } = req.body;
+const client = createClient({
+  projectId: "zqcyefig",
+  dataset: "production",
+  apiVersion: "2023-03-01",
+  token:
+    "skcEET1oF0tK6FltENUhc87cmaJ3DgMngWVFCbO6UgLz8VieuUI4s817z3vuROMGwuPngGI9GkicV4xqZssf0wRWFRjKsWOHEv4eJzPCPScsncs1Lsnt3KdLTtjQSLfKvSp5fEaOwCthl1l6tAR02VHXRU4fJlG2gCosIsbESvwWxUn357ob",
+  useCdn: false, // Disable for authenticated requests
+});
 
-    // TODO: Handle ticketNumbers to mark them as redeemed.
+export default async (req, res) => {
+  const { name, email, selectedSeats, concertId } = req.body;
 
-    try {
-      const filePath = path.resolve("./data/seats.json");
-      const fileData = fs.readFileSync(filePath, "utf-8");
-      const seatsData = JSON.parse(fileData);
+  try {
+    const query = `*[_type == "customer" && name == $name && email == $email]._id`;
+    const params = { name, email };
+    const customerIds = await client.fetch(query, params);
+    const customerId = customerIds[0];
 
-      const cityData = seatsData.find((city) => city.cityId === cityId);
-      if (!cityData) {
-        res
-          .status(HttpStatusCode.BadRequest)
-          .json({ success: false, message: "Invalid city ID." });
-        return;
+    for (const seat of selectedSeats) {
+      const { sectionName, rowId, seatNumber } = seat;
+
+      const seatQuery = `*[_type == "concert" && _id == $concertId]{
+        seatingChart {
+          sections[sectionName == $sectionName] {
+            rows[id == $rowId] {
+              seats[number == $seatNumber] {
+                _key
+              }
+            }
+          }
+        }
+      }[0]`;
+
+      const seatParams = { concertId, sectionName, rowId, seatNumber };
+      const seatData = await client.fetch(seatQuery, seatParams);
+
+      const seatKey =
+        seatData?.seatingChart?.sections[0]?.rows[0]?.seats[0]?._key;
+
+      if (!seatKey) {
+        throw new Error(`Seat not found: ${JSON.stringify(seat)}`);
       }
 
-      // Check if seats are already reserved
-      for (let seatId of selectedSeats) {
-        const [rowId, seatNumber] = seatId.match(/^([A-Z]+)(\d+)$/).slice(1);
-        const row = cityData.rows.find((row) => row.rowId === rowId);
-        const seat =
-          row && row.seats.find((seat) => seat.number === seatNumber);
-        if (seat && seat.isReserved) {
-          res.status(HttpStatusCode.BadRequest).json({
-            success: false,
-            message: `Seat ${seatId} is already reserved.`,
-          });
-          return;
-        }
-      }
+      console.log("seatKey", seatKey);
 
-      // Update the seats data
-      selectedSeats.forEach((seatId) => {
-        const [rowId, seatNumber] = seatId.match(/^([A-Z]+)(\d+)$/).slice(1);
-        const row = cityData.rows.find((row) => row.rowId === rowId);
-        const seat =
-          row && row.seats.find((seat) => seat.number === seatNumber);
-        if (seat) {
-          seat.isReserved = true;
-          seat.name = name;
-          seat.email = email;
-        }
-      });
+      const updatedSeat = await client
+        .patch(concertId)
+        .set({
+          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]: true,
+          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
+            {
+              _type: "reference",
+              _ref: customerId,
+            },
+        })
+        .commit();
 
-      fs.writeFileSync(filePath, JSON.stringify(seatsData, null, 2));
-      res.status(HttpStatusCode.Ok).json({ success: true });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(HttpStatusCode.InternalServerError)
-        .json({ success: false, message: "Server error." });
+      console.log(
+        "updatedSeat",
+        updatedSeat.seatingChart.sections
+          .find((section) => section.sectionName === sectionName)
+          .rows.find((row) => row.id === rowId)
+          .seats.find((seat) => seat._key === seatKey)
+      );
     }
-  } else {
+
+    for (const customerId of customerIds) {
+      const updateCustomer = await client
+        .patch(customerId)
+        .set({
+          redeemed: true,
+        })
+        .commit();
+
+      console.log("updateCustomer", updateCustomer);
+    }
+
+    res.status(HttpStatusCode.Ok).json({ success: true });
+  } catch (error) {
+    console.error(error);
     res
-      .status(HttpStatusCode.MethodNotAllowed)
-      .json({ success: false, message: "Method not allowed." });
+      .status(HttpStatusCode.InternalServerError)
+      .json({ success: false, message: error.message });
   }
-}
+};

@@ -1,12 +1,12 @@
 // Import the necessary libraries
-import { createClient } from "@sanity/client";
+import { createClient } from "next-sanity";
 import { HttpStatusCode } from "axios";
 
 // Initialize the Sanity client
 const client = createClient({
   projectId: "zqcyefig",
   dataset: "production",
-  apiVersion: "2022-03-25",
+  apiVersion: "2023-03-01",
   useCdn: false, // Disable for authenticated requests
 });
 
@@ -25,6 +25,7 @@ export default async (req, res) => {
     const query = `*[_type == "customer" && email == $email && concert._ref == $concertId]{
       name,
       email,
+      redeemed,
       ticketCount
     }`;
     const params = { email, concertId };
@@ -37,8 +38,16 @@ export default async (req, res) => {
       return;
     }
 
-    // Respond with the found customer data
-    res.status(HttpStatusCode.Ok).json(customers);
+    // Sum up the ticketCounts
+    const totalTicketCount = customers.reduce(
+      (sum, customer) => (customer.redeemed ? sum : sum + customer.ticketCount),
+      0
+    );
+
+    console.log(totalTicketCount);
+
+    // Respond with the total ticket count
+    res.status(HttpStatusCode.Ok).json({ totalTicketCount, customers });
   } catch (error) {
     console.error(error);
     res

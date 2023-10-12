@@ -44,21 +44,33 @@ const getAlignment = (sectionName) => {
   }
 };
 
-const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
-  const [selectedSeats, setSelectedSeats] = useState([]);
+const SeatPicker = ({ sections, ticketCount, onSubmit, selectedSeats, setSelectedSeats }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleSeatClick = (sectionIndex, rowIndex, seatIndex) => {
-    const seatId = `${sections[sectionIndex].rows[rowIndex].id}${sections[sectionIndex].rows[rowIndex].seats[seatIndex].number}`;
+  console.log(selectedSeats);
+
+  const handleSeatClick = (sectionName, rowId, seatNumber) => {
+    const seatId = { sectionName, rowId, seatNumber };
     setSelectedSeats((prev) => {
-      if (prev.includes(seatId)) {
-        // Allow deselection of already selected seat
-        return prev.filter((id) => id !== seatId);
+      const isAlreadySelected = prev.some(
+        (seat) =>
+          seat.sectionName === sectionName &&
+          seat.rowId === rowId &&
+          seat.seatNumber === seatNumber
+      );
+      if (isAlreadySelected) {
+        return prev.filter(
+          (seat) =>
+            !(
+              seat.sectionName === sectionName &&
+              seat.rowId === rowId &&
+              seat.seatNumber === seatNumber
+            )
+        );
       } else if (prev.length < ticketCount) {
-        // Allow selection if ticketCount is not yet reached
         return [...prev, seatId];
       }
-      return prev; // No change if ticketCount is reached
+      return prev;
     });
   };
 
@@ -81,7 +93,9 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
         Available Tickets: {ticketCount - selectedSeats.length}
       </Typography>
       <Typography variant="h6" sx={{ mt: 2 }}>
-        Selected Seats: {selectedSeats.join(", ")}
+        {`Selected Seats: ${selectedSeats
+          .map((seat) => `${seat.rowId}${seat.seatNumber}`)
+          .join(", ")}`}
       </Typography>
       <Typography variant="h2" align="center" color="white" sx={{ mb: 3 }}>
         Stage
@@ -99,7 +113,7 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
               >
                 <Grid item>
                   <Typography variant="body1" sx={{ mr: 1 }}>
-                    {row.id || "N/A"}
+                    {row.id}
                   </Typography>
                 </Grid>
                 {row.seats.map((seat, seatIndex) => (
@@ -107,11 +121,21 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
                     <Seat
                       number={seat.number}
                       isReserved={seat.isReserved}
-                      isSelected={selectedSeats.includes(
-                        `${row.id}${seat.number}`
-                      )}
+                      isSelected={selectedSeats.some((s) => {
+                        console.log(s);
+
+                        return (
+                          s.sectionName === section.sectionName &&
+                          s.rowId === row.id &&
+                          s.seatNumber === seat.number
+                        );
+                      })}
                       onSelect={() =>
-                        handleSeatClick(sectionIndex, rowIndex, seatIndex)
+                        handleSeatClick(
+                          section.sectionName,
+                          row.id,
+                          seat.number
+                        )
                       }
                     />
                   </Grid>
@@ -152,7 +176,11 @@ const SeatPicker = ({ sections, ticketCount, onSubmit }) => {
             <br />
             Your Selected Seats Are:
             <br />
-            <b>{selectedSeats.join(", ")}</b>
+            <b>
+              {selectedSeats
+                .map((seat) => `${seat.rowId}${seat.seatNumber}`)
+                .join(", ")}
+            </b>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

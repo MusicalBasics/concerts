@@ -6,28 +6,33 @@ import {
   ToggleButton,
   TextField,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import Layout from "@/components/layout";
 import Image from "next/image";
 import SeatPicker from "@/components/seat-picker";
+import axios from "axios";
+import moment from "moment";
 import { useRouter } from "next/router";
 
-// 4f4b9063-70e7-457f-b4b4-8494eadb85c1
-
 export default function Pick({ concert }) {
+  const router = useRouter();
+  const [selectedSeats, setSelectedSeats] = useState([]);
+
   const city = concert.city;
   const venue = concert.venue;
   const seatingChart = concert.seatingChart;
 
-  console.log(city.image.asset.url);
-  console.log(seatingChart.referenceImage);
-
-  const router = useRouter();
   const [ticketCount, setTicketCount] = useState(0);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false);
+  const [reservationSuccess, setReservationSuccess] = useState(false);
 
   // If there are no ticket numbers, available seats is 0, otherwise it's the number of tickets
   const [showMap, setShowMap] = useState(false);
@@ -38,6 +43,14 @@ export default function Pick({ concert }) {
 
   const handleInputChange = (event) => {
     setEmail(event.target.value);
+  };
+
+  const handleDialogClose = () => {
+    setIsVerified(false);
+    setReservationSuccess(false);
+    setSelectedSeats([]);
+    router.replace(router.asPath);
+    return;
   };
 
   const handleSubmitEmail = async () => {
@@ -69,20 +82,17 @@ export default function Pick({ concert }) {
 
       const data = await response.json();
 
-      if (data.length === 0) {
+      if (data.totalTicketCount === 0) {
         alert("No tickets found for this email.");
         return;
       }
 
-      // Assuming only one customer record is returned per email and concertId
-      const customer = data[0];
-      console.log(
-        `Found ${customer.ticketCount} tickets for ${customer.email}.`
-      );
-      setIsVerified(true); // set isVerified to true once email is verified and name is pulled
+      console.log(`Found ${data.totalTicketCount} tickets for ${email}.`);
+      const customer = data.customers[0];
 
       // Update state with the found customer data
-      setTicketCount(customer.ticketCount);
+      setIsVerified(true); // set isVerified to true once email is verified and name is pulled
+      setTicketCount(data.totalTicketCount);
       setName(customer.name);
       setEmail(customer.email); // This line will overwrite the email state with the email from the customer document
     } catch (error) {
@@ -94,12 +104,17 @@ export default function Pick({ concert }) {
   const handleReserve = async (selectedSeats) => {
     try {
       const response = await axios.post("/api/reserve", {
+        concertId: concert._id,
         name,
         email,
         selectedSeats,
       });
+
+      // Show the response code in the console
+      console.log(`Response code: ${response.status}`);
+
       if (response.data.success) {
-        alert("Seats reserved successfully!");
+        setReservationSuccess(true);
       } else {
         alert("There was an error reserving your seats.");
       }
@@ -118,7 +133,9 @@ export default function Pick({ concert }) {
         </Box>
         <Typography variant="h4">{venue.name}</Typography>
         <Typography variant="body">{venue.address}</Typography>
-        <Typography variant="caption">{concert.date}</Typography>
+        <Typography variant="caption">
+          {moment(concert.date).format("YYYY/MM/DD")}
+        </Typography>
       </Stack>
 
       <Stack textAlign="center">
@@ -142,7 +159,16 @@ export default function Pick({ concert }) {
                 variant="outlined"
                 color="secondary"
                 label="Email"
-                sx={{ width: 300, borderRadius: 4 }}
+                sx={{
+                  width: 300,
+                  borderRadius: 4,
+                  "& label": { color: "white" },
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": { borderColor: "white" },
+                    "&:hover fieldset": { borderColor: "white" },
+                    "&.Mui-focused fieldset": { borderColor: "white" },
+                  },
+                }}
               />
             </Box>
             <Box mt={3}>
@@ -174,7 +200,9 @@ export default function Pick({ concert }) {
           <SeatPicker
             sections={seatingChart.sections}
             ticketCount={ticketCount}
-            onSubmit={handleSubmitEmail}
+            onSubmit={handleReserve}
+            selectedSeats={selectedSeats}
+            setSelectedSeats={setSelectedSeats}
           />
         </Stack>
       )}
@@ -212,6 +240,38 @@ export default function Pick({ concert }) {
             alt="Seating Map"
           />
         </Box>
+      )}
+
+      {reservationSuccess && (
+        <Dialog open={reservationSuccess} onClose={handleDialogClose}>
+          <DialogTitle>Congratulations!</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              You are all set. You have selected seats{" "}
+              {selectedSeats
+                .map((seat) => `${seat.rowId}${seat.seatNumber}`)
+                .join(", ")}
+              <Stack spacing={2}>
+                <Typography variant="body1">
+                  Please print or screenshot this page for your own reference.
+                </Typography>
+                <Typography variant="body1">
+                  You will receive the tickets from the Symphony Space Venue
+                  once we have processed it on our end. Please stay updated.
+                </Typography>
+                <Typography variant="body1">
+                  For any issues or changes related to your order, please
+                  contact us support@musicalbasics.com
+                </Typography>
+              </Stack>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDialogClose} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
     </Layout>
   );

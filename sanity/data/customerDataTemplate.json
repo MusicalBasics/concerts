@@ -1,0 +1,24 @@
+[
+  {
+    "_type": "customer",
+    "name": "Sara Grigoli",
+    "email": "saraillustra@gmail.com",
+    "ticketCount": 3,
+    "redeemed": false,
+    "concert": {
+      "_type": "reference",
+      "_ref": "98205154-0fca-4d86-8c5a-279c7e29bba3"
+    }
+  },
+  {
+    "_type": "customer",
+    "name": "Theresa Park",
+    "email": "theresapark@live.com",
+    "ticketCount": 2,
+    "redeemed": false,
+    "concert": {
+      "_type": "reference",
+      "_ref": "98205154-0fca-4d86-8c5a-279c7e29bba3"
+    }
+  }
+]
