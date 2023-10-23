@@ -323,7 +323,7 @@ const client = createClient({
 // Data Fetching
 export async function getStaticProps(context) {
   // Get cityId from the URL
-  const { concertId } = context.query;
+  const { concertId } = context.params;
 
   if (!concertId) {
     return {
