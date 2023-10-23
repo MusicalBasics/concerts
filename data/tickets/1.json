@@ -1,9 +1,0 @@
-[
-  {
-    "number": "001123456",
-    "redeemed": true
-  },
-  { "number": "001123457", "redeemed": false },
-  { "number": "001123458", "redeemed": false },
-  { "number": "001123459", "redeemed": true }
-]
