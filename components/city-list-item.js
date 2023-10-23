@@ -12,8 +12,15 @@ export default function CityListItem({
   isSoldOut,
 }) {
   function onCityClick() {
+    if (isSoldOut) return;
     onSelect(city.id);
   }
+
+  const buyLink = isSoldOut ? (
+    <Link href={city.buyLink}>Buy Tickets</Link>
+  ) : (
+    <Link href={`/cities/${city.id}`}>Preorder</Link>
+  );
 
   return (
     <Card
@@ -49,11 +56,7 @@ export default function CityListItem({
           >
             {city.timeFrame}
           </Typography>
-          <Button variant="contained" disabled={isSoldOut}>
-            <Link href={`/cities/${city.id}`}>
-              {isSoldOut ? "Sold Out" : "Preorder"}
-            </Link>
-          </Button>
+          <Button variant="contained">{buyLink}</Button>
         </CardContent>
       </Box>
     </Card>

@@ -11,7 +11,8 @@
     "totalTickets": 1000,
     "productId": "7109988024363",
     "variantGID": "40784543612971",
-    "isSoldOut": false,
+    "buyLink": "https://www.symphonyspace.org/events/vp-we-are-one",
+    "isSoldOut": true,
     "image": "new-york-golden-ticket.jpg",
     "concert": {
       "date": "December 21, 2023",

@@ -2,7 +2,7 @@ import mapboxgl from "!mapbox-gl"; // eslint-disable-line import/no-webpack-load
 import CityList from "@/components/city-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Container } from "@mui/material";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./index.module.css";
 import RootLayout from "@/components/root-layout";
 import ResponsiveAppBar from "@/components/app-bar";
