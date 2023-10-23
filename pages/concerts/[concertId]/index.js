@@ -129,7 +129,7 @@ export default function Pick({ concert }) {
       }
 
       // Send confrimation eamils
-      const emailResponse = await axios.post("/api/sendConfirmationEmail", {
+      const emailResponse = await axios.post("/api/sendConfirmation", {
         email,
         seats: toSeatsText(selectedSeats),
       });
