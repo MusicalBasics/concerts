@@ -21,7 +21,7 @@ import { useRouter } from "next/router";
 
 import Layout from "@/components/layout";
 import SeatPicker from "@/components/seat-picker";
-import { toSeatsText, getFormatedDate } from "@/utils/concert-utils";
+import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
 
 export default function Pick({ concert }) {
   const router = useRouter();
@@ -94,7 +94,7 @@ export default function Pick({ concert }) {
         return;
       }
 
-      console.log(`Found ${data.totalTicketCount} tickets for ${email}.`);
+      // console.log(`Found ${data.totalTicketCount} tickets for ${email}.`);
       const customer = data.customers[0];
 
       // Update state with the found customer data
@@ -129,7 +129,7 @@ export default function Pick({ concert }) {
       const emailResponse = await axios.post("/api/sendConfirmation", {
         email,
         concertName: concert.name,
-        concertDate: getFormatedDate(concert.date),
+        concertDate: getFormattedDate(concert.date),
         seats: toSeatsText(selectedSeats),
       });
 
@@ -321,7 +321,7 @@ const client = createClient({
 });
 
 // Data Fetching
-export async function getServerSideProps(context) {
+export async function getStaticProps(context) {
   // Get cityId from the URL
   const { concertId } = context.query;
 
@@ -375,5 +375,6 @@ export async function getServerSideProps(context) {
     props: {
       concert, // now concert includes dereferenced city and venue
     },
+    revalidate: 300,
   };
 }
