@@ -6,7 +6,7 @@ const SSC_EVENT_ID = "6535ee3a500e946233c6fb86";
 const OMNISEND_API_KEY =
   "63217d1f23c4cf3c70415ee0-GYSiRXMum8GJ1v676IK2LhMa2RkyVEYa4wx2AdT8l0lCU13A9J";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const sendConfirmation = async (req: NextApiRequest, res: NextApiResponse) => {
   // Ensure this is a post request
   if (req.method !== "POST") {
     res
@@ -57,3 +57,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
       .json({ message: error.message });
   }
 };
+
+export default sendConfirmation;

@@ -55,7 +55,7 @@ export default function HomePage() {
     });
 
     return () => map.current.remove();
-  }, []);
+  }, [lat, lng, zoom]);
 
   return (
     <RootLayout>

@@ -61,6 +61,7 @@ export default function Milestones({ venues, presales }) {
                 >
                   <Image
                     src={`/images/${venue.image}`}
+                    alt={venue.name}
                     width={240}
                     height={160}
                   />

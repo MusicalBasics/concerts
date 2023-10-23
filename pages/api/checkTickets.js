@@ -9,7 +9,7 @@ const client = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-export default async (req, res) => {
+const checkTickets = async (req, res) => {
   const { name, email, ticketNumbers, concertId } = req.body;
 
   if (!name || !email || !ticketNumbers || !concertId) {
@@ -72,3 +72,5 @@ export default async (req, res) => {
       .json({ message: "Internal Server Error" });
   }
 };
+
+export default checkTickets;

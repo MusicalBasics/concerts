@@ -10,7 +10,7 @@ const sanityClient = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-export default async (req, res) => {
+const reserveGeneral = async (req, res) => {
   const { name, email, selectedSeats, ticketNumbers, concertId } = req.body;
 
   try {
@@ -81,6 +81,14 @@ export default async (req, res) => {
         })
         .commit();
 
+      console.log(
+        "updatedSeat",
+        updatedSeat.seatingChart.sections
+          .find((section) => section.sectionName === sectionName)
+          .rows.find((row) => row.id === rowId)
+          .seats.find((seat) => seat._key === seatKey)
+      );
+
       // Redeem the ticket
       const redeemedTicket = await sanityClient
         .patch(ticketId)
@@ -88,14 +96,6 @@ export default async (req, res) => {
         .commit();
 
       console.log("redeemedTicket", redeemedTicket);
-
-      // console.log(
-      //   "updatedSeat",
-      //   updatedSeat.seatingChart.sections
-      //     .find((section) => section.sectionName === sectionName)
-      //     .rows.find((row) => row.id === rowId)
-      //     .seats.find((seat) => seat._key === seatKey)
-      // );
     }
 
     // Write the updated tickets back to the file
@@ -112,3 +112,5 @@ export default async (req, res) => {
       .json({ success: false, message: error.message });
   }
 };
+
+export default reserveGeneral;

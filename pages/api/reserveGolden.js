@@ -10,7 +10,7 @@ const sanityClient = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-export default async (req, res) => {
+const reserveGolden = async (req, res) => {
   const { name, email, selectedSeats, concertId } = req.body;
 
   try {
@@ -108,3 +108,5 @@ export default async (req, res) => {
       .json({ success: false, message: error.message });
   }
 };
+
+export default reserveGolden;

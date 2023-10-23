@@ -44,7 +44,7 @@ export default function City({ city }) {
     map.current.touchZoomRotate.disableRotation();
 
     return () => map.current.remove();
-  }, []);
+  }, [lat, lng, zoom]);
 
   useEffect(() => {
     setLng(city.coordinates[0]);
