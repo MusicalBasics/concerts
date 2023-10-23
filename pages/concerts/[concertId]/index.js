@@ -378,3 +378,21 @@ export async function getStaticProps(context) {
     revalidate: 300,
   };
 }
+
+export async function getStaticPaths() {
+  const concerts = await client.fetch(
+    `*[_type == "concert"]{
+      _id
+    }
+  `
+  );
+
+  const paths = concerts.map((concert) => ({
+    params: { concertId: concert._id },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+}
