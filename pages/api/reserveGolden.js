@@ -1,7 +1,7 @@
-import { createClient } from "next-sanity";
 import { HttpStatusCode } from "axios";
+import _ from "lodash";
 
-const client = createClient({
+const sanityClient = createClient({
   projectId: "zqcyefig",
   dataset: "production",
   apiVersion: "2023-03-01",
@@ -14,12 +14,35 @@ export default async (req, res) => {
   const { name, email, selectedSeats, concertId } = req.body;
 
   try {
-    const query = `*[_type == "customer" && name == $name && email == $email]._id`;
+    // Find the customer by name and email
+    const query = `*[_type == "customer" && name == $name && email == $email]`;
     const params = { name, email };
-    const customerIds = await client.fetch(query, params);
-    const customerId = customerIds[0];
+    const customers = await sanityClient.fetch(query, params);
 
-    for (const seat of selectedSeats) {
+    if (customers.length === 0) {
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ message: "Customer not found" });
+      return;
+    }
+
+    const customer = customers[0];
+    const customerId = customer._id;
+
+    // Get all the unredeemed golden tickets for all customers found
+    const goldenTickets = customers.reduce(
+      (acc, customer) =>
+        acc.concat(
+          customer.tickets.filter(
+            (ticket) => ticket.type === "golden" && !ticket.redeemed
+          )
+        ),
+      []
+    );
+
+    // Go through each selected seat and update the seat to be reserved by the customer
+    for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
+      const ticketId = ticket._id;
       const { sectionName, rowId, seatNumber } = seat;
 
       const seatQuery = `*[_type == "concert" && _id == $concertId]{
@@ -35,7 +58,7 @@ export default async (req, res) => {
       }[0]`;
 
       const seatParams = { concertId, sectionName, rowId, seatNumber };
-      const seatData = await client.fetch(seatQuery, seatParams);
+      const seatData = await sanityClient.fetch(seatQuery, seatParams);
 
       const seatKey =
         seatData?.seatingChart?.sections[0]?.rows[0]?.seats[0]?._key;
@@ -44,17 +67,19 @@ export default async (req, res) => {
         throw new Error(`Seat not found: ${JSON.stringify(seat)}`);
       }
 
-      console.log("seatKey", seatKey);
-
-      const updatedSeat = await client
+      const updatedSeat = await sanityClient
         .patch(concertId)
         .set({
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
-            true,
+          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]: true,
           [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
             {
               _type: "reference",
               _ref: customerId,
+            },
+          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].redeemedTicket`]:
+            {
+              _type: "reference",
+              _ref: ticketId,
             },
         })
         .commit();
@@ -66,17 +91,13 @@ export default async (req, res) => {
           .rows.find((row) => row.id === rowId)
           .seats.find((seat) => seat._key === seatKey)
       );
-    }
 
-    for (const customerId of customerIds) {
-      const updateCustomer = await client
-        .patch(customerId)
-        .set({
-          redeemed: true,
-        })
+      const redeemedTicket = await sanityClient
+        .patch(ticketId)
+        .set({ redeemed: true })
         .commit();
 
-      console.log("updateCustomer", updateCustomer);
+      console.log("redeemedTicket", redeemedTicket);
     }
 
     res.status(HttpStatusCode.Ok).json({ success: true });

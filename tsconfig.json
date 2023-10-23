@@ -29,7 +29,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/api/reserve.js", "utils/concert-utils.js"  ],
+, "pages/api/reserveGolden.js", "utils/concert-utils.js"  ],
   "exclude": [
     "node_modules"
   ]

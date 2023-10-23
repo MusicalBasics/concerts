@@ -21,14 +21,19 @@ export default async (req, res) => {
   }
 
   try {
-    // Query Sanity for customer documents matching the provided email and concertId
-    const query = `*[_type == "customer" && email == $email && concert._ref == $concertId]{
+    const query = `*[_type == "customer" && email == $email]{
       name,
       email,
-      redeemed,
-      ticketCount
+      "tickets": tickets[]->{
+        type,
+        number,
+        redeemed,
+        concert-> {
+          _id
+        }
+      }
     }`;
-    const params = { email, concertId };
+    const params = { email };
     const customers = await client.fetch(query, params);
 
     if (customers.length === 0) {
@@ -38,16 +43,30 @@ export default async (req, res) => {
       return;
     }
 
-    // Sum up the ticketCounts
-    const totalTicketCount = customers.reduce(
-      (sum, customer) => (customer.redeemed ? sum : sum + customer.ticketCount),
+    // Filter out tickets that don't belong to the specified concert
+    const filteredCustomers = customers.map((customer) => ({
+      ...customer,
+      tickets: customer.tickets.filter(
+        (ticket) => ticket.concert._id === concertId
+      ),
+    }));
+
+    // Sum up the golden ticket count for the customer
+    const totalGoldenTicketCount = filteredCustomers.reduce(
+      (acc, customer) =>
+        acc +
+        customer.tickets.filter(
+          (ticket) => ticket.type === "golden" && !ticket.redeemed
+        ).length,
       0
     );
 
-    console.log(totalTicketCount);
+    console.log(totalGoldenTicketCount); // Logs the total count of golden tickets
 
     // Respond with the total ticket count
-    res.status(HttpStatusCode.Ok).json({ totalTicketCount, customers });
+    res
+      .status(HttpStatusCode.Ok)
+      .json({ totalTicketCount: totalGoldenTicketCount, customers });
   } catch (error) {
     console.error(error);
     res

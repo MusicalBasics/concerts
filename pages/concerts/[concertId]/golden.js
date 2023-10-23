@@ -16,14 +16,16 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import Image from "next/image";
-import moment from "moment";
 import { useRouter } from "next/router";
 
 import Layout from "@/components/layout";
 import SeatPicker from "@/components/seat-picker";
 import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
+import { sanityClient } from "@/utils/sanity";
+import GoldenButton from "@/components/concerts/golden-button";
+import EmailInput from "@/components/concerts/email-input";
 
-export default function Pick({ concert }) {
+export default function GoldenTicketPage({ concert }) {
   const router = useRouter();
   const [selectedSeats, setSelectedSeats] = useState([]);
 
@@ -112,7 +114,7 @@ export default function Pick({ concert }) {
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const reserveRes = await axios.post("/api/reserve", {
+      const reserveRes = await axios.post("/api/reserveGolden", {
         concertId: concert._id,
         name,
         email,
@@ -167,13 +169,10 @@ export default function Pick({ concert }) {
       )}
 
       <Stack textAlign="center" my={5} spacing={1}>
-        <Box p={2}>
-          <Image src={city.image.asset.url} width={360} height={240} />
-        </Box>
         <Typography variant="h4">{venue.name}</Typography>
-        <Typography variant="body">{venue.address}</Typography>
+        <Typography>{venue.address}</Typography>
         <Typography variant="caption">
-          {moment(concert.date).format("YYYY/MM/DD")}
+          {getFormattedDate(concert.date)}
         </Typography>
       </Stack>
 
@@ -184,6 +183,9 @@ export default function Pick({ concert }) {
           </Box>
         ) : (
           <Box>
+            <Typography>
+              Please enter the email you used to purchase the Golden Ticket(s):
+            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -191,33 +193,10 @@ export default function Pick({ concert }) {
                 mt: 2,
               }}
             >
-              <TextField
-                value={email}
-                onChange={handleInputChange}
-                type="email"
-                variant="outlined"
-                color="secondary"
-                label="Email"
-                sx={{
-                  width: 300,
-                  borderRadius: 4,
-                  "& label": { color: "white" },
-                  "& .MuiOutlinedInput-root": {
-                    "& fieldset": { borderColor: "white" },
-                    "&:hover fieldset": { borderColor: "white" },
-                    "&.Mui-focused fieldset": { borderColor: "white" },
-                  },
-                }}
-              />
+              <EmailInput value={email} onChange={handleInputChange} />
             </Box>
             <Box mt={3}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleSubmitEmail}
-              >
-                Submit
-              </Button>
+              <GoldenButton onClick={handleSubmitEmail}>Submit</GoldenButton>
             </Box>
           </Box>
         )}
@@ -312,18 +291,10 @@ export default function Pick({ concert }) {
   );
 }
 
-// CMS
-const client = createClient({
-  projectId: "zqcyefig",
-  dataset: "production",
-  apiVersion: "2022-03-25",
-  useCdn: false,
-});
-
 // Data Fetching
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
   // Get cityId from the URL
-  const { concertId } = context.params;
+  const { concertId } = context.query;
 
   if (!concertId) {
     return {
@@ -331,7 +302,7 @@ export async function getStaticProps(context) {
     };
   }
 
-  const concerts = await client.fetch(
+  const concerts = await sanityClient.fetch(
     `*[_type == "concert" && _id == "${concertId}"]{
       _id,
       name,
@@ -375,24 +346,5 @@ export async function getStaticProps(context) {
     props: {
       concert, // now concert includes dereferenced city and venue
     },
-    revalidate: 300,
-  };
-}
-
-export async function getStaticPaths() {
-  const concerts = await client.fetch(
-    `*[_type == "concert"]{
-      _id
-    }
-  `
-  );
-
-  const paths = concerts.map((concert) => ({
-    params: { concertId: concert._id },
-  }));
-
-  return {
-    paths,
-    fallback: false,
   };
 }
