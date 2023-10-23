@@ -1,4 +1,5 @@
 import { createClient } from "next-sanity";
+import axios, { HttpStatusCode } from "axios";
 import {
   Box,
   Stack,
@@ -14,17 +15,13 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useState } from "react";
-import Layout from "@/components/layout";
 import Image from "next/image";
-import SeatPicker from "@/components/seat-picker";
-import axios from "axios";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { HttpStatusCode } from "axios";
 
-const toSeatsText = (seats) => {
-  return seats.map((seat) => `${seat.rowId}${seat.seatNumber}`).join(", ");
-};
+import Layout from "@/components/layout";
+import SeatPicker from "@/components/seat-picker";
+import { toSeatsText, getFormatedDate } from "@/utils/concert-utils";
 
 export default function Pick({ concert }) {
   const router = useRouter();
@@ -131,6 +128,8 @@ export default function Pick({ concert }) {
       // Send confrimation eamils
       const emailResponse = await axios.post("/api/sendConfirmation", {
         email,
+        concertName: concert.name,
+        concertDate: getFormatedDate(concert.date),
         seats: toSeatsText(selectedSeats),
       });
 
