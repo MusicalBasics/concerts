@@ -53,8 +53,6 @@ const SeatPicker = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  console.log(selectedSeats);
-
   const handleSeatClick = (sectionName, rowId, seatNumber) => {
     const seatId = { sectionName, rowId, seatNumber };
     setSelectedSeats((prev) => {
@@ -128,8 +126,6 @@ const SeatPicker = ({
                       number={seat.number}
                       isReserved={seat.isReserved}
                       isSelected={selectedSeats.some((s) => {
-                        console.log(s);
-
                         return (
                           s.sectionName === section.sectionName &&
                           s.rowId === row.id &&

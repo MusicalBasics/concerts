@@ -20,6 +20,11 @@ import SeatPicker from "@/components/seat-picker";
 import axios from "axios";
 import moment from "moment";
 import { useRouter } from "next/router";
+import { HttpStatusCode } from "axios";
+
+const toSeatsText = (seats) => {
+  return seats.map((seat) => `${seat.rowId}${seat.seatNumber}`).join(", ");
+};
 
 export default function Pick({ concert }) {
   const router = useRouter();
@@ -110,21 +115,30 @@ export default function Pick({ concert }) {
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/reserve", {
+      const reserveRes = await axios.post("/api/reserve", {
         concertId: concert._id,
         name,
         email,
         selectedSeats,
       });
 
-      // Show the response code in the console
-      console.log(`Response code: ${response.status}`);
-
-      if (response.data.success) {
+      if (reserveRes.data.success) {
         setReservationSuccess(true);
       } else {
         alert("There was an error reserving your seats.");
       }
+
+      // Send confrimation eamils
+      const emailResponse = await axios.post("/api/sendConfirmationEmail", {
+        email,
+        seats: toSeatsText(selectedSeats),
+      });
+
+      if (emailResponse.status !== HttpStatusCode.Ok) {
+        console.log("There was an error sending the confirmation email.");
+      }
+
+      alert("Confirmation email sent.");
     } catch (error) {
       console.error(error);
       alert("There was an error reserving your seats.");
@@ -274,26 +288,16 @@ export default function Pick({ concert }) {
           <DialogContent>
             <DialogContentText>
               You are all set. You have selected seats{" "}
-              <b>
-                {selectedSeats
-                  .map((seat) => `${seat.rowId}${seat.seatNumber}`)
-                  .join(", ")}
-              </b>
+              <b>{toSeatsText(selectedSeats)}</b>
               <Stack spacing={2}>
                 <Typography variant="body1">
-                  Please print or screenshot this page for your own reference.
+                  You will receive an email confirming your seat selections to{" "}
+                  {email}.
                 </Typography>
                 <Typography variant="body1">
                   You will receive the tickets from the
                   <b>{` ${venue.name} `}</b>
                   once we have processed it on our end. Please stay updated.
-                </Typography>
-                <Typography variant="body1">
-                  For any issues or changes related to your order, please
-                  contact us at{" "}
-                  <a href="mailto:support@musicalbasics.com>">
-                    <b>support@musicalbasics.com</b>
-                  </a>
                 </Typography>
               </Stack>
             </DialogContentText>
@@ -309,6 +313,7 @@ export default function Pick({ concert }) {
   );
 }
 
+// CMS
 const client = createClient({
   projectId: "zqcyefig",
   dataset: "production",
@@ -316,6 +321,7 @@ const client = createClient({
   useCdn: false,
 });
 
+// Data Fetching
 export async function getServerSideProps(context) {
   // Get cityId from the URL
   const { concertId } = context.query;
