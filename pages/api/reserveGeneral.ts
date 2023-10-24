@@ -1,4 +1,3 @@
-import { log } from "./../../utils/logger";
 import { getLogger } from "@/utils/logging-utils";
 import { HttpStatusCode } from "axios";
 import _ from "lodash";

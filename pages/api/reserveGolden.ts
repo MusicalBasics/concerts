@@ -85,7 +85,17 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
     // Get all the tickets for the customer by ticket ids
     const ticketsQuery = `*[_type == "ticket" && _id in $ticketIds]`;
     const ticketsParams = { ticketIds };
-    const goldenTickets = await sanityClient.fetch(ticketsQuery, ticketsParams);
+    const goldenTickets: Ticket[] = await sanityClient.fetch(
+      ticketsQuery,
+      ticketsParams
+    );
+
+    if (goldenTickets.length === 0) {
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ message: "Tickets not found" });
+      return;
+    }
 
     // Find the venue
     const concertQuery = `*[_type == "concert" && _id == $concertId]{
@@ -111,7 +121,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Go through each selected seat and update the seat to be reserved by the customer
     for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
-      const ticketId = ticket._id;
+      const ticketId = ticket!._id;
       const { sectionName, rowId, seatNumber } = seat;
 
       const seatQuery = `*[_type == "concert" && _id == $concertId]{
