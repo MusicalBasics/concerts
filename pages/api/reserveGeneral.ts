@@ -100,7 +100,9 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Make sure all the tickets belong to the given concert
-    if (tickets.some((ticket) => ticket.concert._id !== concertId)) {
+    if (tickets.some((ticket) => ticket.concert._ref !== concertId)) {
+      console.log("tickets", tickets);
+
       res
         .status(HttpStatusCode.BadRequest)
         .json({ message: "Some tickets do not belong to this concert" });
@@ -265,6 +267,7 @@ interface Customer {
 interface Concert {
   _id: string;
   _type: string;
+  _ref?: string;
   name: string;
   date: string;
   seatingChart: SeatingChart;

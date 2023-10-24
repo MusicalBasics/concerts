@@ -159,7 +159,8 @@ export default function GenerelTicketPage({ concert }) {
       if (reserveRes.data.success) {
         setReservationSuccess(true);
       } else {
-        alert("There was an error reserving your seats.");
+        const { message } = reserveRes.data;
+        alert(message);
       }
 
       // Send confrimation eamils
@@ -177,7 +178,9 @@ export default function GenerelTicketPage({ concert }) {
       alert("Confirmation email sent.");
     } catch (error) {
       console.error(error);
-      alert("There was an error reserving your seats.");
+      // Get error message from response
+      const { message } = error.response.data;
+      alert(message);
     }
     setLoading(false);
   };
