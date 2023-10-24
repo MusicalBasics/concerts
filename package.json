@@ -40,11 +40,11 @@
     "swr": "^2.1.5",
     "validator": "^13.9.0",
     "xml2js": "^0.6.0",
-    "xss": "^1.0.14"
+    "xss": "^1.0.14",
+    "pino-pretty": "^10.2.3"
   },
   "devDependencies": {
     "@types/node": "20.8.8",
-    "pino-pretty": "^10.2.3",
     "typescript": "5.2.2"
   }
 }
