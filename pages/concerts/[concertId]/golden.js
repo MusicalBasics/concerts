@@ -52,6 +52,11 @@ export default function GoldenTicketPage({ concert }) {
   };
 
   const handleDialogClose = () => {
+    setEmail("");
+    setName("");
+    setLoading(false);
+    setTicketCount(0);
+    setTicketIds([]);
     setIsVerified(false);
     setReservationSuccess(false);
     setSelectedSeats([]);
@@ -123,6 +128,7 @@ export default function GoldenTicketPage({ concert }) {
         name,
         email,
         selectedSeats,
+        ticketIds,
       });
 
       if (reserveRes.data.success) {
@@ -274,7 +280,7 @@ export default function GoldenTicketPage({ concert }) {
               <Stack spacing={2}>
                 <Typography variant="body1">
                   You will receive an email confirming your seat selections to{" "}
-                  {email}.
+                  <b>{email}</b>.
                 </Typography>
                 <Typography variant="body1">
                   You will receive the tickets from the

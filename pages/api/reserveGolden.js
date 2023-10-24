@@ -1,5 +1,6 @@
 import { HttpStatusCode } from "axios";
 import _ from "lodash";
+import { createClient } from "@sanity/client";
 
 const sanityClient = createClient({
   projectId: "zqcyefig",
@@ -16,7 +17,42 @@ const reserveGolden = async (req, res) => {
     return;
   }
 
-  const { name, email, selectedSeats, concertId } = req.body;
+  const { name, email, selectedSeats, concertId, ticketIds } = req.body;
+
+  if (!name || !email || !selectedSeats || !concertId || !ticketIds) {
+    res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: "Missing required fields" });
+    return;
+  }
+
+  if (!Array.isArray(selectedSeats)) {
+    res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: "Selected seats must be an array" });
+    return;
+  }
+
+  if (selectedSeats.length === 0) {
+    res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: "Selected seats cannot be empty" });
+    return;
+  }
+
+  if (!Array.isArray(ticketIds)) {
+    res
+      .status(HttpStatusCode.BadRequest)
+      .json({ message: "Ticket IDs must be an array" });
+    return;
+  }
+
+  if (selectedSeats.length !== ticketIds.length) {
+    res.status(HttpStatusCode.BadRequest).json({
+      message: "Selected seats and ticket IDs must be the same length",
+    });
+    return;
+  }
 
   try {
     // Find the customer by name and email
@@ -31,19 +67,21 @@ const reserveGolden = async (req, res) => {
       return;
     }
 
+    if (customers.length > 1) {
+      res
+        .status(HttpStatusCode.InternalServerError)
+        .json({ message: "Multiple customers found" });
+      return;
+    }
+
+    // Found the customer
     const customer = customers[0];
     const customerId = customer._id;
 
-    // Get all the unredeemed golden tickets for all customers found
-    const goldenTickets = customers.reduce(
-      (acc, customer) =>
-        acc.concat(
-          customer.tickets.filter(
-            (ticket) => ticket.type === "golden" && !ticket.redeemed
-          )
-        ),
-      []
-    );
+    // Get all the tickets for the customer by ticket ids
+    const ticketsQuery = `*[_type == "ticket" && _id in $ticketIds]`;
+    const ticketsParams = { ticketIds };
+    const goldenTickets = await sanityClient.fetch(ticketsQuery, ticketsParams);
 
     // Go through each selected seat and update the seat to be reserved by the customer
     for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
@@ -69,9 +107,13 @@ const reserveGolden = async (req, res) => {
         seatData?.seatingChart?.sections[0]?.rows[0]?.seats[0]?._key;
 
       if (!seatKey) {
-        throw new Error(`Seat not found: ${JSON.stringify(seat)}`);
+        res.status(HttpStatusCode.InternalServerError).json({
+          message: `Seat ${sectionName}-${rowId}${seatNumber} not found`,
+        });
+        return;
       }
 
+      // Update the seat to be reserved by the customer
       const updatedSeat = await sanityClient
         .patch(concertId)
         .set({
@@ -89,6 +131,13 @@ const reserveGolden = async (req, res) => {
         })
         .commit();
 
+      if (!updatedSeat) {
+        res.status(HttpStatusCode.InternalServerError).json({
+          message: `Unable to reserve the Seat ${sectionName}-${rowId}${seatNumber}`,
+        });
+        return;
+      }
+
       console.log(
         "updatedSeat",
         updatedSeat.seatingChart.sections
@@ -97,10 +146,18 @@ const reserveGolden = async (req, res) => {
           .seats.find((seat) => seat._key === seatKey)
       );
 
+      // Update the ticket to be redeemed
       const redeemedTicket = await sanityClient
         .patch(ticketId)
         .set({ redeemed: true })
         .commit();
+
+      if (!redeemedTicket) {
+        res.status(HttpStatusCode.InternalServerError).json({
+          message: `Unable to redeem the ticket ${ticketId}`,
+        });
+        return;
+      }
 
       console.log("redeemedTicket", redeemedTicket);
     }

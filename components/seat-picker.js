@@ -171,7 +171,14 @@ const SeatPicker = ({
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Are You Sure?</DialogTitle>
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{
+            color: "black",
+          }}
+        >
+          Are You Sure?
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Seat Selections Are Final
