@@ -121,8 +121,7 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     const ticketIds = unredeemedTickets.map((ticket) => ticket._id);
 
     // If the customer doesn't have the tickets, add them
-    // console.log("customer", customer);
-    // console.log("customer.tickets", customer.tickets);
+    console.log("customer", customer);
 
     const ticketsToAdd = ticketIds.map((ticketId) => ({
       _ref: ticketId,
@@ -131,7 +130,7 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const filteredTicketsToAdd = ticketsToAdd.filter(
       (ticketToAdd) =>
-        !customer.tickets!.some(
+        !customer.tickets?.some(
           (customerTicket) => customerTicket._ref === ticketToAdd._ref
         )
     );
@@ -153,15 +152,15 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       })
     );
 
+    console.log("updatedTickets", updatedTickets);
+    console.log("updatedCustomer", updatedCustomer);
+
     const totalTicketCount = unredeemedTickets.length;
 
     console.log("ticketIds", ticketIds);
     console.log("tickets", unredeemedTickets);
     console.log("totalTicketCount", totalTicketCount);
-
-    console.log(totalTicketCount);
-
-    // Respond with the total ticket count
+       // Respond with the total ticket count
     res
       .status(HttpStatusCode.Ok)
       .json({ success: true, totalTicketCount, ticketIds });
