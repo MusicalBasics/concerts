@@ -29,11 +29,11 @@ export default function GoldenTicketPage({ concert }) {
   const router = useRouter();
   const [selectedSeats, setSelectedSeats] = useState([]);
 
-  const city = concert.city;
   const venue = concert.venue;
   const seatingChart = concert.seatingChart;
 
   const [ticketCount, setTicketCount] = useState(0);
+  const [ticketIds, setTicketIds] = useState([]); // This is an array of ticket IDs
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false);
@@ -88,25 +88,29 @@ export default function GoldenTicketPage({ concert }) {
         return;
       }
 
-      const data = await response.json();
+      const { totalTicketCount, ticketIds, customerName } =
+        await response.json();
 
-      if (data.totalTicketCount === 0) {
+      if (totalTicketCount === 0) {
         alert("No tickets found for this email.");
         setLoading(false);
         return;
       }
 
-      // console.log(`Found ${data.totalTicketCount} tickets for ${email}.`);
-      const customer = data.customers[0];
+      console.log(`Found ${totalTicketCount} tickets for ${email}.`);
+      console.log(`Ticket IDs: ${ticketIds}`);
 
       // Update state with the found customer data
       setIsVerified(true); // set isVerified to true once email is verified and name is pulled
-      setTicketCount(data.totalTicketCount);
-      setName(customer.name);
-      setEmail(customer.email); // This line will overwrite the email state with the email from the customer document
+      setEmail(email); // This line will overwrite the email state with the email from the customer document
+      setName(customerName);
+      setTicketCount(totalTicketCount);
+      setTicketIds(ticketIds);
     } catch (error) {
       console.error(error);
       alert("There was an error checking the email.");
+    } finally {
+      setLoading(false);
     }
     setLoading(false);
   };

@@ -11,6 +11,11 @@ const sanityClient = createClient({
 });
 
 const reserveGolden = async (req, res) => {
+  if (req.method !== "POST") {
+    res.status(HttpStatusCode.MethodNotAllowed).end();
+    return;
+  }
+
   const { name, email, selectedSeats, concertId } = req.body;
 
   try {
