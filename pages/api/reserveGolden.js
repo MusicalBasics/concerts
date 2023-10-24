@@ -146,10 +146,22 @@ const reserveGolden = async (req, res) => {
           .seats.find((seat) => seat._key === seatKey)
       );
 
-      // Update the ticket to be redeemed
+      // Update the ticket to be redeemed, and link to the seat
+      // It's not a reference,
+      // In the ticket schema, there is a seat object, which is not a reference
+      // It's got 4 fields: short, section, row, number. All of them are string
+      const short = `${sectionName}-${rowId}${seatNumber}`;
       const redeemedTicket = await sanityClient
         .patch(ticketId)
-        .set({ redeemed: true })
+        .set({
+          redeemed: true,
+          seat: {
+            short,
+            section: sectionName,
+            row: rowId,
+            number: seatNumber,
+          },
+        })
         .commit();
 
       if (!redeemedTicket) {

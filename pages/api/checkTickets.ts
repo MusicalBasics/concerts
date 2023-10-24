@@ -7,6 +7,8 @@ const client = createClient({
   projectId: "zqcyefig",
   dataset: "production",
   apiVersion: "2023-03-01",
+  token:
+    "skHhHg8CnSmPV5G1Zduibkq2PKZ8HEqElBQofLLHNzojqu4n1zR8MBpkjdRbFNZuMvIEodoe2tWG7UkQLsuk6mjDnwHgrcdNlHQKFzPvhBosMLAwulZuyqWb37leLpSvHS9dEMo6Vbvg6rjSamY1J4IxIOMZCMo0PP2XghiyTvQNmV38r6ZH",
   useCdn: false, // Disable for authenticated requests
 });
 
@@ -43,12 +45,23 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     // Find the unredeemed tickets by ticket numbers, and make sure they belong to the specified concert
-    const ticketsQuery = `*[_type == "ticket" && number in $ticketNumbers && concert._id == $concertId]`;
+
+    // TODO: This query is not working
+    // It should contain number, concert, pull its _id, and redeemed, also customer
+    const ticketsQuery = `*[_type == "ticket" && number in $ticketNumbers && concert._ref == $concertId]{
+      _id,
+      type,
+      number,
+      redeemed,
+      concert -> {
+        _id
+      },
+      customer -> {
+        _id
+      }
+    }`;
     const ticketsParams = { ticketNumbers, concertId };
     const tickets: Ticket[] = await client.fetch(ticketsQuery, ticketsParams);
-
-    console.log(tickets);
-    
 
     // If there are no tickets found, respond with an error
     if (tickets.length === 0) {
@@ -111,6 +124,8 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
+    console.log("updatedCustomer", updatedCustomer);
+
     const totalTicketCount = tickets.length;
 
     // Respond with the total ticket count
@@ -129,9 +144,11 @@ export default checkTickets;
 interface Ticket {
   _id: string;
   _type: string;
-  number: number;
+  type: string;
+  number: string;
   redeemed: boolean;
   concert: Concert;
+  customer: Customer;
 }
 
 interface Customer {
