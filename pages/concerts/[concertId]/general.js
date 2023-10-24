@@ -29,6 +29,7 @@ import {
   validateEmail,
   validateTicketNumbers,
 } from "@/utils/concert-utils";
+import Link from "next/link";
 
 export default function GenerelTicketPage({ concert }) {
   const router = useRouter();
@@ -40,6 +41,7 @@ export default function GenerelTicketPage({ concert }) {
   const [isVerified, setIsVerified] = useState(false);
   const [reservationSuccess, setReservationSuccess] = useState(false);
   const [ticketNumbers, setTicketNumbers] = useState("");
+  const [ticketIds, setTicketIds] = useState([]);
 
   const venue = concert.venue;
   const concertId = concert._id;
@@ -70,6 +72,12 @@ export default function GenerelTicketPage({ concert }) {
     setIsVerified(false);
     setReservationSuccess(false);
     setSelectedSeats([]);
+    setName("");
+    setEmail("");
+    setTicketNumbers("");
+    setTicketCount(0);
+    setTicketIds([]);
+
     router.replace(router.asPath);
     return;
   };
@@ -117,31 +125,41 @@ export default function GenerelTicketPage({ concert }) {
 
       const data = await response.json();
 
-      if (data.totalTicketCount === 0) {
+      if (!data.success) {
+        alert("There was an error checking the tickets: " + data.message);
+        return;
+      }
+
+      const { totalTicketCount, ticketIds } = data;
+
+      if (totalTicketCount === 0) {
         alert("No valid tickets.");
         setLoading(false);
         return;
       }
 
-      // console.log(`Found ${data.totalTicketCount} tickets for ${email}.`);
+      console.log(`Found ${totalTicketCount} tickets for ${email}.`);
+      console.log(`Ticket IDs: ${ticketIds}`);
 
-      // Update state with the found customer data
+      setTicketIds(ticketIds); // Update state with the found ticket IDs
+      setTicketCount(totalTicketCount);
       setIsVerified(true); // set isVerified to true once ticket numbers are verified
-      setTicketCount(data.totalTicketCount);
     } catch (error) {
       console.error(error);
       alert("There was an error checking the tickets.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const reserveRes = await axios.post("/api/reserve", {
+      const reserveRes = await axios.post("/api/reserveGeneral", {
         concertId,
         name,
         email,
+        ticketIds,
         selectedSeats,
       });
 
@@ -192,13 +210,15 @@ export default function GenerelTicketPage({ concert }) {
         </Box>
       )}
 
-      <Stack textAlign="center" my={2} spacing={1}>
-        <Typography variant="h4">{venue.name}</Typography>
-        <Typography>{venue.address}</Typography>
-        <Typography variant="caption">
-          {getFormattedDate(concert.date)}
-        </Typography>
-      </Stack>
+      <Link href={`/concerts/${concert._id}`}>
+        <Stack textAlign="center" my={2} spacing={1}>
+          <Typography variant="h4">{venue.name}</Typography>
+          <Typography>{venue.address}</Typography>
+          <Typography variant="caption">
+            {getFormattedDate(concert.date)}
+          </Typography>
+        </Stack>
+      </Link>
 
       <Stack textAlign="center">
         {isVerified ? (

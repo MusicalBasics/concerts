@@ -24,6 +24,7 @@ import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
 import { sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import EmailInput from "@/components/concerts/email-input";
+import Link from "next/link";
 
 export default function GoldenTicketPage({ concert }) {
   const router = useRouter();
@@ -178,13 +179,15 @@ export default function GoldenTicketPage({ concert }) {
         </Box>
       )}
 
-      <Stack textAlign="center" my={5} spacing={1}>
-        <Typography variant="h4">{venue.name}</Typography>
-        <Typography>{venue.address}</Typography>
-        <Typography variant="caption">
-          {getFormattedDate(concert.date)}
-        </Typography>
-      </Stack>
+      <Link href={`/concerts/${concert._id}`}>
+        <Stack textAlign="center" my={5} spacing={1}>
+          <Typography variant="h4">{venue.name}</Typography>
+          <Typography>{venue.address}</Typography>
+          <Typography variant="caption">
+            {getFormattedDate(concert.date)}
+          </Typography>
+        </Stack>
+      </Link>
 
       <Stack textAlign="center">
         {isVerified ? (
