@@ -92,7 +92,12 @@ export default function City({ city }) {
       <FloatingCityList cityLinks={require("@/data/city_links.json")} />
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
-          <Image src={`/images/${city.image}`} width={360} height={240} />
+          <Image
+            src={`/images/${city.image}`}
+            alt={city.name}
+            width={360}
+            height={240}
+          />
         </Box>
         <Typography
           variant="h3"

@@ -9,6 +9,7 @@ import { saveAs } from "file-saver";
 import { Typography, Button, Stack } from "@mui/material";
 import Layout from "@/components/layout";
 import validator from "validator";
+import Image from "next/image";
 
 function TicketPage({ city, number, imageUrl, error }) {
   // If there's an error message, display it and don't render the rest of the component
@@ -39,7 +40,7 @@ function TicketPage({ city, number, imageUrl, error }) {
         <Typography variant="body1">
           Your ticket number is <strong>{number}</strong>
         </Typography>
-        <img src={imageUrl} alt="Ticket preview" />
+        <Image src={imageUrl} alt="Ticket preview" width={1100} height={356} />
         <Stack
           spacing={2}
           direction="row"
