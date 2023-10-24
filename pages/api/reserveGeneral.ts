@@ -1,3 +1,5 @@
+import { log } from "./../../utils/logger";
+import { getLogger } from "@/utils/logging-utils";
 import { HttpStatusCode } from "axios";
 import _ from "lodash";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -12,7 +14,12 @@ const sanityClient = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
+const reserveGeneralHandler = async (
+  req: NextApiRequest,
+  res: NextApiResponse
+) => {
+  const logger = getLogger("api/reserveGeneral");
+
   const { name, email, selectedSeats, ticketIds, concertId } = req.body;
 
   if (!name || !email || !selectedSeats || !ticketIds || !concertId) {
@@ -101,7 +108,7 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Make sure all the tickets belong to the given concert
     if (tickets.some((ticket) => ticket.concert._ref !== concertId)) {
-      console.log("tickets", tickets);
+      logger.debug(tickets, "tickets");
 
       res
         .status(HttpStatusCode.BadRequest)
@@ -157,6 +164,28 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
+    // Find the venue
+    const concertQuery = `*[_type == "concert" && _id == $concertId]{
+      venue -> {
+        name,
+        _id
+      }
+    }[0]`;
+    const concertParams = { concertId };
+    const concert: Concert = await sanityClient.fetch(
+      concertQuery,
+      concertParams
+    );
+
+    if (!concert) {
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ message: "Concert not found" });
+      return;
+    }
+
+    const { _id: venueId, name: venueName } = concert.venue;
+
     // Find the seats
     for (const [seat, ticket] of _.zip(selectedSeats, tickets)) {
       const ticketId = ticket!._id;
@@ -204,21 +233,23 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
               _ref: ticketId,
             },
         })
-        .commit();
+        .commit({
+          autoGenerateArrayKeys: true,
+        });
 
-      console.log(
-        "updatedSeat",
+      logger.debug(
         updatedSeat.seatingChart.sections
           .find((section: Section) => section.sectionName === sectionName)
           .rows.find((row: Row) => row.id === rowId)
-          .seats.find((seat: Seat) => seat._key === seatKey)
+          .seats.find((seat: Seat) => seat._key === seatKey),
+        "updatedSeat"
       );
 
       // Update the ticket to be redeemed, and link to the seat
       // It's not a reference,
       // In the ticket schema, there is a seat object, which is not a reference
       // It's got 4 fields: short, section, row, number. All of them are string
-      const short = `${sectionName}-${rowId}${seatNumber}`;
+      const short = `${venueName}: ${sectionName}-${rowId}${seatNumber}`;
       const redeemedTicket = await sanityClient
         .patch(ticketId)
         .set({
@@ -228,11 +259,15 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
             section: sectionName,
             row: rowId,
             number: seatNumber,
+            venue: {
+              _type: "reference",
+              _ref: venueId,
+            },
           },
         })
-        .commit();
+        .commit({ autoGenerateArrayKeys: true });
 
-      console.log("redeemedTicket", redeemedTicket);
+      logger.debug(redeemedTicket, "redeemedTicket");
     }
 
     res.status(HttpStatusCode.Ok).json({ success: true });
@@ -244,7 +279,7 @@ const reserveGeneral = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default reserveGeneral;
+export default reserveGeneralHandler;
 
 // Type Definitions
 interface Ticket {
@@ -271,6 +306,14 @@ interface Concert {
   name: string;
   date: string;
   seatingChart: SeatingChart;
+  venue: Venue;
+}
+
+interface Venue {
+  _id: string;
+  _type: string;
+  name: string;
+  address: string;
 }
 
 interface SeatingChart {

@@ -2,6 +2,7 @@
 import { createClient } from "next-sanity";
 import { HttpStatusCode } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getLogger } from "@/utils/logging-utils";
 
 // Initialize the Sanity client
 const client = createClient({
@@ -12,6 +13,8 @@ const client = createClient({
 });
 
 const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
+  const logger = getLogger("api/checkEmail");
+
   const { email, concertId } = req.body;
 
   if (!email || !concertId) {
@@ -76,6 +79,7 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
+    logger.debug("here");
     // Filter out tickets that have already been redeemed
     const filteredGoldenTickets = filteredConcertTickets.filter(
       (ticket) => ticket.type === "golden"
@@ -107,7 +111,12 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
     // Respond with the total ticket count
     res
       .status(HttpStatusCode.Ok)
-      .json({ totalTicketCount, ticketIds, customerName: customer.name });
+      .json({
+        success: true,
+        totalTicketCount,
+        ticketIds,
+        customerName: customer.name,
+      });
   } catch (error) {
     console.error(error);
     res

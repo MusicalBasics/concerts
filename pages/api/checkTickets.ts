@@ -1,6 +1,7 @@
 import { HttpStatusCode } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "next-sanity";
+import { getLogger } from "@/utils/logging-utils";
 
 // Initialize the Sanity client
 const sanityClient = createClient({
@@ -13,6 +14,8 @@ const sanityClient = createClient({
 });
 
 const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
+  const logger = getLogger("api/checkTickets");
+
   const { name, email, concertId, ticketNumbers } = req.body;
 
   if (!name || !email || !ticketNumbers || !concertId) {
@@ -121,7 +124,7 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     const ticketIds = unredeemedTickets.map((ticket) => ticket._id);
 
     // If the customer doesn't have the tickets, add them
-    console.log("customer", customer);
+    logger.debug(customer, "customer");
 
     const ticketsToAdd = ticketIds.map((ticketId) => ({
       _ref: ticketId,
@@ -152,15 +155,15 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       })
     );
 
-    console.log("updatedTickets", updatedTickets);
-    console.log("updatedCustomer", updatedCustomer);
+    logger.debug(updatedTickets, "updatedTickets");
+    logger.debug(updatedCustomer, "updatedCustomer");
 
     const totalTicketCount = unredeemedTickets.length;
 
-    console.log("ticketIds", ticketIds);
-    console.log("tickets", unredeemedTickets);
-    console.log("totalTicketCount", totalTicketCount);
-       // Respond with the total ticket count
+    logger.debug(ticketIds, "ticketIds");
+    logger.debug(unredeemedTickets, "tickets");
+    logger.debug(totalTicketCount, "totalTicketCount");
+    // Respond with the total ticket count
     res
       .status(HttpStatusCode.Ok)
       .json({ success: true, totalTicketCount, ticketIds });

@@ -86,6 +86,9 @@ export default function GoldenTicketPage({ concert }) {
       const data = response.data;
 
       if (response.status !== HttpStatusCode.Ok || !data.success) {
+        // Get error message from response
+        const { message } = data;
+        alert(`Error: ${message}`);
         setLoading(false);
         return;
       }

@@ -1,6 +1,8 @@
 import { HttpStatusCode } from "axios";
 import _ from "lodash";
 import { createClient } from "@sanity/client";
+import { getLogger } from "@/utils/logging-utils";
+import { NextApiRequest, NextApiResponse } from "next";
 
 const sanityClient = createClient({
   projectId: "zqcyefig",
@@ -11,7 +13,9 @@ const sanityClient = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-const reserveGolden = async (req, res) => {
+const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
+  const logger = getLogger("api/reserveGolden");
+
   if (req.method !== "POST") {
     res.status(HttpStatusCode.MethodNotAllowed).end();
     return;
@@ -83,6 +87,28 @@ const reserveGolden = async (req, res) => {
     const ticketsParams = { ticketIds };
     const goldenTickets = await sanityClient.fetch(ticketsQuery, ticketsParams);
 
+    // Find the venue
+    const concertQuery = `*[_type == "concert" && _id == $concertId]{
+      venue -> {
+        name,
+        _id
+      }
+    }[0]`;
+    const concertParams = { concertId };
+    const concert: Concert = await sanityClient.fetch(
+      concertQuery,
+      concertParams
+    );
+
+    if (!concert) {
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ message: "Concert not found" });
+      return;
+    }
+
+    const { _id: venueId, name: venueName } = concert.venue;
+
     // Go through each selected seat and update the seat to be reserved by the customer
     for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
       const ticketId = ticket._id;
@@ -117,7 +143,8 @@ const reserveGolden = async (req, res) => {
       const updatedSeat = await sanityClient
         .patch(concertId)
         .set({
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]: true,
+          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
+            true,
           [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
             {
               _type: "reference",
@@ -129,7 +156,9 @@ const reserveGolden = async (req, res) => {
               _ref: ticketId,
             },
         })
-        .commit();
+        .commit({
+          autoGenerateArrayKeys: true,
+        });
 
       if (!updatedSeat) {
         res.status(HttpStatusCode.InternalServerError).json({
@@ -138,12 +167,12 @@ const reserveGolden = async (req, res) => {
         return;
       }
 
-      console.log(
-        "updatedSeat",
+      logger.debug(
         updatedSeat.seatingChart.sections
-          .find((section) => section.sectionName === sectionName)
-          .rows.find((row) => row.id === rowId)
-          .seats.find((seat) => seat._key === seatKey)
+          .find((section: Section) => section.sectionName === sectionName)
+          .rows.find((row: Row) => row.id === rowId)
+          .seats.find((seat: Seat) => seat._key === seatKey),
+        "updatedSeat"
       );
 
       // Update the ticket to be redeemed, and link to the seat
@@ -160,9 +189,13 @@ const reserveGolden = async (req, res) => {
             section: sectionName,
             row: rowId,
             number: seatNumber,
+            venue: {
+              _type: "reference",
+              _ref: venueId,
+            },
           },
         })
-        .commit();
+        .commit({ autoGenerateArrayKeys: true });
 
       if (!redeemedTicket) {
         res.status(HttpStatusCode.InternalServerError).json({
@@ -171,12 +204,11 @@ const reserveGolden = async (req, res) => {
         return;
       }
 
-      console.log("redeemedTicket", redeemedTicket);
+      logger.debug(redeemedTicket, "redeemedTicket");
     }
 
     res.status(HttpStatusCode.Ok).json({ success: true });
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
     res
       .status(HttpStatusCode.InternalServerError)
       .json({ success: false, message: error.message });
@@ -184,3 +216,64 @@ const reserveGolden = async (req, res) => {
 };
 
 export default reserveGolden;
+
+// Type Definitions
+interface Ticket {
+  _id: string;
+  _type: string;
+  type: string;
+  number: string;
+  redeemed: boolean;
+  concert: Concert;
+}
+
+interface Customer {
+  _id: string;
+  _type: string;
+  name: string;
+  email: string;
+  tickets: Ticket[];
+}
+
+interface Concert {
+  _id: string;
+  _type: string;
+  _ref?: string;
+  name: string;
+  date: string;
+  seatingChart: SeatingChart;
+  venue: Venue;
+}
+
+interface Venue {
+  _id: string;
+  _type: string;
+  name: string;
+  address: string;
+}
+
+interface SeatingChart {
+  _type: string;
+  sections: Section[];
+}
+
+interface Section {
+  _type: string;
+  sectionName: string;
+  rows: Row[];
+}
+
+interface Row {
+  _type: string;
+  id: string;
+  seats: Seat[];
+}
+
+interface Seat {
+  _type: string;
+  _key: string;
+  number: number;
+  isReserved: boolean;
+  reservedBy: Customer;
+  redeemedTicket: Ticket;
+}
