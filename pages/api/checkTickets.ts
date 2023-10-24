@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createClient } from "next-sanity";
 
 // Initialize the Sanity client
-const client = createClient({
+const sanityClient = createClient({
   projectId: "zqcyefig",
   dataset: "production",
   apiVersion: "2023-03-01",
@@ -61,7 +61,10 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }`;
     const ticketsParams = { ticketNumbers, concertId };
-    const tickets: Ticket[] = await client.fetch(ticketsQuery, ticketsParams);
+    const tickets: Ticket[] = await sanityClient.fetch(
+      ticketsQuery,
+      ticketsParams
+    );
 
     // If there are no tickets found, respond with an error
     if (tickets.length === 0) {
@@ -71,7 +74,12 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
-    // TODO: May find multiple tickets for the same number, so need to merge them
+    if (tickets.length > ticketNumbers.length) {
+      res
+        .status(HttpStatusCode.InternalServerError)
+        .json({ message: "Multiple tickets found for the same number" });
+      return;
+    }
 
     const unredeemedTickets = tickets.filter((ticket) => !ticket.redeemed);
     // If there are no unredeemed tickets, respond with an error
@@ -85,14 +93,14 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     // Find the customer by name and email, or create a new customer if one doesn't exist
     const customerQuery = `*[_type == "customer" && name == $name && email == $email]`;
     const customerParams = { name, email };
-    const customers: Customer[] = await client.fetch(
+    const customers: Customer[] = await sanityClient.fetch(
       customerQuery,
       customerParams
     );
 
     let customer: Customer;
     if (customers.length === 0) {
-      customer = await client.create({
+      customer = await sanityClient.create({
         _type: "customer",
         name,
         email,
@@ -110,11 +118,11 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Connect the customer to the tickets
-    const ticketIds = tickets.map((ticket) => ticket._id);
+    const ticketIds = unredeemedTickets.map((ticket) => ticket._id);
 
     // If the customer doesn't have the tickets, add them
-    console.log("customer", customer);
-    console.log("customer.tickets", customer.tickets);
+    // console.log("customer", customer);
+    // console.log("customer.tickets", customer.tickets);
 
     const ticketsToAdd = ticketIds.map((ticketId) => ({
       _ref: ticketId,
@@ -128,13 +136,28 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
         )
     );
 
-    const updatedCustomer = await client
+    const updatedCustomer = await sanityClient
       .patch(customerId)
       .setIfMissing({ tickets: [] })
       .append("tickets", filteredTicketsToAdd)
       .commit({ autoGenerateArrayKeys: true });
 
-    const totalTicketCount = tickets.length;
+    // For each ticket, set set customer reference
+    const updatedTickets = await Promise.all(
+      ticketIds.map(async (ticketId) => {
+        const ticket = await sanityClient
+          .patch(ticketId)
+          .set({ customer: { _ref: customerId, _type: "reference" } })
+          .commit({ autoGenerateArrayKeys: true });
+        return ticket;
+      })
+    );
+
+    const totalTicketCount = unredeemedTickets.length;
+
+    console.log("ticketIds", ticketIds);
+    console.log("tickets", unredeemedTickets);
+    console.log("totalTicketCount", totalTicketCount);
 
     console.log(totalTicketCount);
 

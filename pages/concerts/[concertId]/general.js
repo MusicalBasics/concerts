@@ -111,15 +111,13 @@ export default function GenerelTicketPage({ concert }) {
         ticketNumbers: uniqueTicketNumbers,
       });
 
-      if (response.status !== HttpStatusCode.Ok) {
-        alert("There was an error checking the tickets.");
-        return;
-      }
-
       const data = response.data;
 
-      if (!data.success) {
-        alert("There was an error checking the tickets.");
+      if (response.status !== HttpStatusCode.Ok || !data.success) {
+        // Get error message from response
+        const { message } = data;
+        alert(`Error: ${message}`);
+        setLoading(false);
         return;
       }
 
@@ -139,7 +137,9 @@ export default function GenerelTicketPage({ concert }) {
       setIsVerified(true); // set isVerified to true once ticket numbers are verified
     } catch (error) {
       console.error(error);
-      alert("There was an error checking the tickets.");
+      // Get error message from response
+      const { message } = error.response.data;
+      alert(`Error: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -148,7 +148,7 @@ export default function GenerelTicketPage({ concert }) {
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const reserveRes = await axios.post("/api/reserveGeneral", {
+      const response = await axios.post("/api/reserveGeneral", {
         concertId,
         name,
         email,
@@ -156,12 +156,17 @@ export default function GenerelTicketPage({ concert }) {
         selectedSeats,
       });
 
-      if (reserveRes.data.success) {
-        setReservationSuccess(true);
-      } else {
-        const { message } = reserveRes.data;
-        alert(message);
+      const data = response.data;
+
+      if (response.status !== HttpStatusCode.Ok || !data.success) {
+        // Get error message from response
+        const { message } = data;
+        alert(`Error: ${message}`);
+        setLoading(false);
+        return;
       }
+
+      setReservationSuccess(true);
 
       // Send confrimation eamils
       const emailResponse = await axios.post("/api/sendConfirmation", {
@@ -180,7 +185,9 @@ export default function GenerelTicketPage({ concert }) {
       console.error(error);
       // Get error message from response
       const { message } = error.response.data;
-      alert(message);
+      alert(`Error: ${message}`);
+    } finally {
+      setLoading(false);
     }
     setLoading(false);
   };

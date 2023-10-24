@@ -77,25 +77,20 @@ export default function GoldenTicketPage({ concert }) {
     }
 
     try {
-      const response = await fetch("/api/checkEmail", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          concertId: concert._id,
-        }),
+      // rewrite this to use axios
+      const response = await axios.post("/api/checkEmail", {
+        email,
+        concertId: concert._id,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+      const data = response.data;
+
+      if (response.status !== HttpStatusCode.Ok || !data.success) {
+        setLoading(false);
         return;
       }
 
-      const { totalTicketCount, ticketIds, customerName } =
-        await response.json();
+      const { totalTicketCount, ticketIds, customerName } = data;
 
       if (totalTicketCount === 0) {
         alert("No tickets found for this email.");
@@ -103,8 +98,8 @@ export default function GoldenTicketPage({ concert }) {
         return;
       }
 
-      console.log(`Found ${totalTicketCount} tickets for ${email}.`);
-      console.log(`Ticket IDs: ${ticketIds}`);
+      // console.log(`Found ${totalTicketCount} tickets for ${email}.`);
+      // console.log(`Ticket IDs: ${ticketIds}`);
 
       // Update state with the found customer data
       setIsVerified(true); // set isVerified to true once email is verified and name is pulled
@@ -113,8 +108,9 @@ export default function GoldenTicketPage({ concert }) {
       setTicketCount(totalTicketCount);
       setTicketIds(ticketIds);
     } catch (error) {
-      console.error(error);
-      alert("There was an error checking the email.");
+      // Get the error message
+      const { message } = error.response.data;
+      alert(`Error: ${message}`);
     } finally {
       setLoading(false);
     }
@@ -124,7 +120,7 @@ export default function GoldenTicketPage({ concert }) {
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const reserveRes = await axios.post("/api/reserveGolden", {
+      const response = await axios.post("/api/reserveGolden", {
         concertId: concert._id,
         name,
         email,
@@ -132,11 +128,17 @@ export default function GoldenTicketPage({ concert }) {
         ticketIds,
       });
 
-      if (reserveRes.data.success) {
-        setReservationSuccess(true);
-      } else {
-        alert("There was an error reserving your seats.");
+      const data = response.data;
+
+      if (response.status !== HttpStatusCode.Ok || !data.success) {
+        // Get error message from response
+        const { message } = data;
+        alert(`Error: ${message}`);
+        setLoading(false);
+        return;
       }
+
+      setReservationSuccess(true);
 
       // Send confrimation eamils
       const emailResponse = await axios.post("/api/sendConfirmation", {
