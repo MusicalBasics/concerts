@@ -115,7 +115,8 @@
     "totalTickets": 1000,
     "productId": "7109987926059",
     "variantGID": "40784543514667",
-    "isSoldOut": false,
+    "buyLink": "https://musicalbasics.com/products/general-ticket-amsterdam",
+    "isSoldOut": true,
     "image": "amsterdam-golden-ticket.jpg",
     "venues": [
       {
