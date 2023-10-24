@@ -13,7 +13,7 @@ const client = createClient({
 });
 
 const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { name, email, ticketNumbers, concertId } = req.body;
+  const { name, email, concertId, ticketNumbers } = req.body;
 
   if (!name || !email || !ticketNumbers || !concertId) {
     res
@@ -90,46 +90,58 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       customerParams
     );
 
-    let customer;
+    let customer: Customer;
     if (customers.length === 0) {
       customer = await client.create({
         _type: "customer",
         name,
         email,
       });
-
-      if (!customer) {
-        res
-          .status(HttpStatusCode.InternalServerError)
-          .json({ message: "Failed to create customer" });
-        return;
-      }
     } else {
       customer = customers[0];
     }
     const customerId = customer._id;
 
-    // Connect the customer to the tickets
-    const ticketIds = tickets.map((ticket) => ticket._id);
-    const updatedCustomer = await client
-      .patch(customerId)
-      .setIfMissing({ tickets: [] })
-      .append("tickets", ticketIds)
-      .commit();
-
-    if (!updatedCustomer) {
+    if (!customer) {
       res
         .status(HttpStatusCode.InternalServerError)
-        .json({ message: "Failed to link tickets to the customer" });
+        .json({ message: "Failed to create/fetch customer" });
       return;
     }
 
-    console.log("updatedCustomer", updatedCustomer);
+    // Connect the customer to the tickets
+    const ticketIds = tickets.map((ticket) => ticket._id);
+
+    // If the customer doesn't have the tickets, add them
+    console.log("customer", customer);
+    console.log("customer.tickets", customer.tickets);
+
+    const ticketsToAdd = ticketIds.map((ticketId) => ({
+      _ref: ticketId,
+      _type: "reference",
+    }));
+
+    const filteredTicketsToAdd = ticketsToAdd.filter(
+      (ticketToAdd) =>
+        !customer.tickets!.some(
+          (customerTicket) => customerTicket._ref === ticketToAdd._ref
+        )
+    );
+
+    const updatedCustomer = await client
+      .patch(customerId)
+      .setIfMissing({ tickets: [] })
+      .append("tickets", filteredTicketsToAdd)
+      .commit({ autoGenerateArrayKeys: true });
 
     const totalTicketCount = tickets.length;
 
+    console.log(totalTicketCount);
+
     // Respond with the total ticket count
-    res.status(HttpStatusCode.Ok).json({ totalTicketCount, ticketIds });
+    res
+      .status(HttpStatusCode.Ok)
+      .json({ success: true, totalTicketCount, ticketIds });
   } catch (error) {
     console.error(error);
     res
@@ -144,6 +156,7 @@ export default checkTickets;
 interface Ticket {
   _id: string;
   _type: string;
+  _ref?: string;
   type: string;
   number: string;
   redeemed: boolean;
@@ -156,7 +169,7 @@ interface Customer {
   _type: string;
   name: string;
   email: string;
-  tickets: Ticket[];
+  tickets?: Ticket[];
 }
 
 interface Concert {

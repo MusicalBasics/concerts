@@ -104,29 +104,22 @@ export default function GenerelTicketPage({ concert }) {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/checkTickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          ticketNumbers: uniqueTicketNumbers,
-          concertId,
-        }),
+      const response = await axios.post("/api/checkTickets", {
+        name,
+        email,
+        concertId,
+        ticketNumbers: uniqueTicketNumbers,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+      if (response.status !== HttpStatusCode.Ok) {
+        alert("There was an error checking the tickets.");
         return;
       }
 
-      const data = await response.json();
+      const data = response.data;
 
       if (!data.success) {
-        alert("There was an error checking the tickets: " + data.message);
+        alert("There was an error checking the tickets.");
         return;
       }
 
