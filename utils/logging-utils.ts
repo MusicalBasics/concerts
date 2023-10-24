@@ -1,4 +1,5 @@
 import pino, { Logger } from "pino";
+import "pino-pretty";
 
 const LOG_LEVEL_DATA = {
   "*": "silent",
