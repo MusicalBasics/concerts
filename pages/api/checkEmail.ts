@@ -25,7 +25,7 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const query = `*[_type == "customer" && email == $email]{
+    const customerQuery = `*[_type == "customer" && email == $email]{
       name,
       email,
       "tickets": tickets[]->{
@@ -39,7 +39,7 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }`;
     const params = { email };
-    const customers: Customer[] = await client.fetch(query, params);
+    const customers: Customer[] = await client.fetch(customerQuery, params);
 
     if (customers.length === 0) {
       res
@@ -69,7 +69,10 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
 
     // Filter out tickets that don't belong to the specified concert for this customer
     const filteredConcertTickets = tickets.filter(
-      (ticket) => ticket.concert._id === concertId
+      (ticket) =>
+        ticket.concert._id === concertId &&
+        !ticket._id.includes("draft") &&
+        ticket.redeemed === false
     );
 
     if (filteredConcertTickets.length === 0) {
@@ -109,14 +112,12 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
     const ticketIds = filteredTickets.map((ticket) => ticket._id);
 
     // Respond with the total ticket count
-    res
-      .status(HttpStatusCode.Ok)
-      .json({
-        success: true,
-        totalTicketCount,
-        ticketIds,
-        customerName: customer.name,
-      });
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
+      totalTicketCount,
+      ticketIds,
+      customerName: customer.name,
+    });
   } catch (error) {
     console.error(error);
     res

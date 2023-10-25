@@ -49,7 +49,6 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Find the unredeemed tickets by ticket numbers, and make sure they belong to the specified concert
 
-    // TODO: This query is not working， it needs to ignore draft tickets
     // It should contain number, concert, pull its _id, and redeemed, also customer
     const ticketsQuery = `*[_type == "ticket" && number in $ticketNumbers && concert._ref == $concertId]{
       _id,
