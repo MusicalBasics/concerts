@@ -49,7 +49,7 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // Find the unredeemed tickets by ticket numbers, and make sure they belong to the specified concert
 
-    // TODO: This query is not working
+    // TODO: This query is not working， it needs to ignore draft tickets
     // It should contain number, concert, pull its _id, and redeemed, also customer
     const ticketsQuery = `*[_type == "ticket" && number in $ticketNumbers && concert._ref == $concertId]{
       _id,
@@ -77,14 +77,21 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
-    if (tickets.length > ticketNumbers.length) {
+    // Ignore the draft tickets, whose _id has draft in it
+    const publishedTickets = tickets.filter(
+      (ticket) => !ticket._id.includes("draft")
+    );
+
+    if (publishedTickets.length > ticketNumbers.length) {
       res
         .status(HttpStatusCode.InternalServerError)
         .json({ message: "Multiple tickets found for the same number" });
       return;
     }
 
-    const unredeemedTickets = tickets.filter((ticket) => !ticket.redeemed);
+    const unredeemedTickets = publishedTickets.filter(
+      (ticket) => !ticket.redeemed
+    );
     // If there are no unredeemed tickets, respond with an error
     if (unredeemedTickets.length === 0) {
       res
