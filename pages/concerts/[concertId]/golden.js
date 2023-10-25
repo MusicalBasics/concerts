@@ -202,7 +202,7 @@ export default function GoldenTicketPage({ concert }) {
         ) : (
           <Box>
             <Typography>
-              Please enter the email you used to purchase the Golden Ticket(s):
+              Please enter the email you used to purchase the Golden Ticket(s):
             </Typography>
             <Box
               sx={{
