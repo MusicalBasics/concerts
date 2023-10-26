@@ -213,7 +213,7 @@ export default function GenerelTicketPage({ concert }) {
         </Box>
       )}
 
-      <Link href={`/concerts/${concert._id}`}>
+      <Link href={`/concerts/${concert._id}/redeem`}>
         <Stack textAlign="center" my={2} spacing={1}>
           <Typography variant="h4">{venue.name}</Typography>
           <Typography>{venue.address}</Typography>

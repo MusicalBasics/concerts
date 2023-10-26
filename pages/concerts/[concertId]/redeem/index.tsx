@@ -33,10 +33,10 @@ const ConcertPage: React.FC<ConcertPageProps> = ({ concert }) => {
         <Box p={1} />
         <Typography>Select Your Ticket Type</Typography>
         <Stack direction="row" justifyContent="center" spacing={2}>
-          <Link href={`/concerts/${concertId}/golden`}>
+          <Link href={`/concerts/${concertId}/redeem/golden`}>
             <GoldenButton>Golden</GoldenButton>
           </Link>
-          <Link href={`/concerts/${concertId}/general`}>
+          <Link href={`/concerts/${concertId}/redeem/general`}>
             <RegularButton>General</RegularButton>
           </Link>
         </Stack>
