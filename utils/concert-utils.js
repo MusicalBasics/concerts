@@ -68,6 +68,10 @@ export const getCityLinks = async () => {
       city->{
         name,
         "slug": slug.current
+      },
+      buyLink,
+      preorder{
+        isSoldOut
       }
     }
   `;
@@ -87,13 +91,21 @@ export const getCityLinks = async () => {
       .fromPairs()
       .value();
 
-    const cityLinks = Object.keys(sortedGroups).map((dateRange) => ({
-      dateRange,
-      cities: sortedGroups[dateRange].map((concert) => ({
-        name: concert.city.name,
-        link: `/concerts/${concert._id}`,
-      })),
-    }));
+    const cityLinks = Object.keys(sortedGroups).map((dateRange) => {
+      return {
+        dateRange,
+        cities: sortedGroups[dateRange].map((concert) => {
+          const { buyLink } = concert;
+          const { isSoldOut } = concert.preorder;
+          const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
+
+          return {
+            name: concert.city.name,
+            link,
+          };
+        }),
+      };
+    });
 
     return cityLinks;
   } catch (error) {

@@ -10,6 +10,7 @@ import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Map } from "react-map-gl";
+import { Concert } from "@/models/Concert";
 
 const HomePage: FC<HomePageProps> = ({ concerts }) => {
   return (
@@ -93,5 +94,5 @@ export const getStaticProps = (async () => {
 
 // Type definitions
 interface HomePageProps {
-  concerts: any[];
+  concerts: Concert[];
 }
