@@ -14,11 +14,7 @@ export default function CityListItem({
   const { city, preorder, buyLink } = concert;
   const { timeFrame } = preorder;
 
-  function onCityClick() {
-    onSelect(city.id);
-  }
-
-  const link = isSoldOut ? buyLink : `/cities/${city.id}`;
+  const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
   const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
 
   return (
@@ -34,7 +30,7 @@ export default function CityListItem({
         ],
         cursor: "pointer",
       }}
-      onClick={onCityClick}
+      onClick={() => onSelect(city.id)}
     >
       <Box
         sx={{

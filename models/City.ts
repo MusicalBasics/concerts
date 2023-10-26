@@ -1,4 +1,4 @@
-export default interface City {
+export type City = {
   _id: string;
   id: string;
   name: string;
@@ -11,4 +11,8 @@ export default interface City {
       url: string;
     };
   };
-}
+};
+
+export type Cities = City[];
+
+export default City;

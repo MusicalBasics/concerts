@@ -10,8 +10,11 @@ import { Box, Stack } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
+import { FC } from "react";
+import Milestone from "@/models/Milestone";
+import Link from "next/link";
 
-export default function Milestones({ venues, presales }) {
+const Milestones: FC<MilestonesProps> = ({ milestones, presales }) => {
   return (
     <Timeline
       position="alternate"
@@ -20,8 +23,9 @@ export default function Milestones({ venues, presales }) {
         color: "white",
       }}
     >
-      {venues.map((venue, index) => {
-        const isReached = presales >= venue.threshold;
+      {milestones.map((milestone, index) => {
+        const { venue, threshold, level } = milestone;
+        const isReached = presales >= threshold;
 
         return (
           <TimelineItem key={venue.name}>
@@ -30,8 +34,8 @@ export default function Milestones({ venues, presales }) {
               align="right"
               variant="body2"
             >
-              <Typography variant="h6">Level {venue.level}</Typography>
-              <Typography variant="body2">{venue.threshold} Minimum</Typography>
+              <Typography variant="h6">Level {level}</Typography>
+              <Typography variant="body2">{threshold} Minimum</Typography>
             </TimelineOppositeContent>
             <TimelineSeparator>
               <TimelineConnector />
@@ -45,7 +49,7 @@ export default function Milestones({ venues, presales }) {
                 <Typography variant="h6" component="span">
                   {venue.name}
                 </Typography>
-                <Typography>{venue.city}</Typography>
+                <Typography>{venue.city.name}</Typography>
                 <Box
                   mt={1}
                   sx={{
@@ -59,12 +63,14 @@ export default function Milestones({ venues, presales }) {
                     },
                   }}
                 >
-                  <Image
-                    src={`/images/${venue.image}`}
-                    alt={venue.name}
-                    width={240}
-                    height={160}
-                  />
+                  <Link href={`/venues/${venue.slug.current}`}>
+                    <Image
+                      src={venue.image.asset.url}
+                      alt={venue.name}
+                      width={240}
+                      height={160}
+                    />
+                  </Link>
                 </Box>
               </Stack>
             </TimelineContent>
@@ -73,4 +79,11 @@ export default function Milestones({ venues, presales }) {
       })}
     </Timeline>
   );
+};
+
+export default Milestones;
+
+export interface MilestonesProps {
+  milestones: Milestone[];
+  presales: number;
 }

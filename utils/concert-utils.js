@@ -1,4 +1,7 @@
+import axios from "axios";
 import moment from "moment";
+import _ from "lodash";
+import { sanityClient } from "./sanity";
 
 export const toSeatsText = (seats) => {
   return seats.map((seat) => `${seat.rowId}${seat.seatNumber}`).join(", ");
@@ -54,4 +57,46 @@ export const validateTicketNumbers = (ticketNumbers) => {
   );
 
   return isValid;
+};
+
+export const getCityLinks = async () => {
+  const query = `
+    *[_type == "concert"]{
+      _id,
+      "startDate": preorder.startDate,
+      "endDate": preorder.endDate,
+      city->{
+        name,
+        "slug": slug.current
+      }
+    }
+  `;
+
+  try {
+    const concerts = await sanityClient.fetch(query);
+
+    const groupedConcerts = _.groupBy(concerts, (concert) => {
+      const formattedStartDate = moment(concert.startDate).format("MMM YYYY");
+      const formattedEndDate = moment(concert.endDate).format("MMM YYYY");
+      return `${formattedStartDate} - ${formattedEndDate}`;
+    });
+
+    const sortedGroups = _(groupedConcerts)
+      .toPairs()
+      .orderBy((pair) => new Date(pair[0].split(" - ")[0]), ["asc"])
+      .fromPairs()
+      .value();
+
+    const cityLinks = Object.keys(sortedGroups).map((dateRange) => ({
+      dateRange,
+      cities: sortedGroups[dateRange].map((concert) => ({
+        name: concert.city.name,
+        link: `/concerts/${concert._id}`,
+      })),
+    }));
+
+    return cityLinks;
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };

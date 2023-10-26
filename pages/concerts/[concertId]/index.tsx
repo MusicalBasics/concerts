@@ -1,22 +1,29 @@
 import * as mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import Milestones from "@/components/milestones";
-import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { FC } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
 import FloatingCityList from "@/components/floating-city-list";
-import { GetServerSideProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
+import { Concert } from "@/models/Concert";
+import { getCityLinks } from "@/utils/concert-utils";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
-const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
+const ConcertPage: FC<ConcertPageProps> = ({
+  concert,
+  ticketsSold,
+  cityLinks,
+}) => {
   const { city, preorder, buyLink } = concert;
+
+  const cityLink = `/cities/${city.slug.current}`;
 
   // const map = useRef<
   //   | (mapboxgl.Map & {
@@ -30,8 +37,6 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   // const [lng, setLng] = useState(coordinates[0]);
   // const [lat, setLat] = useState(coordinates[1]);
   // const [zoom, setZoom] = useState(10);
-
-  // console.log("Current sold:", city.ticketsSold);
 
   // useEffect(() => {
   //   if (map.current) return; // initialize map only once
@@ -93,7 +98,7 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <FloatingCityList cityLinks={require("@/data/city_links.json")} />
+      <FloatingCityList cityLinks={cityLinks} />
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
           <Image
@@ -103,22 +108,24 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
             height={240}
           />
         </Box>
-        <Typography
-          variant="h3"
-          sx={{
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-          // onClick={() => {
-          //   map.current.flyTo({
-          //     center: coordinates,
-          //     zoom: zoom,
-          //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-          //   });
-          // }}
-        >
-          {city.name}
-        </Typography>
+        <Link href={buyLink}>
+          <Typography
+            variant="h3"
+            fontWeight={700}
+            sx={{
+              cursor: "pointer",
+            }}
+            // onClick={() => {
+            //   map.current.flyTo({
+            //     center: coordinates,
+            //     zoom: zoom,
+            //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+            //   });
+            // }}
+          >
+            {city.name}
+          </Typography>
+        </Link>
         <Typography variant="caption">{preorder.timeFrame}</Typography>
         <Typography>{/* Current Presales: {city.ticketsSold} */}</Typography>
       </Stack>
@@ -129,7 +136,7 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
           </Button>
         </Link>
       </Box>
-      {/* <Milestones venues={city.venues} presales={city.ticketsSold} /> */}
+      <Milestones milestones={preorder.milestones} presales={ticketsSold} />
       {/* <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={2}
@@ -146,19 +153,18 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
 
 export default ConcertPage;
 
-export const getServerSideProps = (async (context) => {
+export const getStaticProps = (async (context) => {
   // Get cityId from the URL
-  const { citySlug } = context.query;
+  const { concertId } = context.params!;
 
-  if (!citySlug) {
+  if (!concertId) {
     return {
       notFound: true,
     };
   }
 
   // Pull data from sanity
-  // const concertsQuery = `*[_type == "concert" && city.slug.current == "${citySlug}"] {
-  const concertsQuery = `*[_type == "concert"] {
+  const concertsQuery = `*[_type == "concert" && _id == $concertId] {
     _id,
     name,
     slug,
@@ -179,10 +185,40 @@ export const getServerSideProps = (async (context) => {
     preorder {
       isSoldOut,
       timeFrame,
-      milestones,
+      totalTickets,
+      milestones[] {
+        level,
+        threshold,
+        venue-> {
+          name,
+          address,
+          coordinates,
+          slug,
+          city-> {
+            name,
+            slug,
+          },
+          image {
+            asset-> {
+              url
+            }
+          },
+        }
+      },
+      goldenTicketProduct-> {
+        store {
+          gid
+        }
+      },
     },
   }`;
-  const concertsData = await sanityClient.fetch(concertsQuery);
+  const concertsParams = {
+    concertId,
+  };
+  const concertsData: Concert[] = await sanityClient.fetch(
+    concertsQuery,
+    concertsParams
+  );
 
   console.log("concertsData", concertsData);
 
@@ -192,57 +228,45 @@ export const getServerSideProps = (async (context) => {
     };
   }
 
-  const concerts = _.orderBy(concertsData, ["city.id"], ["asc"]);
-  const concert = concerts[3];
+  const concert = concertsData[0];
 
-  const city = concert.city;
+  const { totalTickets, goldenTicketProduct } = concert.preorder;
+  const goldenTicketProductiGid = goldenTicketProduct.store.gid;
 
-  // const inventoryTickets = await getInventory(city.productId);
-
-  // DEBUG
-  // console.log("inventoryTickets", inventoryTickets);
-
-  // city.ticketsSold = city.totalTickets - inventoryTickets;
+  const inventoryTickets = await getInventory(goldenTicketProductiGid);
+  const ticketsSold = totalTickets - inventoryTickets;
+  const cityLinks = await getCityLinks();
 
   return {
     props: {
       concert,
+      ticketsSold,
+      cityLinks,
     },
   };
-}) satisfies GetServerSideProps<ConcertPageProps>;
+}) satisfies GetStaticProps<ConcertPageProps>;
+
+export const getStaticPaths = (async () => {
+  const concerts: Concert[] = await sanityClient.fetch(
+    `*[_type == "concert"]{
+      _id,
+    }
+  `
+  );
+
+  return {
+    paths: concerts.map((concert) => ({
+      params: {
+        concertId: concert._id,
+      },
+    })),
+    fallback: false,
+  };
+}) satisfies GetStaticPaths;
 
 // Type Definitions
 interface ConcertPageProps {
   concert: Concert;
-}
-
-interface Concert {
-  _id: string;
-  name: string;
-  slug: string;
-  date: string;
-  buyLink: string;
-  city: City;
-  preorder: Preorder;
-  productId?: string;
-  totalTickets?: number;
-  ticketsSold?: number;
-}
-
-interface City {
-  _id: string;
-  id: string;
-  name: string;
-  coordinates: number[];
-  slug: string;
-  image: {
-    asset: {
-      url: string;
-    };
-  };
-}
-
-interface Preorder {
-  isSoldOut: boolean;
-  timeFrame: string;
+  ticketsSold: number;
+  cityLinks: ReturnType<typeof getCityLinks>;
 }
