@@ -2,7 +2,7 @@ import Milestones from "@/components/milestones";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { FC, useMemo, useState } from "react";
+import { FC, useState } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
@@ -13,9 +13,6 @@ import _ from "lodash";
 import { Concert } from "@/models/Concert";
 import { getCityLinks } from "@/utils/concert-utils";
 import { Map, Marker, Popup } from "react-map-gl";
-import mapboxgl from "mapbox-gl";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import VenueList from "@/components/venue-list";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 
 const ConcertPage: FC<ConcertPageProps> = ({
@@ -92,6 +89,7 @@ const ConcertPage: FC<ConcertPageProps> = ({
               const { coordinates } = venue;
               return (
                 <Marker
+                  key={venue.name}
                   longitude={coordinates.lng}
                   latitude={coordinates.lat}
                   onClick={(e) => {
