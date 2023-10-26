@@ -75,6 +75,7 @@ export const getStaticProps = (async () => {
 
   return {
     props: { duplicateTickets },
+    revalidate: 600,
   };
 }) satisfies GetStaticProps;
 
