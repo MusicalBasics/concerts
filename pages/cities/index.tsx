@@ -20,6 +20,7 @@ const CitiesPage: FC<CitiesPageProps> = ({ cities }) => {
         {cities.map((city) => {
           return (
             <Grid
+              key={city.id}
               container
               item
               xs={12}
