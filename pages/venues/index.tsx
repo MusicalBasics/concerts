@@ -1,8 +1,6 @@
 import { Box, Grid, Stack, Typography } from "@mui/material";
-import Link from "next/link";
 import { FC } from "react";
 import Layout from "@/components/layout";
-import Image from "next/image";
 import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";

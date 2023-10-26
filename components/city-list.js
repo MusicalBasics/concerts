@@ -3,11 +3,13 @@ import { useState } from "react";
 import CityListItem from "./city-list-item.js";
 import styles from "./concert-list.module.css";
 import _ from "lodash";
+import { useMap } from "react-map-gl";
 
 export const HQ = [-115.1398, 36.1699];
 
-export default function CityList({ map, concerts }) {
+export default function CityList({ concerts }) {
   const [selectedCity, setSelectedCity] = useState(null);
+  const { current: map } = useMap();
 
   return (
     <Box overflow={{ xs: "scroll" }} height={{ xs: "60vh" }}>
@@ -32,7 +34,7 @@ export default function CityList({ map, concerts }) {
               isSelected={selectedCity === city.id}
               onSelect={(id) => {
                 setSelectedCity(id);
-                map.current.flyTo({
+                map.flyTo({
                   center: city.coordinates,
                   zoom: 10,
                   essential: true, // this animation is considered essential with respect to prefers-reduced-motion
