@@ -2,23 +2,69 @@ import { sanityClient } from "@/utils/sanity";
 import { GetStaticProps } from "next";
 import React, { FC } from "react";
 import _, { orderBy } from "lodash";
+import { useState } from "react";
+import {
+  Button,
+  Container,
+  List,
+  ListItem,
+  Stack,
+  Typography,
+} from "@mui/material";
 
 const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
+  const [copiedId, setCopiedId] = useState(null);
+
+  const copyToClipboard = (id) => {
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+  };
+
   return (
-    <div
-      style={{
+    <Container
+      maxWidth="md"
+      sx={{
+        marginTop: "20px",
+        padding: "20px",
+        textAlign: "center",
+        backgroundColor: "#000000",
+        borderRadius: "10px",
+        boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.75)",
         color: "white",
       }}
     >
-      <h1>Check Tickets</h1>
-      <ul>
+      <Typography variant="h4" gutterBottom>
+        Check Tickets
+      </Typography>
+      <List>
         {duplicateTickets.map((ticket) => (
-          <li key={ticket.number}>
-            {ticket.number}: {ticket.ids.join(", ")}
-          </li>
+          <ListItem key={ticket.number}>
+            <Typography variant="h4">{ticket.number}: </Typography>
+            <Stack>
+              {ticket.ids.map((id) => (
+                <Stack
+                  direction={"row"}
+                  spacing={2}
+                  key={id}
+                  p={1}
+                  alignItems={"center"}
+                >
+                  <Typography variant="body1">{id}</Typography>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    color="secondary"
+                    onClick={() => copyToClipboard(id)}
+                  >
+                    {copiedId === id ? "Copied!" : "Copy"}
+                  </Button>
+                </Stack>
+              ))}
+            </Stack>
+          </ListItem>
         ))}
-      </ul>
-    </div>
+      </List>
+    </Container>
   );
 };
 
