@@ -8,7 +8,7 @@ import Image from "next/image";
 import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/city";
+import City from "@/models/City";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
@@ -73,7 +73,6 @@ export default CitiesPage;
 export const getStaticProps = (async (context) => {
   // Pull data from sanity
   const citiesQuery = `*[_type == "city"] {
-    slug,
     _id,
     id,
     name,

@@ -244,7 +244,7 @@ export const getStaticProps = (async (context) => {
       cityLinks,
     },
   };
-}) satisfies GetStaticProps<ConcertPageProps>;
+}) satisfies GetStaticProps;
 
 export const getStaticPaths = (async () => {
   const concerts: Concert[] = await sanityClient.fetch(
@@ -268,5 +268,5 @@ export const getStaticPaths = (async () => {
 interface ConcertPageProps {
   concert: Concert;
   ticketsSold: number;
-  cityLinks: ReturnType<typeof getCityLinks>;
+  cityLinks: any[];
 }

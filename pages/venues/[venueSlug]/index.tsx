@@ -1,56 +1,52 @@
 import * as mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import Milestones from "@/components/milestones";
-import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { FC } from "react";
 import Layout from "@/components/layout";
-import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
-import FloatingCityList from "@/components/floating-city-list";
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/city";
+import { Venue } from "@/models/Venue";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
-const CityPage: FC<CityPageProps> = ({ city }) => {
+const VenuePage: FC<VenuePageProps> = ({ venue }) => {
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <Link href="/cities">ALL CITIES</Link>
+      <Link href="/venues">ALL VENUES</Link>
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
           <Image
-            src={city.image.asset.url}
-            alt={city.name}
+            src={venue.image.asset.url}
+            alt={venue.name}
             width={360}
             height={240}
           />
         </Box>
         <Typography
-          variant="h3"
+          variant="h4"
           sx={{
             fontWeight: "bold",
             cursor: "pointer",
           }}
         >
-          {city.name}
+          {venue.name}
         </Typography>
       </Stack>
     </Layout>
   );
 };
 
-export default CityPage;
+export default VenuePage;
 
 export const getStaticProps = (async (context) => {
   // Get cityId from the URL
-  const { citySlug } = context.params!;
+  const { venueSlug } = context.params!;
 
-  if (!citySlug) {
+  if (!venueSlug) {
     return {
       notFound: true,
     };
@@ -58,7 +54,7 @@ export const getStaticProps = (async (context) => {
 
   // Pull data from sanity
   // const concertsQuery = `*[_type == "concert" && city.slug.current == "${citySlug}"] {
-  const citiesQuery = `*[_type == "city" && slug.current == "${citySlug}"] {
+  const citiesQuery = `*[_type == "venue" && slug.current == "${venueSlug}"] {
     _id,
     id,
     name,
@@ -70,17 +66,17 @@ export const getStaticProps = (async (context) => {
       }
     },
   }`;
-  const citiesData = await sanityClient.fetch(citiesQuery);
+  const venues = await sanityClient.fetch(citiesQuery);
 
-  console.log("citiesData", citiesData);
+  console.log("venues", venues);
 
-  if (!citiesData.length) {
+  if (!venues.length) {
     return {
       notFound: true,
     };
   }
 
-  const city = citiesData[0];
+  const venue = venues[0];
 
   // const inventoryTickets = await getInventory(city.productId);
   // console.log("inventoryTickets", inventoryTickets);
@@ -88,23 +84,23 @@ export const getStaticProps = (async (context) => {
 
   return {
     props: {
-      city,
+      venue,
     },
   };
-}) satisfies GetStaticProps<CityPageProps>;
+}) satisfies GetStaticProps;
 
 export const getStaticPaths = (async () => {
-  const cities: City[] = await sanityClient.fetch(
-    `*[_type == "city"]{
+  const venues: Venue[] = await sanityClient.fetch(
+    `*[_type == "venue"]{
       slug,
     }
   `
   );
 
   return {
-    paths: cities.map((city) => ({
+    paths: venues.map((venue) => ({
       params: {
-        citySlug: city.slug.current,
+        venueSlug: venue.slug.current,
       },
     })),
     fallback: false,
@@ -112,6 +108,6 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 // Type Definitions
-interface CityPageProps {
-  city: City;
+interface VenuePageProps {
+  venue: Venue;
 }
