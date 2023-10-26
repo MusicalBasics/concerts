@@ -129,8 +129,8 @@ export default function GenerelTicketPage({ concert }) {
         return;
       }
 
-      console.log(`Found ${totalTicketCount} tickets for ${email}.`);
-      console.log(`Ticket IDs: ${ticketIds}`);
+      // console.log(`Found ${totalTicketCount} tickets for ${email}.`);
+      // console.log(`Ticket IDs: ${ticketIds}`);
 
       setTicketIds(ticketIds); // Update state with the found ticket IDs
       setTicketCount(totalTicketCount);
@@ -177,7 +177,7 @@ export default function GenerelTicketPage({ concert }) {
       });
 
       if (emailResponse.status !== HttpStatusCode.Ok) {
-        console.log("There was an error sending the confirmation email.");
+        alert("There was an error sending the confirmation email.");
       }
 
       alert("Confirmation email sent.");

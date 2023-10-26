@@ -86,8 +86,6 @@ export const getStaticProps = (async (context) => {
   }`;
   const venues = await sanityClient.fetch(venuesQuery);
 
-  console.log("venues", venues);
-
   if (!venues.length) {
     return {
       notFound: true,

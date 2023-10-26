@@ -87,8 +87,6 @@ export const getStaticProps = (async (context) => {
   }`;
   const citiesData = await sanityClient.fetch(citiesQuery);
 
-  console.log("citiesData", citiesData);
-
   if (!citiesData.length) {
     return {
       notFound: true,

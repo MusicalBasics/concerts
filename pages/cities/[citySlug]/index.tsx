@@ -93,8 +93,6 @@ export const getStaticProps = (async (context) => {
   }`;
   const citiesData = await sanityClient.fetch(citiesQuery);
 
-  console.log("citiesData", citiesData);
-
   if (!citiesData.length) {
     return {
       notFound: true,
@@ -102,10 +100,6 @@ export const getStaticProps = (async (context) => {
   }
 
   const city = citiesData[0];
-
-  // const inventoryTickets = await getInventory(city.productId);
-  // console.log("inventoryTickets", inventoryTickets);
-  // city.ticketsSold = city.totalTickets - inventoryTickets;
 
   return {
     props: {

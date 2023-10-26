@@ -220,8 +220,6 @@ export const getStaticProps = (async (context) => {
     concertsParams
   );
 
-  console.log("concertsData", concertsData);
-
   if (!concertsData.length) {
     return {
       notFound: true,

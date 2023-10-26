@@ -41,8 +41,6 @@ const sendConfirmation = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const response = await axios.request(config);
 
-    console.log(JSON.stringify(response.data));
-
     if (response.status === HttpStatusCode.NoContent) {
       res.status(HttpStatusCode.Ok).json({ message: "Success" });
     } else {
@@ -51,7 +49,7 @@ const sendConfirmation = async (req: NextApiRequest, res: NextApiResponse) => {
         .json({ message: "Failed" });
     }
   } catch (error: any) {
-    console.log(error);
+    // console.log(error);
     res
       .status(HttpStatusCode.InternalServerError)
       .json({ message: error.message });

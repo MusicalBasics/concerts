@@ -109,8 +109,6 @@ export async function getServerSideProps(context) {
 
   const tickets = await sanityClient.fetch(ticketsQuery, { number });
 
-  console.log(tickets);
-
   if (!tickets || tickets.length === 0) {
     return {
       props: {
@@ -122,10 +120,6 @@ export async function getServerSideProps(context) {
   const ticket = tickets[0];
   const { concert } = ticket;
   const { preorder, city } = concert;
-
-  console.log(ticket);
-  console.log(concert);
-  console.log(city);
 
   if (!city) {
     return {
