@@ -2,7 +2,10 @@ export type City = {
   _id: string;
   id: string;
   name: string;
-  coordinates: number[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
   slug: {
     current: string;
   };

@@ -12,17 +12,21 @@ import FloatingCityList from "@/components/floating-city-list";
 import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/city";
+import City from "@/models/City";
+import { Map, Marker } from "react-map-gl";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
 const CityPage: FC<CityPageProps> = ({ city }) => {
+  const { lat, lng } = city.coordinates;
+
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <Link href="/cities">ALL CITIES</Link>
-      <Stack textAlign="center" my={5} spacing={1}>
-        <Box p={2}>
+      {/* <Link href="/cities">ALL CITIES</Link> */}
+      <Stack textAlign="center" my={5} spacing={2}>
+        <Box>
           <Image
             src={city.image.asset.url}
             alt={city.name}
@@ -31,7 +35,7 @@ const CityPage: FC<CityPageProps> = ({ city }) => {
           />
         </Box>
         <Typography
-          variant="h3"
+          variant="h4"
           sx={{
             fontWeight: "bold",
             cursor: "pointer",
@@ -39,6 +43,23 @@ const CityPage: FC<CityPageProps> = ({ city }) => {
         >
           {city.name}
         </Typography>
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Map
+            mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+            initialViewState={{
+              longitude: lng,
+              latitude: lat,
+              zoom: 9,
+            }}
+            style={{ width: 800, height: 400 }}
+            // dark
+            mapStyle={"mapbox://styles/mapbox/dark-v11"}
+          >
+            <Marker longitude={lng} latitude={lat}>
+              <LocationOnIcon color="error" fontSize="large" />
+            </Marker>
+          </Map>
+        </Box>
       </Stack>
     </Layout>
   );
