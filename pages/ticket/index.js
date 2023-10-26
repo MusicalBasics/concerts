@@ -3,15 +3,15 @@ import path from "path";
 import sharp from "sharp";
 import { parseStringPromise, Builder } from "xml2js";
 import { Buffer } from "buffer";
-import { getCity } from "@/data/cities";
 import xss from "xss";
 import { saveAs } from "file-saver";
 import { Typography, Button, Stack } from "@mui/material";
 import Layout from "@/components/layout";
 import validator from "validator";
 import Image from "next/image";
+import { sanityClient } from "@/utils/sanity";
 
-function TicketPage({ city, number, imageUrl, error }) {
+function TicketPage({ city, number, imageUrl, error, timeFrame }) {
   // If there's an error message, display it and don't render the rest of the component
   if (error) {
     return (
@@ -34,7 +34,7 @@ function TicketPage({ city, number, imageUrl, error }) {
   return (
     <Layout>
       <Typography variant="h5" gutterBottom>
-        Your Ticket for {city.name} ({city.timeFrame})
+        Your Ticket for {city.name} ({timeFrame})
       </Typography>
       <Stack spacing={2} sx={{ marginBottom: 2 }}>
         <Typography variant="body1">
@@ -89,7 +89,44 @@ export async function getServerSideProps(context) {
   const sanitizedCity = xss(cityId).substring(0, 3);
   const sanitizedTicket = xss(number).substring(0, 9);
 
-  const city = getCity(sanitizedCity);
+  // get rid of leading zeros
+  const sanitizedCityId = parseInt(sanitizedCity, 10);
+
+  // Get the city from the database
+  const ticketsQuery = `*[_type == "ticket" && number == $number]{
+    concert->{
+      preorder {
+        startDate,
+        endDate,
+        timeFrame,
+      },
+      city->{
+        name,
+        id,
+      },
+    }
+  }`;
+
+  const tickets = await sanityClient.fetch(ticketsQuery, { number });
+
+  console.log(tickets);
+
+  if (!tickets || tickets.length === 0) {
+    return {
+      props: {
+        error: "Ticket not found",
+      },
+    };
+  }
+
+  const ticket = tickets[0];
+  const { concert } = ticket;
+  const { preorder, city } = concert;
+
+  console.log(ticket);
+  console.log(concert);
+  console.log(city);
+
   if (!city) {
     return {
       props: {
@@ -113,9 +150,9 @@ export async function getServerSideProps(context) {
         } else if (obj["$"].id === "ticket") {
           obj[key] = sanitizedTicket;
         } else if (obj["$"].id === "startMonth") {
-          obj[key] = city.startDate;
+          obj[key] = preorder.startDate;
         } else if (obj["$"].id === "endMonth") {
-          obj[key] = city.endDate;
+          obj[key] = preorder.endDate;
         }
       }
     }
@@ -138,6 +175,7 @@ export async function getServerSideProps(context) {
     props: {
       city,
       number,
+      timeFrame: preorder.timeFrame,
       imageUrl: `data:image/jpeg;base64,${base64Image}`,
     },
   };
