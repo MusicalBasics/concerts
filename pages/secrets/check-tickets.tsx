@@ -1,5 +1,5 @@
 import { sanityClient } from "@/utils/sanity";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import React, { FC } from "react";
 import _, { orderBy } from "lodash";
 import { useState } from "react";
@@ -70,14 +70,13 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
 
 export default CheckTicketsPage;
 
-export const getStaticProps = (async () => {
+export const getServerSideProps = (async () => {
   const duplicateTickets = await findDuplicateTickets();
 
   return {
     props: { duplicateTickets },
-    revalidate: 600,
   };
-}) satisfies GetStaticProps;
+}) satisfies GetServerSideProps;
 
 async function findDuplicateTickets() {
   try {
