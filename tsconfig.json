@@ -28,12 +28,9 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/api/reserveGolden.ts", "utils/concert-utils.js"  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "**/*.tsx",
+    "pages/api/reserveGolden.ts",
+    "utils/concert-utils.js"
+  ],
+  "exclude": ["node_modules"]
 }
-
-// Add       "@/*": ["./*"]
-
