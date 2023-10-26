@@ -1,10 +1,12 @@
-import { CITIES, HQ } from "@/data/cities";
 import { Box, Button, Stack } from "@mui/material";
 import { useState } from "react";
 import CityListItem from "./city-list-item.js";
 import styles from "./concert-list.module.css";
+import _ from "lodash";
 
-export default function CityList({ map }) {
+export const HQ = [-115.1398, 36.1699];
+
+export default function CityList({ map, concerts }) {
   const [selectedCity, setSelectedCity] = useState(null);
 
   return (
@@ -21,22 +23,25 @@ export default function CityList({ map }) {
         >
           We Are One / Lionel Yu World Tour
         </Button>
-        {CITIES.map((city) => (
-          <CityListItem
-            key={city.id}
-            city={city}
-            isSelected={selectedCity === city.id}
-            onSelect={(id) => {
-              setSelectedCity(id);
-              map.current.flyTo({
-                center: city.coordinates,
-                zoom: 10,
-                essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-              });
-            }}
-            isSoldOut={city.isSoldOut}
-          />
-        ))}
+        {_.orderBy(concerts, (c) => c.city.id).map((concert) => {
+          const city = concert.city;
+          return (
+            <CityListItem
+              key={city.id}
+              concert={concert}
+              isSelected={selectedCity === city.id}
+              onSelect={(id) => {
+                setSelectedCity(id);
+                map.current.flyTo({
+                  center: city.coordinates,
+                  zoom: 10,
+                  essential: true, // this animation is considered essential with respect to prefers-reduced-motion
+                });
+              }}
+              isSoldOut={concert.preorder.isSoldOut}
+            />
+          );
+        })}
       </Stack>
     </Box>
   );

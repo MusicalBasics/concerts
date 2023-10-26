@@ -6,21 +6,20 @@ import Typography from "@mui/material/Typography";
 import Link from "next/link";
 
 export default function CityListItem({
-  city,
+  concert,
   onSelect,
   isSelected,
   isSoldOut,
 }) {
+  const { city, preorder, buyLink } = concert;
+  const { timeFrame } = preorder;
+
   function onCityClick() {
-    if (isSoldOut) return;
     onSelect(city.id);
   }
 
-  const buyLink = isSoldOut ? (
-    <Link href={city.buyLink}>Buy Tickets</Link>
-  ) : (
-    <Link href={`/cities/${city.id}`}>Preorder</Link>
-  );
+  const link = isSoldOut ? buyLink : `/cities/${city.id}`;
+  const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
 
   return (
     <Card
@@ -54,9 +53,11 @@ export default function CityListItem({
             color="text.secondary"
             component="div"
           >
-            {city.timeFrame}
+            {timeFrame}
           </Typography>
-          <Button variant="contained">{buyLink}</Button>
+          <Link href={link}>
+            <Button variant="contained">{linkText}</Button>
+          </Link>
         </CardContent>
       </Box>
     </Card>
