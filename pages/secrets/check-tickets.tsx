@@ -15,7 +15,7 @@ import {
 const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
   const [copiedId, setCopiedId] = useState(null);
 
-  const copyToClipboard = (id) => {
+  const copyToClipboard = (id: any) => {
     navigator.clipboard.writeText(id);
     setCopiedId(id);
   };
