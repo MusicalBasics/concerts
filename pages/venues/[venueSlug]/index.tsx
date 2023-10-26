@@ -1,6 +1,5 @@
-import * as mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Icon, IconButton, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { FC } from "react";
 import Layout from "@/components/layout";
@@ -9,16 +8,19 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Venue } from "@/models/Venue";
-
-mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
+import { Map, Marker } from "react-map-gl";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
 const VenuePage: FC<VenuePageProps> = ({ venue }) => {
   // Use MUI Box component to wrap the content
+
+  const { lat, lng } = venue.coordinates;
+
   return (
     <Layout>
-      <Link href="/venues">ALL VENUES</Link>
-      <Stack textAlign="center" my={5} spacing={1}>
-        <Box p={2}>
+      {/* <Link href="/venues">ALL VENUES</Link> */}
+      <Stack textAlign="center" my={5} spacing={3}>
+        <Box>
           <Image
             src={venue.image.asset.url}
             alt={venue.name}
@@ -26,15 +28,30 @@ const VenuePage: FC<VenuePageProps> = ({ venue }) => {
             height={240}
           />
         </Box>
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: "bold",
-            cursor: "pointer",
-          }}
-        >
-          {venue.name}
-        </Typography>
+        <Box>
+          <Typography variant="h5" fontWeight={"bold"}>
+            {venue.name}
+          </Typography>
+          {/* address */}
+          <Typography variant="body1">{venue.address}</Typography>
+        </Box>
+        <Box display={"flex"} justifyContent={"center"} alignItems={"center"}>
+          <Map
+            mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+            initialViewState={{
+              longitude: lng,
+              latitude: lat,
+              zoom: 14,
+            }}
+            style={{ width: 600, height: 400 }}
+            // dark
+            mapStyle={"mapbox://styles/mapbox/dark-v11"}
+          >
+            <Marker longitude={lng} latitude={lat}>
+              <LocationOnIcon color="error" fontSize="large" />
+            </Marker>
+          </Map>
+        </Box>
       </Stack>
     </Layout>
   );
@@ -54,11 +71,12 @@ export const getStaticProps = (async (context) => {
 
   // Pull data from sanity
   // const concertsQuery = `*[_type == "concert" && city.slug.current == "${citySlug}"] {
-  const citiesQuery = `*[_type == "venue" && slug.current == "${venueSlug}"] {
+  const venuesQuery = `*[_type == "venue" && slug.current == "${venueSlug}"] {
     _id,
     id,
     name,
     coordinates,
+    address,
     slug,
     image {
       asset-> {
@@ -66,7 +84,7 @@ export const getStaticProps = (async (context) => {
       }
     },
   }`;
-  const venues = await sanityClient.fetch(citiesQuery);
+  const venues = await sanityClient.fetch(venuesQuery);
 
   console.log("venues", venues);
 
