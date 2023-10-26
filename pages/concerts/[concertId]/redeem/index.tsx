@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,14 +9,17 @@ import { sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import RegularButton from "@/components/concerts/regular-button";
 import Layout from "@/components/layout";
+import { Concert } from "@/models/Concert";
+import { Map } from "react-map-gl";
+import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 
-const ConcertPage: React.FC<ConcertPageProps> = ({ concert }) => {
+const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   const { venue, _id: concertId } = concert;
 
   return (
     <Layout>
       <Stack textAlign="center" my={2} spacing={1}>
-        <Typography variant="h3">{concert.name}</Typography>
+        <Typography variant="h4">{concert.name}</Typography>
         <Box p={1}>
           <Image
             src={venue.image.asset.url}
@@ -25,7 +28,7 @@ const ConcertPage: React.FC<ConcertPageProps> = ({ concert }) => {
             height={240}
           />
         </Box>
-        <Typography variant="h4">{venue.name}</Typography>
+        <Typography variant="h5">{venue.name}</Typography>
         <Typography>{venue.address}</Typography>
         <Typography variant="caption">
           {getFormattedDate(concert.date)}
@@ -104,7 +107,7 @@ export const getStaticProps = (async (context) => {
 
 export const getStaticPaths = (async () => {
   const concerts = await sanityClient.fetch(
-    `*[_type == "concert"]{
+    `*[_type == "concert" && venue != null]{
       _id
     }
   `
@@ -121,31 +124,6 @@ export const getStaticPaths = (async () => {
 }) satisfies GetStaticPaths;
 
 // Types
-interface Concert {
-  _id: string;
-  name: string;
-  city: {
-    name: string;
-    image: {
-      asset: {
-        url: string;
-      };
-    };
-    _id: string;
-  };
-  venue: {
-    name: string;
-    address: string;
-    image: {
-      asset: {
-        url: string;
-      };
-    };
-    _id: string;
-  };
-  date: string;
-}
-
 interface ConcertPageProps {
   concert: Concert;
 }

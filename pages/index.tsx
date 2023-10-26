@@ -1,7 +1,7 @@
 import CityList from "@/components/city-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Container } from "@mui/material";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC } from "react";
 import styles from "./index.module.css";
 import RootLayout from "@/components/root-layout";
 import ResponsiveAppBar from "@/components/app-bar";
@@ -81,8 +81,6 @@ export const getStaticProps = (async () => {
       },
     };
   }
-
-  console.log(concertsData[0]);
 
   const concerts = _.orderBy(concertsData, ["city.id"], ["asc"]);
 
