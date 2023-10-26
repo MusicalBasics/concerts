@@ -53,11 +53,20 @@ const ConcertPage: FC<ConcertPageProps> = ({
         <Typography>{/* Current Presales: {city.ticketsSold} */}</Typography>
       </Stack>
       <Box mt={3} mb={3} textAlign="center">
-        <Link href={buyLink}>
-          <Button size="large" variant="outlined" color="secondary">
-            Buy Tickets
-          </Button>
-        </Link>
+        <Stack direction="row" spacing={2} justifyContent="center">
+          <Link href={buyLink}>
+            <Button size="large" variant="outlined" color="secondary">
+              Buy Tickets
+            </Button>
+          </Link>
+          {preorder.isSoldOut && (
+            <Link href={`/concerts/${concert._id}/redeem`}>
+              <Button size="large" variant="outlined" color="secondary">
+                Redeem Tickets
+              </Button>
+            </Link>
+          )}
+        </Stack>
       </Box>
       <Milestones milestones={milestones} presales={ticketsSold} />
       <Stack
