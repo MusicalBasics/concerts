@@ -9,15 +9,14 @@ import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
 import FloatingCityList from "@/components/floating-city-list";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
+import City from "@/models/city";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
-const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
-  const { city, preorder, buyLink } = concert;
-
+const CityPage: FC<CityPageProps> = ({ city }) => {
   // const map = useRef<
   //   | (mapboxgl.Map & {
   //       setFog: any;
@@ -93,7 +92,6 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   // Use MUI Box component to wrap the content
   return (
     <Layout>
-      <FloatingCityList cityLinks={require("@/data/city_links.json")} />
       <Stack textAlign="center" my={5} spacing={1}>
         <Box p={2}>
           <Image
@@ -119,16 +117,14 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
         >
           {city.name}
         </Typography>
-        <Typography variant="caption">{preorder.timeFrame}</Typography>
-        <Typography>{/* Current Presales: {city.ticketsSold} */}</Typography>
       </Stack>
-      <Box mt={3} mb={3} textAlign="center">
+      {/* <Box mt={3} mb={3} textAlign="center">
         <Link href={buyLink}>
           <Button size="large" variant="outlined" color="secondary">
             Buy Tickets
           </Button>
         </Link>
-      </Box>
+      </Box> */}
       {/* <Milestones venues={city.venues} presales={city.ticketsSold} /> */}
       {/* <Stack
         direction={{ xs: "column", md: "row" }}
@@ -144,11 +140,11 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   );
 };
 
-export default ConcertPage;
+export default CityPage;
 
-export const getServerSideProps = (async (context) => {
+export const getStaticProps = (async (context) => {
   // Get cityId from the URL
-  const { citySlug } = context.query;
+  const { citySlug } = context.params!;
 
   if (!citySlug) {
     return {
@@ -158,91 +154,61 @@ export const getServerSideProps = (async (context) => {
 
   // Pull data from sanity
   // const concertsQuery = `*[_type == "concert" && city.slug.current == "${citySlug}"] {
-  const concertsQuery = `*[_type == "concert"] {
-    _id,
-    name,
+  const citiesQuery = `*[_type == "city" && slug.current == "${citySlug}"] {
     slug,
-    date,
-    buyLink,
-    city->{
-      _id,
-      id,
-      name,
-      coordinates,
-      slug,
-      image {
-        asset-> {
-          url
-        }
-      },
-    },
-    preorder {
-      isSoldOut,
-      timeFrame,
-      milestones,
+    _id,
+    id,
+    name,
+    coordinates,
+    slug,
+    image {
+      asset-> {
+        url
+      }
     },
   }`;
-  const concertsData = await sanityClient.fetch(concertsQuery);
+  const citiesData = await sanityClient.fetch(citiesQuery);
 
-  console.log("concertsData", concertsData);
+  console.log("citiesData", citiesData);
 
-  if (!concertsData.length) {
+  if (!citiesData.length) {
     return {
       notFound: true,
     };
   }
 
-  const concerts = _.orderBy(concertsData, ["city.id"], ["asc"]);
-  const concert = concerts[3];
-
-  const city = concert.city;
+  const city = citiesData[0];
 
   // const inventoryTickets = await getInventory(city.productId);
-
-  // DEBUG
   // console.log("inventoryTickets", inventoryTickets);
-
   // city.ticketsSold = city.totalTickets - inventoryTickets;
 
   return {
     props: {
-      concert,
+      city,
     },
   };
-}) satisfies GetServerSideProps<ConcertPageProps>;
+}) satisfies GetStaticProps<CityPageProps>;
+
+export const getStaticPaths = (async () => {
+  const cities: City[] = await sanityClient.fetch(
+    `*[_type == "city"]{
+      slug,
+    }
+  `
+  );
+
+  return {
+    paths: cities.map((city) => ({
+      params: {
+        citySlug: city.slug.current,
+      },
+    })),
+    fallback: false,
+  };
+}) satisfies GetStaticPaths;
 
 // Type Definitions
-interface ConcertPageProps {
-  concert: Concert;
-}
-
-interface Concert {
-  _id: string;
-  name: string;
-  slug: string;
-  date: string;
-  buyLink: string;
+interface CityPageProps {
   city: City;
-  preorder: Preorder;
-  productId?: string;
-  totalTickets?: number;
-  ticketsSold?: number;
-}
-
-interface City {
-  _id: string;
-  id: string;
-  name: string;
-  coordinates: number[];
-  slug: string;
-  image: {
-    asset: {
-      url: string;
-    };
-  };
-}
-
-interface Preorder {
-  isSoldOut: boolean;
-  timeFrame: string;
 }
