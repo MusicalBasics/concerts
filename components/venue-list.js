@@ -15,17 +15,23 @@ import {
 import { grey } from "@mui/material/colors";
 import styles from "./venue-list.module.css";
 import AssistantDirectionIcon from "@mui/icons-material/AssistantDirection";
+import { useMap } from "react-map-gl";
 mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
-export default function VenueList({ map, venues }) {
+export default function VenueList({ milestones }) {
+  const { current: map } = useMap();
+  const venues = milestones.map((milestone) => {
+    return milestone.venue;
+  });
+
   function onNavigationClick(venue) {
-    map.current.flyTo({
+    map.flyTo({
       center: venue.coordinates,
       zoom: 15,
       essential: true, // this animation is considered essential with respect to prefers-reduced-motion
     });
 
-    map.current.on("moveend", () => {
+    map.on("moveend", () => {
       closeAllPopups();
       venue.marker.togglePopup();
     });
@@ -42,6 +48,7 @@ export default function VenueList({ map, venues }) {
   return (
     <Box
       sx={{
+        height: "100%",
         maxHeight: {
           xs: "220px",
           sm: "calc(20vh + 200px)",

@@ -1,9 +1,8 @@
-import * as mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
 import Milestones from "@/components/milestones";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Link from "next/link";
-import { FC } from "react";
+import { FC, useMemo, useState } from "react";
 import Layout from "@/components/layout";
 import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
@@ -13,8 +12,11 @@ import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Concert } from "@/models/Concert";
 import { getCityLinks } from "@/utils/concert-utils";
-
-mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
+import { Map, Marker, Popup } from "react-map-gl";
+import mapboxgl from "mapbox-gl";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import VenueList from "@/components/venue-list";
+import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 
 const ConcertPage: FC<ConcertPageProps> = ({
   concert,
@@ -22,78 +24,9 @@ const ConcertPage: FC<ConcertPageProps> = ({
   cityLinks,
 }) => {
   const { city, preorder, buyLink } = concert;
-
+  const { milestones } = preorder;
+  const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const cityLink = `/cities/${city.slug.current}`;
-
-  // const map = useRef<
-  //   | (mapboxgl.Map & {
-  //       setFog: any;
-  //       setPadding: any;
-  //     })
-  //   | null
-  // >(null);
-  // const mapContainer = useRef<string | HTMLElement | null>(null);
-  // const markers = useRef([]);
-  // const [lng, setLng] = useState(coordinates[0]);
-  // const [lat, setLat] = useState(coordinates[1]);
-  // const [zoom, setZoom] = useState(10);
-
-  // useEffect(() => {
-  //   if (map.current) return; // initialize map only once
-  //   map.current = new mapboxgl.Map({
-  //     container: mapContainer.current!,
-  //     style: "mapbox://styles/mapbox/navigation-night-v1",
-  //     center: [lng, lat],
-  //     zoom: zoom,
-  //     attributionControl: false,
-  //   });
-
-  //   // Disable user interactions
-  //   map.current.dragPan.disable();
-  //   map.current.scrollZoom.disable();
-  //   map.current.boxZoom.disable();
-  //   map.current.dragRotate.disable();
-  //   map.current.keyboard.disable();
-  //   map.current.doubleClickZoom.disable();
-  //   map.current.touchZoomRotate.disableRotation();
-
-  //   return () => map.current!.remove();
-  // }, []);
-
-  // useEffect(() => {
-  //   if (!map.current) return; // wait for map to initialize
-
-  //   // Remove previous markers
-  //   markers.current.forEach((marker) => marker.remove());
-  //   markers.current = [];
-
-  //   // Add markers for all venues
-  //   city.venues.forEach((venue) => {
-  //     const marker = new mapboxgl.Marker()
-  //       .setLngLat(venue.coordinates)
-  //       .setPopup(
-  //         new mapboxgl.Popup().setHTML(
-  //           `
-  //         <div style="color: black;">
-  //         <h3>${venue.name}</h3>
-  //         <p>${venue.address}</p>
-  //         <p>${venue.threshold} minimum</p>
-  //         </div>
-  //         `
-  //         )
-  //       )
-  //       .addTo(map.current!);
-
-  //     markers.current.push(marker);
-  //     venue.marker = marker;
-  //   });
-
-  //   // Update the map center
-  //   map.current.flyTo({
-  //     center: [lng, lat],
-  //     zoom: zoom,
-  //   });
-  // }, [city, lng, lat, zoom]);
 
   // Use MUI Box component to wrap the content
   return (
@@ -115,13 +48,6 @@ const ConcertPage: FC<ConcertPageProps> = ({
             sx={{
               cursor: "pointer",
             }}
-            // onClick={() => {
-            //   map.current.flyTo({
-            //     center: coordinates,
-            //     zoom: zoom,
-            //     essential: true, // this animation is considered essential with respect to prefers-reduced-motion
-            //   });
-            // }}
           >
             {city.name}
           </Typography>
@@ -136,17 +62,70 @@ const ConcertPage: FC<ConcertPageProps> = ({
           </Button>
         </Link>
       </Box>
-      <Milestones milestones={preorder.milestones} presales={ticketsSold} />
-      {/* <Stack
+      <Milestones milestones={milestones} presales={ticketsSold} />
+      <Stack
         direction={{ xs: "column", md: "row" }}
         spacing={2}
         width="100%"
         mb={10}
         display="flex"
       >
-        <Box ref={mapContainer} sx={{ flex: 1, minHeight: 300 }} />
-        <VenueList venues={city.venues} map={map} sx={{ flex: 1 }} />
-      </Stack> */}
+        <Box
+          display={"flex"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          width={"100%"}
+        >
+          <Map
+            mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+            initialViewState={{
+              longitude: city.coordinates.lng,
+              latitude: city.coordinates.lat,
+              zoom: 10,
+            }}
+            style={{ width: "100%", height: 400 }}
+            // dark
+            mapStyle={"mapbox://styles/mapbox/dark-v11"}
+          >
+            {milestones.map((milestone) => {
+              const { venue } = milestone;
+              const { coordinates } = venue;
+              return (
+                <Marker
+                  longitude={coordinates.lng}
+                  latitude={coordinates.lat}
+                  onClick={(e) => {
+                    // If we let the click event propagates to the map, it will immediately close the popup
+                    // with `closeOnClick: true`
+                    e.originalEvent.stopPropagation();
+                    setPopupInfo({
+                      name: venue.name,
+                      adress: venue.address,
+                      longitude: coordinates.lng,
+                      latitude: coordinates.lat,
+                    });
+                  }}
+                >
+                  <TheaterComedyIcon color="info" />
+                </Marker>
+              );
+            })}
+            {popupInfo && (
+              <Popup
+                anchor="bottom"
+                longitude={Number(popupInfo.longitude)}
+                latitude={Number(popupInfo.latitude)}
+                onClose={() => setPopupInfo(null)}
+              >
+                <Typography variant="h6" color={"primary"}>
+                  {popupInfo.name}
+                </Typography>
+                <Typography color={"primary"}>{popupInfo.adress}</Typography>
+              </Popup>
+            )}
+          </Map>
+        </Box>
+      </Stack>
     </Layout>
   );
 };
@@ -267,4 +246,11 @@ interface ConcertPageProps {
   concert: Concert;
   ticketsSold: number;
   cityLinks: any[];
+}
+
+interface PopupInfo {
+  name: string;
+  adress: string;
+  longitude: number;
+  latitude: number;
 }

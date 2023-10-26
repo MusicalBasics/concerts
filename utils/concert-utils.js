@@ -80,8 +80,12 @@ export const getCityLinks = async () => {
     const concerts = await sanityClient.fetch(query);
 
     const groupedConcerts = _.groupBy(concerts, (concert) => {
-      const formattedStartDate = moment(concert.startDate).format("MMM YYYY");
-      const formattedEndDate = moment(concert.endDate).format("MMM YYYY");
+      const formattedStartDate = moment(new Date(concert.startDate)).format(
+        "MMM YYYY"
+      );
+      const formattedEndDate = moment(new Date(concert.endDate)).format(
+        "MMM YYYY"
+      );
       return `${formattedStartDate} - ${formattedEndDate}`;
     });
 
