@@ -37,6 +37,11 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
         Check Tickets
       </Typography>
       <List>
+        {duplicateTickets.length === 0 && (
+          <ListItem>
+            <Typography variant="h4">No duplicate tickets found!</Typography>
+          </ListItem>
+        )}
         {duplicateTickets.map((ticket) => (
           <ListItem key={ticket.number}>
             <Typography variant="h4">{ticket.number}: </Typography>
