@@ -9,9 +9,22 @@ import Tooltip from "./tooltip";
 interface SeatingMapProps {
   sections: Section[];
   curve?: number;
+  stageWidthOffset?: number;
+  stageRectHeight?: number;
+  stageHeightMultiplier?: number;
+  rowGap?: number;
+  gapBetweenSeats?: number;
 }
 
-const SeatingMap: FC<SeatingMapProps> = ({ sections = [], curve = 0.0002 }) => {
+const SeatingMap: FC<SeatingMapProps> = ({
+  sections = [],
+  curve = 0.0002,
+  stageWidthOffset = 35,
+  stageRectHeight = 100,
+  stageHeightMultiplier = 1.8,
+  rowGap = 8,
+  gapBetweenSeats = 5,
+}) => {
   const [selectedSeats, setSelectedSeats] = useState({});
   const [hoveredSeat, setHoveredSeat] = useState<string | null | undefined>(
     null
@@ -59,7 +72,6 @@ const SeatingMap: FC<SeatingMapProps> = ({ sections = [], curve = 0.0002 }) => {
   const rowHeight = 20;
   const seatWidth = 30;
   const gapBetweenSections = seatWidth * 2;
-  const gapBetweenSeats = 5;
 
   // Stage
   const getLongestRowWidth = (section: Section) => {
@@ -71,10 +83,8 @@ const SeatingMap: FC<SeatingMapProps> = ({ sections = [], curve = 0.0002 }) => {
   const stageWidth =
     _.sumBy(sections, getLongestRowWidth) +
     gapBetweenSections * (sections.length - 1);
-  const stageHeight = 800;
-
+  const stageHeight = 600;
   const stageRectWidth = stageWidth / 3;
-  const stageRectHeight = 100;
   const stageRectX = (stageWidth - stageRectWidth) / 2; // centering the rectangle
   const stageRectY = 10; // you can adjust this value to position the rectangle
 
@@ -131,10 +141,17 @@ const SeatingMap: FC<SeatingMapProps> = ({ sections = [], curve = 0.0002 }) => {
       sectionStartX + seatIndex * (seatWidth + gapBetweenSeats) + offset;
 
     const a = curve;
-    const y =
-      -a * Math.pow(x - stageWidth / 2, 2) +
-      rowIndex * (rowHeight + gapBetweenSeats) +
-      stageRectHeight * 1.5;
+    // Adjust the parabola to ensure it's centered vertically on the stage
+    const parabolaHeight = stageRectHeight * stageHeightMultiplier; // Adjust this value to control the height of the parabola
+    const parabolaY =
+      -a * Math.pow(x - (stageWidth - stageWidthOffset) / 2, 2) +
+      parabolaHeight;
+
+    // Adjust the linear part to control the vertical position of the seats within each row
+    const linearY = rowIndex * (rowHeight + rowGap);
+
+    // Combine the parabolic and linear parts
+    const y = parabolaY + linearY;
 
     return { x, y };
   };

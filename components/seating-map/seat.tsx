@@ -29,13 +29,13 @@ const Seat: FC<SeatProps> = ({
 
   let fill;
   if (isReserved || !isReservable) {
-    fill = "grey";
+    fill = "#B0B0B0"; // soft grey
   } else if (isSelected) {
-    fill = "blue";
+    fill = "#89CFF0"; // baby blue
   } else if (isHovered) {
-    fill = "green";
+    fill = "#98FB98"; // pale green
   } else {
-    fill = "white"; // default color
+    fill = "#F5F5F5"; // light grey (almost white)
   }
 
   return (

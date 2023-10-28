@@ -34,7 +34,7 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections }) => {
   return (
     // Define the component's JSX
     <Container>
-      <SeatingMap sections={sections} />
+      <SeatingMap sections={sections} curve={0.0005} />
     </Container>
   );
 };
