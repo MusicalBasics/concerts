@@ -32,8 +32,9 @@ import {
 import Link from "next/link";
 
 export default function GenerelTicketPage({ concert }) {
+  
   const router = useRouter();
-
+  
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [ticketCount, setTicketCount] = useState(0);
   const [name, setName] = useState("");
@@ -42,7 +43,7 @@ export default function GenerelTicketPage({ concert }) {
   const [reservationSuccess, setReservationSuccess] = useState(false);
   const [ticketNumbers, setTicketNumbers] = useState("");
   const [ticketIds, setTicketIds] = useState([]);
-
+  
   const venue = concert.venue;
   const concertId = concert._id;
   const seatingChart = concert.seatingChart;
@@ -370,7 +371,7 @@ export async function getServerSideProps(context) {
         _id
       },
       date,
-      seatingChart {
+      seatingChart->{
         sections[],
         referenceImage {
           asset-> {

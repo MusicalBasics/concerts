@@ -152,13 +152,17 @@ export default function GoldenTicketPage({ concert }) {
       });
 
       if (emailResponse.status !== HttpStatusCode.Ok) {
-        console.log("There was an error sending the confirmation email.");
+        const { message } = emailResponse.data;
+        console.log(
+          "There was an error sending the confirmation email." + message
+        );
       }
 
       alert("Confirmation email sent.");
     } catch (error) {
       console.error(error);
-      alert("There was an error reserving your seats.");
+      const { message } = error.response.data;
+      alert("There was an error reserving your seats." + message);
     }
     setLoading(false);
   };
@@ -339,7 +343,7 @@ export async function getServerSideProps(context) {
         _id
       },
       date,
-      seatingChart {
+      seatingChart->{
         sections[],
         referenceImage {
           asset-> {

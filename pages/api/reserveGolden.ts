@@ -102,6 +102,9 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
       venue -> {
         name,
         _id
+      },
+      seatingChart -> {
+        _id,
       }
     }[0]`;
     const concertParams = { concertId };
@@ -118,29 +121,27 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { _id: venueId, name: venueName } = concert.venue;
+    const { _id: seatingChartId } = concert.seatingChart;
 
     // Go through each selected seat and update the seat to be reserved by the customer
     for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
       const ticketId = ticket!._id;
       const { sectionName, rowId, seatNumber } = seat;
 
-      const seatQuery = `*[_type == "concert" && _id == $concertId]{
-        seatingChart {
-          sections[sectionName == $sectionName] {
-            rows[id == $rowId] {
-              seats[number == $seatNumber] {
-                _key
-              }
+      const seatQuery = `*[_type == "seatingChart" && _id == $seatingChartId]{
+        sections[sectionName == $sectionName] {
+          rows[id == $rowId] {
+            seats[number == $seatNumber] {
+              _key
             }
           }
         }
       }[0]`;
+      const seatParams = { seatingChartId, sectionName, rowId, seatNumber };
 
-      const seatParams = { concertId, sectionName, rowId, seatNumber };
       const seatData = await sanityClient.fetch(seatQuery, seatParams);
 
-      const seatKey =
-        seatData?.seatingChart?.sections[0]?.rows[0]?.seats[0]?._key;
+      const seatKey = seatData?.sections[0]?.rows[0]?.seats[0]?._key;
 
       if (!seatKey) {
         res.status(HttpStatusCode.InternalServerError).json({
@@ -151,16 +152,16 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
 
       // Update the seat to be reserved by the customer
       const updatedSeat = await sanityClient
-        .patch(concertId)
+        .patch(seatingChartId)
         .set({
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
             true,
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
             {
               _type: "reference",
               _ref: customerId,
             },
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].redeemedTicket`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].redeemedTicket`]:
             {
               _type: "reference",
               _ref: ticketId,
@@ -177,13 +178,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      logger.debug(
-        updatedSeat.seatingChart.sections
-          .find((section: Section) => section.sectionName === sectionName)
-          .rows.find((row: Row) => row.id === rowId)
-          .seats.find((seat: Seat) => seat._key === seatKey),
-        "updatedSeat"
-      );
+      // logger.debug(updatedSeat, "updatedSeat");
 
       // Update the ticket to be redeemed, and link to the seat
       // It's not a reference,
@@ -214,7 +209,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      logger.debug(redeemedTicket, "redeemedTicket");
+      // logger.debug(redeemedTicket, "redeemedTicket");
     }
 
     res.status(HttpStatusCode.Ok).json({ success: true });

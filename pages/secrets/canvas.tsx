@@ -19,8 +19,6 @@ interface CanvasPageProps {
 }
 
 const CanvasPage: FC<CanvasPageProps> = ({ sections }) => {
-  console.log(sections);
-
   // Initialize state if needed
   const [state, setState] = useState<CanvasPageState>({
     // ...

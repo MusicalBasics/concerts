@@ -82,7 +82,6 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
-    logger.debug("here");
     // Filter out tickets that have already been redeemed
     const filteredGoldenTickets = filteredConcertTickets.filter(
       (ticket) => ticket.type === "golden"
