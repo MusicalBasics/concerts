@@ -121,7 +121,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { _id: venueId, name: venueName } = concert.venue;
-    const { _id: seatingChartId } = concert.seatingChart;
+    const seatingChartId = concert.seatingChart._id;
 
     // Go through each selected seat and update the seat to be reserved by the customer
     for (const [ticket, seat] of _.zip(goldenTickets, selectedSeats)) {
@@ -178,7 +178,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      // logger.debug(updatedSeat, "updatedSeat");
+      logger.debug(updatedSeat, "updatedSeat");
 
       // Update the ticket to be redeemed, and link to the seat
       // It's not a reference,
@@ -197,6 +197,10 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
             venue: {
               _type: "reference",
               _ref: venueId,
+            },
+            seatingChart: {
+              _type: "reference",
+              _ref: seatingChartId,
             },
           },
         })
@@ -258,6 +262,7 @@ interface Venue {
 }
 
 interface SeatingChart {
+  _id: string;
   _type: string;
   sections: Section[];
 }

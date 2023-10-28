@@ -168,6 +168,9 @@ const reserveGeneralHandler = async (
       venue -> {
         name,
         _id
+      },
+      seatingChart -> {
+        _id,
       }
     }[0]`;
     const concertParams = { concertId };
@@ -184,29 +187,27 @@ const reserveGeneralHandler = async (
     }
 
     const { _id: venueId, name: venueName } = concert.venue;
+    const seatingChartId = concert.seatingChart._id;
 
     // Find the seats
     for (const [seat, ticket] of _.zip(selectedSeats, tickets)) {
       const ticketId = ticket!._id;
       const { sectionName, rowId, seatNumber } = seat;
 
-      const seatQuery = `*[_type == "concert" && _id == $concertId]{
-        seatingChart {
-          sections[sectionName == $sectionName] {
-            rows[id == $rowId] {
-              seats[number == $seatNumber] {
-                _key
-              }
+      const seatQuery = `*[_type == "seatingChart" && _id == $seatingChartId]{
+        sections[sectionName == $sectionName] {
+          rows[id == $rowId] {
+            seats[number == $seatNumber] {
+              _key
             }
           }
         }
       }[0]`;
 
-      const seatParams = { concertId, sectionName, rowId, seatNumber };
+      const seatParams = { seatingChartId, sectionName, rowId, seatNumber };
       const seatData = await sanityClient.fetch(seatQuery, seatParams);
 
-      const seatKey =
-        seatData?.seatingChart?.sections[0]?.rows[0]?.seats[0]?._key;
+      const seatKey = seatData?.sections[0]?.rows[0]?.seats[0]?._key;
 
       if (!seatKey) {
         res.status(HttpStatusCode.NotFound).json({
@@ -217,16 +218,16 @@ const reserveGeneralHandler = async (
 
       // Update the seat to be reserved by the customer
       const updatedSeat = await sanityClient
-        .patch(concertId)
+        .patch(seatingChartId)
         .set({
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].isReserved`]:
             true,
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].reservedBy`]:
             {
               _type: "reference",
               _ref: customerId,
             },
-          [`seatingChart.sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].redeemedTicket`]:
+          [`sections[sectionName==\"${sectionName}\"].rows[id==\"${rowId}\"].seats[_key==\"${seatKey}\"].redeemedTicket`]:
             {
               _type: "reference",
               _ref: ticketId,
@@ -237,7 +238,7 @@ const reserveGeneralHandler = async (
         });
 
       logger.debug(
-        updatedSeat.seatingChart.sections
+        updatedSeat.sections
           .find((section: Section) => section.sectionName === sectionName)
           .rows.find((row: Row) => row.id === rowId)
           .seats.find((seat: Seat) => seat._key === seatKey),
@@ -262,6 +263,10 @@ const reserveGeneralHandler = async (
               _type: "reference",
               _ref: venueId,
             },
+            seatingChart: {
+              _type: "reference",
+              _ref: seatingChartId,
+            }
           },
         })
         .commit({ autoGenerateArrayKeys: true });
@@ -316,6 +321,7 @@ interface Venue {
 }
 
 interface SeatingChart {
+  _id: string;
   _type: string;
   sections: Section[];
 }

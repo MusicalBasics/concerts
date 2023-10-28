@@ -91,6 +91,10 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     const unredeemedTickets = publishedTickets.filter(
       (ticket) => !ticket.redeemed
     );
+
+    console.log(publishedTickets, "publishedTickets");
+    console.log(unredeemedTickets, "unredeemedTickets");
+
     // If there are no unredeemed tickets, respond with an error
     if (unredeemedTickets.length === 0) {
       res
