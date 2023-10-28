@@ -237,13 +237,13 @@ const reserveGeneralHandler = async (
           autoGenerateArrayKeys: true,
         });
 
-      logger.debug(
-        updatedSeat.sections
-          .find((section: Section) => section.sectionName === sectionName)
-          .rows.find((row: Row) => row.id === rowId)
-          .seats.find((seat: Seat) => seat._key === seatKey),
-        "updatedSeat"
-      );
+      // logger.debug(
+      //   updatedSeat.sections
+      //     .find((section: Section) => section.sectionName === sectionName)
+      //     .rows.find((row: Row) => row.id === rowId)
+      //     .seats.find((seat: Seat) => seat._key === seatKey),
+      //   "updatedSeat"
+      // );
 
       // Update the ticket to be redeemed, and link to the seat
       // It's not a reference,
@@ -271,7 +271,7 @@ const reserveGeneralHandler = async (
         })
         .commit({ autoGenerateArrayKeys: true });
 
-      logger.debug(redeemedTicket, "redeemedTicket");
+      // logger.debug(redeemedTicket, "redeemedTicket");
     }
 
     res.status(HttpStatusCode.Ok).json({ success: true });

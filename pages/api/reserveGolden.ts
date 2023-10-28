@@ -178,7 +178,7 @@ const reserveGolden = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      logger.debug(updatedSeat, "updatedSeat");
+      // logger.debug(updatedSeat, "updatedSeat");
 
       // Update the ticket to be redeemed, and link to the seat
       // It's not a reference,
