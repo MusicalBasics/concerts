@@ -97,12 +97,16 @@ const SeatingMap: FC<SeatingMapProps> = ({ sections = [], curve = 0.0002 }) => {
     return widthOfPreviousSections;
   };
 
-  const getLongestRowLength = (section) => {
+  const getLongestRowLength = (section: Section) => {
     const longestRow = _.maxBy(section.rows, (row) => row.seats.length);
     return longestRow ? longestRow.seats.length : 0;
   };
 
-  const getSeatPosition = (rowIndex, seatIndex, sectionIndex) => {
+  const getSeatPosition = (
+    rowIndex: number,
+    seatIndex: number,
+    sectionIndex: number
+  ) => {
     const sectionStartX = getSectionStartX(sectionIndex);
     const longestRowLength = getLongestRowLength(sections[sectionIndex]);
     const currentRowLength = sections[sectionIndex].rows[rowIndex].seats.length;
