@@ -49,42 +49,39 @@ export default CanvasPage;
 export const getServerSideProps = (async (context) => {
   const TEST_CONCERT_ID = "4f4b9063-70e7-457f-b4b4-8494eadb85c1";
 
-  const concerts = await sanityClient.fetch(
-    `*[_type == "concert" && _id == $concertId]{
-      _id,
-      seatingChart {
-        sections[] {
-          name,
-          rows[] {
-            id,
-            seats[] {
-              number,
-              isReserved,
-              isReservable,
-              reservedBy-> {
-                _id,
-                name,
-                email,
-              },
+  const seatingChartId = "db1714bf-361a-4bf9-88a6-6950949dc532";
+
+  const seatingCharts = await sanityClient.fetch(
+    `*[_type == "seatingChart" && _id == $seatingChartId]{
+      sections[] {
+        name,
+        rows[] {
+          id,
+          seats[] {
+            number,
+            isReserved,
+            isReservable,
+            reservedBy-> {
+              _id,
+              name,
+              email,
             },
           },
         },
       },
     }
   `,
-    { concertId: TEST_CONCERT_ID }
+    { seatingChartId }
   );
 
-  if (!concerts || concerts.length === 0) {
+  if (!seatingCharts || seatingCharts.length === 0) {
     return {
       notFound: true,
     };
   }
 
-  const concert = concerts[0];
-  const {
-    seatingChart: { sections },
-  } = concert;
+  const seatingChart = seatingCharts[0];
+  const { sections } = seatingChart;
 
   return {
     props: {
