@@ -1,8 +1,10 @@
-import { Button } from "@mui/material";
+import { toConcertDate } from "@/utils/datetime-utils";
+import { Button, Stack } from "@mui/material";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import moment from "moment";
 import Link from "next/link";
 
 export default function CityListItem({
@@ -16,6 +18,16 @@ export default function CityListItem({
 
   const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
   const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
+
+  const dateText = isSoldOut ? toConcertDate(concert.date) : timeFrame;
+
+  const LearnMoreButton = () => {
+    return (
+      <Link href={`/concerts/${concert._id}`}>
+        <Button variant="contained">Learn More</Button>
+      </Link>
+    );
+  };
 
   return (
     <Card
@@ -49,11 +61,14 @@ export default function CityListItem({
             color="text.secondary"
             component="div"
           >
-            {timeFrame}
+            {dateText}
           </Typography>
-          <Link href={link}>
-            <Button variant="contained">{linkText}</Button>
-          </Link>
+          <Stack direction="row" spacing={1}>
+            <Link href={link}>
+              <Button variant="contained">{linkText}</Button>
+            </Link>
+            {isSoldOut && <LearnMoreButton />}
+          </Stack>
         </CardContent>
       </Box>
     </Card>

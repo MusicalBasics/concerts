@@ -14,6 +14,7 @@ import { Concert } from "@/models/Concert";
 import { getCityLinks } from "@/utils/concert-utils";
 import { Map, Marker, Popup } from "react-map-gl";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
+import { toConcertDate } from "@/utils/datetime-utils";
 
 const ConcertPage: FC<ConcertPageProps> = ({
   concert,
@@ -24,6 +25,9 @@ const ConcertPage: FC<ConcertPageProps> = ({
   const { milestones } = preorder;
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const cityLink = `/cities/${city.slug.current}`;
+  const dateText = preorder.isSoldOut
+    ? toConcertDate(concert.date)
+    : preorder.timeFrame;
 
   // Use MUI Box component to wrap the content
   return (
@@ -49,8 +53,20 @@ const ConcertPage: FC<ConcertPageProps> = ({
             {city.name}
           </Typography>
         </Link>
-        <Typography variant="caption">{preorder.timeFrame}</Typography>
-        <Typography>{/* Current Presales: {city.ticketsSold} */}</Typography>
+        <Typography variant="caption">{dateText}</Typography>
+        {preorder.isSoldOut && (
+          <Stack>
+            <Typography>{concert.venue.name}</Typography>
+            <Box p={1}>
+              <Image
+                src={concert.venue.image.asset.url}
+                alt={concert.venue.name}
+                width={300}
+                height={200}
+              />
+            </Box>
+          </Stack>
+        )}
       </Stack>
       <Box mt={3} mb={3} textAlign="center">
         <Stack direction="row" spacing={2} justifyContent="center">
@@ -68,71 +84,75 @@ const ConcertPage: FC<ConcertPageProps> = ({
           )}
         </Stack>
       </Box>
-      <Milestones milestones={milestones} presales={ticketsSold} />
-      <Stack
-        direction={{ xs: "column", md: "row" }}
-        spacing={2}
-        width="100%"
-        mb={10}
-        display="flex"
-      >
-        <Box
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          width={"100%"}
+      {!preorder.isSoldOut && (
+        <Milestones milestones={milestones} presales={ticketsSold} />
+      )}
+      {!preorder.isSoldOut && (
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={2}
+          width="100%"
+          mb={10}
+          display="flex"
         >
-          <Map
-            mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
-            initialViewState={{
-              longitude: city.coordinates.lng,
-              latitude: city.coordinates.lat,
-              zoom: 10,
-            }}
-            style={{ width: "100%", height: 400 }}
-            // dark
-            mapStyle={"mapbox://styles/mapbox/dark-v11"}
+          <Box
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            width={"100%"}
           >
-            {milestones.map((milestone) => {
-              const { venue } = milestone;
-              const { coordinates } = venue;
-              return (
-                <Marker
-                  key={venue.name}
-                  longitude={coordinates.lng}
-                  latitude={coordinates.lat}
-                  onClick={(e) => {
-                    // If we let the click event propagates to the map, it will immediately close the popup
-                    // with `closeOnClick: true`
-                    e.originalEvent.stopPropagation();
-                    setPopupInfo({
-                      name: venue.name,
-                      adress: venue.address,
-                      longitude: coordinates.lng,
-                      latitude: coordinates.lat,
-                    });
-                  }}
+            <Map
+              mapboxAccessToken={MAPBOX_ACCESS_TOKEN}
+              initialViewState={{
+                longitude: city.coordinates.lng,
+                latitude: city.coordinates.lat,
+                zoom: 10,
+              }}
+              style={{ width: "100%", height: 400 }}
+              // dark
+              mapStyle={"mapbox://styles/mapbox/dark-v11"}
+            >
+              {milestones.map((milestone) => {
+                const { venue } = milestone;
+                const { coordinates } = venue;
+                return (
+                  <Marker
+                    key={venue.name}
+                    longitude={coordinates.lng}
+                    latitude={coordinates.lat}
+                    onClick={(e) => {
+                      // If we let the click event propagates to the map, it will immediately close the popup
+                      // with `closeOnClick: true`
+                      e.originalEvent.stopPropagation();
+                      setPopupInfo({
+                        name: venue.name,
+                        adress: venue.address,
+                        longitude: coordinates.lng,
+                        latitude: coordinates.lat,
+                      });
+                    }}
+                  >
+                    <TheaterComedyIcon color="info" />
+                  </Marker>
+                );
+              })}
+              {popupInfo && (
+                <Popup
+                  anchor="bottom"
+                  longitude={Number(popupInfo.longitude)}
+                  latitude={Number(popupInfo.latitude)}
+                  onClose={() => setPopupInfo(null)}
                 >
-                  <TheaterComedyIcon color="info" />
-                </Marker>
-              );
-            })}
-            {popupInfo && (
-              <Popup
-                anchor="bottom"
-                longitude={Number(popupInfo.longitude)}
-                latitude={Number(popupInfo.latitude)}
-                onClose={() => setPopupInfo(null)}
-              >
-                <Typography variant="h6" color={"primary"}>
-                  {popupInfo.name}
-                </Typography>
-                <Typography color={"primary"}>{popupInfo.adress}</Typography>
-              </Popup>
-            )}
-          </Map>
-        </Box>
-      </Stack>
+                  <Typography variant="h6" color={"primary"}>
+                    {popupInfo.name}
+                  </Typography>
+                  <Typography color={"primary"}>{popupInfo.adress}</Typography>
+                </Popup>
+              )}
+            </Map>
+          </Box>
+        </Stack>
+      )}
     </Layout>
   );
 };
@@ -156,6 +176,21 @@ export const getStaticProps = (async (context) => {
     slug,
     date,
     buyLink,
+    venue-> {
+      name,
+      address,
+      coordinates,
+      slug,
+      city-> {
+        name,
+        slug,
+      },
+      image {
+        asset-> {
+          url
+        }
+      },
+    },
     city->{
       _id,
       id,
