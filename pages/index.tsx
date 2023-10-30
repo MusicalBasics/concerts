@@ -89,6 +89,7 @@ export const getStaticProps = (async () => {
     props: {
       concerts,
     },
+    revalidate: 60,
   };
 }) satisfies GetStaticProps<HomePageProps>;
 

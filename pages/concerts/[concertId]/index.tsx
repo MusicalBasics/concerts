@@ -262,6 +262,7 @@ export const getStaticProps = (async (context) => {
       ticketsSold,
       cityLinks,
     },
+    revalidate: 60,
   };
 }) satisfies GetStaticProps;
 
