@@ -86,7 +86,7 @@ export default CanvasPage;
 
 // Data Fetching
 export const getServerSideProps = (async (context) => {
-  const { concertId } = context.params;
+  const { concertId } = context.params!;
 
   const concerts = await sanityClient.fetch(
     `*[_type == "concert" && _id == $concertId]{

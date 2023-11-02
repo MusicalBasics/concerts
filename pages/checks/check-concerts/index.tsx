@@ -7,10 +7,12 @@ import { Section } from "@/models/Section";
 import { Button, Container, Grid, Stack } from "@mui/material";
 import Link from "next/link";
 import _ from "lodash";
+import { Concert } from "@/models/Concert";
 
 interface CheckConcertsPageProps {
   // Define any props needed for the component
   sections: Section[];
+  concerts: Concert[];
 }
 
 const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
