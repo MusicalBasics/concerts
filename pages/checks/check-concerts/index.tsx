@@ -9,6 +9,7 @@ import Link from "next/link";
 import _ from "lodash";
 import { Concert } from "@/models/Concert";
 import { getFormattedDate } from "@/utils/concert-utils";
+import { useRouter } from "next/router";
 
 interface CheckConcertsPageProps {
   // Define any props needed for the component
@@ -20,6 +21,7 @@ const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
   // Initialize state if needed
 
   // Define any necessary functions for the component
+  const router = useRouter();
 
   return (
     // Define the component's JSX
@@ -48,17 +50,19 @@ const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
               <p>{concert.city.name}</p>
               <p>{concert.venue?.name || "No Venue"}</p>
             </Stack>
-            <Link href={`/checks/check-concerts/${concert._id}`}>
-              <Button
-                variant="contained"
-                sx={{
-                  backgroundColor: "#000000",
-                  color: "white",
-                }}
-              >
-                Check Concert
-              </Button>
-            </Link>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: "#000000",
+                color: "white",
+              }}
+              disabled={!concert.seatingChart}
+              onClick={() => {
+                router.push(`/checks/check-concerts/${concert._id}`);
+              }}
+            >
+              Check Concert
+            </Button>
           </Grid>
         ))}
       </Grid>
