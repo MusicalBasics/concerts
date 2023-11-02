@@ -8,6 +8,7 @@ import { Button, Container, Grid, Stack } from "@mui/material";
 import Link from "next/link";
 import _ from "lodash";
 import { Concert } from "@/models/Concert";
+import { getFormattedDate } from "@/utils/concert-utils";
 
 interface CheckConcertsPageProps {
   // Define any props needed for the component
@@ -23,17 +24,27 @@ const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
   return (
     // Define the component's JSX
     <Container>
-      <Grid container spacing={2}>
+      <Grid container spacing={2} gap={2} my={2}>
         {concerts.map((concert) => (
-          <Grid item xs={12} md={6} lg={4} key={concert._id}>
+          <Grid
+            item
+            xs={12}
+            md={5}
+            key={concert._id}
+            p={5}
+            borderRadius={2}
+            boxShadow="0px 0px 10px 0px rgba(0,0,0,0.75)"
+          >
             <Stack
               sx={{
                 color: "white",
               }}
               py={3}
+              px={2}
+              gap={1}
             >
               <h1>{concert.name}</h1>
-              <p>{concert.date}</p>
+              <p>{getFormattedDate(concert.date)}</p>
               <p>{concert.city.name}</p>
               <p>{concert.venue?.name || "No Venue"}</p>
             </Stack>
@@ -99,9 +110,19 @@ export const getServerSideProps = (async (context) => {
     };
   }
 
+  const sortedConcerts = _.orderBy(
+    concerts,
+    [
+      (concert) => {
+        return concert.date ? new Date(concert.date) : 0;
+      },
+    ],
+    ["desc"]
+  );
+
   return {
     props: {
-      concerts: _.sortBy(concerts, ["date"], ["asc"]),
+      concerts: sortedConcerts,
     },
   };
 }) satisfies GetServerSideProps;
