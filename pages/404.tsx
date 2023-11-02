@@ -26,7 +26,7 @@ export default function Custom404() {
           Page Not Found
         </Typography>
         <Typography variant="body1" paragraph>
-          The page you are looking for doesn't exist or has been moved.
+          The page you are looking for no longer exists or has been moved.
         </Typography>
         <Button
           variant="contained"
