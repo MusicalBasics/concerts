@@ -62,13 +62,13 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
       <SeatingMap sections={sections} curve={0.0005} />
       <Stack sx={{ color: "wheat" }} mt={5}>
         <Typography variant="h4">Seats Reserved Without User</Typography>
-        {seatsReservedWithoutUser.map((seats) => {
+        {seatsReservedWithoutUser.map((seats, i) => {
           return (
-            <Stack>
+            <Stack key={i}>
               {seats.length === 0
-                ? "Empty"
+                ? `${i} Empty`
                 : seats.map((seat) => {
-                    return <p>{seat.number}</p>;
+                    return <p key={seat.number}>{seat.number}</p>;
                   })}
             </Stack>
           );
