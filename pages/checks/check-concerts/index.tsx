@@ -37,7 +37,7 @@ const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
               <p>{concert.city.name}</p>
               <p>{concert.venue?.name || "No Venue"}</p>
             </Stack>
-            <Link href={`/secrets/check-concerts/${concert._id}`}>
+            <Link href={`/checks/check-concerts/${concert._id}`}>
               <Button
                 variant="contained"
                 sx={{
