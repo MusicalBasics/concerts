@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import Link from "next/link";
 
 type ChecksProps = {
@@ -7,10 +7,30 @@ type ChecksProps = {
 
 const Checks = ({ children }: ChecksProps) => {
   return (
-    <Stack>
-      <Link href="/checks/check-concerts">Check Concerts</Link>
-      <Link href="/checks/check-customers">Check Customers</Link>
-      <Link href="/checks/check-tickets">Check Tickets</Link>
+    <Stack
+      sx={{
+        width: "100%",
+        height: "100vh",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      spacing={4}
+    >
+      <Button variant="contained">
+        <Link href="/checks/check-concerts" passHref>
+          Check Concerts
+        </Link>
+      </Button>
+      <Button variant="contained">
+        <Link href="/checks/check-customers" passHref>
+          Check Customers
+        </Link>
+      </Button>
+      <Button variant="contained">
+        <Link href="/checks/check-tickets" passHref>
+          Check Tickets
+        </Link>
+      </Button>
     </Stack>
   );
 };
