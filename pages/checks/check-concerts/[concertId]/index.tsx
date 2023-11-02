@@ -8,6 +8,7 @@ import { Container, Stack, Typography } from "@mui/material";
 import _ from "lodash";
 import { Concert } from "@/models/Concert";
 import { getFormattedDate } from "@/utils/concert-utils";
+import Row from "@/models/Row";
 
 const SeatingMap = dynamic(
   () => import("@/components/seating-map/seating-map"),
@@ -34,13 +35,9 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
   };
 
   // Is reserved but not reserved by any user (no customer reference)
-  const seatsReservedWithoutUser = _.flatten(
-    sections.map((section) =>
-      section.rows.map((row) =>
-        row.seats.filter((seat) => seat.isReserved && !seat.reservedBy)
-      )
-    )
-  );
+  const getSeatsReservedWithoutUser = (row: Row) => {
+    return row.seats.filter((seat) => seat.isReserved && !seat.reservedBy);
+  };
 
   return (
     // Define the component's JSX
@@ -60,19 +57,23 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
         <Typography variant="h4">Seating Map</Typography>
       </Stack>
       <SeatingMap sections={sections} curve={0.0005} />
-      <Stack sx={{ color: "wheat" }} mt={5}>
-        <Typography variant="h4">Seats Reserved Without User</Typography>
-        {seatsReservedWithoutUser.map((seats, i) => {
-          return (
-            <Stack key={i}>
-              {seats.length === 0
-                ? `${i} Empty`
-                : seats.map((seat) => {
-                    return <p key={seat.number}>{seat.number}</p>;
-                  })}
-            </Stack>
-          );
-        })}
+      <Stack sx={{ color: "wheat" }} mt={5} gap={2} my={5}>
+        <Typography variant="h3">Seats Reserved Without User</Typography>
+        {sections.map((section, sectionIndex) => (
+          <Stack key={sectionIndex} gap={1}>
+            <Typography variant="h4">Section {sectionIndex + 1}</Typography>
+            {section.rows.map((row, rowIndex) => (
+              <Stack key={rowIndex}>
+                <Typography variant="h5">Row {rowIndex + 1}</Typography>
+                {getSeatsReservedWithoutUser(row).map((seat) => (
+                  <Typography variant="h6" key={seat.number}>
+                    {seat.number}
+                  </Typography>
+                ))}
+              </Stack>
+            ))}
+          </Stack>
+        ))}
       </Stack>
     </Container>
   );
