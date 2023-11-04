@@ -59,10 +59,10 @@ const ConcertPage: FC<ConcertPageProps> = ({
               {city.name}
             </Typography>
           </Link>
-          <Typography variant="caption">{dateText}</Typography>
+          <Typography>{dateText}</Typography>
           {preorder.isSoldOut && (
             <Stack>
-              <Typography>{concert.venue.name}</Typography>
+              <Typography variant="h6">{concert.venue.name}</Typography>
               <Box position={"relative"} height={300} mt={3}>
                 <Image
                   src={concert.venue.image.asset.url}
