@@ -36,3 +36,9 @@ export const createTicket = async ({
 
   return ticketPdf;
 };
+
+export const validateTicket = (ticketNumber: string) => {
+  return (
+    !ticketNumber || ticketNumber.length !== 9 || !/^\d+$/.test(ticketNumber)
+  );
+};
