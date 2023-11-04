@@ -16,7 +16,6 @@ import { Map, Marker, Popup } from "react-map-gl";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import { toConcertDate } from "@/utils/datetime-utils";
 import { PortableText } from "@portabletext/react";
-import ptConfig from "@/ptConfig";
 import { Router, useRouter } from "next/router";
 
 const ConcertPage: FC<ConcertPageProps> = ({
