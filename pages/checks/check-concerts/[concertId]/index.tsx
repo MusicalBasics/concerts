@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { sanityClient } from "@/utils/sanity";
 import { GetServerSideProps } from "next";
 import { Section } from "@/models/Section";
-import { Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import _ from "lodash";
 import { Concert } from "@/models/Concert";
 import { getFormattedDate } from "@/utils/concert-utils";
@@ -24,14 +24,42 @@ interface CanvasPageProps {
 }
 
 const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
-  // Initialize state if needed
-  const [state, setState] = useState<CanvasPageState>({
-    // ...
-  });
+  const flattenSections = () => {
+    return _.flatMap(sections, (section) =>
+      _.flatMap(section.rows, (row) =>
+        _.map(row.seats, (seat) => ({
+          seatNumber: `${row.id}-${seat.number}`,
+          name: seat.reservedBy ? seat.reservedBy.name : "",
+          email: seat.reservedBy ? seat.reservedBy.email : "",
+        }))
+      )
+    );
+  };
 
-  // Define any necessary functions for the component
-  const myFunction = (): void => {
-    // ...
+  const convertToCsv = (data: any[]) => {
+    const csvRows = [
+      ["Seat Number", "Name", "Email"], // headers
+      ...data.map((item) => [item.seatNumber, item.name, item.email]),
+    ];
+    return csvRows.join("\n");
+  };
+
+  const downloadCsv = (csv: string) => {
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.setAttribute("hidden", "");
+    a.setAttribute("href", url);
+    a.setAttribute("download", "seats.csv");
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleDownload = () => {
+    const flatData = flattenSections();
+    const csv = convertToCsv(flatData);
+    downloadCsv(csv);
   };
 
   // Is reserved but not reserved by any user (no customer reference)
@@ -54,7 +82,12 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
           <Typography variant="h5">{getFormattedDate(concert.date)}</Typography>
           <Typography variant="h5">{concert.venue.name}</Typography>
         </Stack>
-        <Typography variant="h4">Seating Map</Typography>
+        <Stack direction="row" gap={5} mb={5}>
+          <Typography variant="h4">Seating Map</Typography>
+          <Button variant="contained" onClick={handleDownload}>
+            Export to CSV
+          </Button>
+        </Stack>
       </Stack>
       <SeatingMap sections={sections} curve={0.0005} />
       <Stack sx={{ color: "wheat" }} mt={5} gap={2} my={5}>
