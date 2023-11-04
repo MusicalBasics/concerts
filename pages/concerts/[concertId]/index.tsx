@@ -75,13 +75,13 @@ const ConcertPage: FC<ConcertPageProps> = ({
               Buy Tickets
             </Button>
           </Link>
-          {preorder.isSoldOut && (
+          {/* {preorder.isSoldOut && (
             <Link href={`/concerts/${concert._id}/redeem`}>
               <Button size="large" variant="outlined" color="secondary">
                 Redeem Tickets
               </Button>
             </Link>
-          )}
+          )} */}
         </Stack>
       </Box>
       {!preorder.isSoldOut && (

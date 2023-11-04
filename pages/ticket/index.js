@@ -153,6 +153,8 @@ export async function getServerSideProps(context) {
   };
   traverse(result);
 
+  // State: We have a valid SVG ticket
+
   var builder = new Builder();
   var xml = builder.buildObject(result);
 
