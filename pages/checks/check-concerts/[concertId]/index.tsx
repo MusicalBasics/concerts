@@ -27,8 +27,7 @@ const CanvasPage: FC<CanvasPageProps> = ({ sections, concert }) => {
   const flattenSections = () => {
     return _.flatMap(sections, (section) =>
       _.flatMap(section.rows, (row) =>
-        _.map(row.seats, (seat) => (
-          seat.isReserved && {
+        _.map(row.seats, (seat) => ({
           seatNumber: `${row.id}${seat.number}`,
           name: seat.reservedBy ? seat.reservedBy.name : "",
           email: seat.reservedBy ? seat.reservedBy.email : "",
