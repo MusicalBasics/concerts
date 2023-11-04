@@ -11,7 +11,7 @@ export type Concert = {
   venue: Venue;
   date: string;
   buyLink: string;
-  description: string;
+  description: any;
   seatingChart: SeatingMap;
   preorder: Preorder;
 };

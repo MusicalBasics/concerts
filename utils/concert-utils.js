@@ -101,7 +101,8 @@ export const getCityLinks = async () => {
         cities: sortedGroups[dateRange].map((concert) => {
           const { buyLink } = concert;
           const { isSoldOut } = concert.preorder;
-          const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
+          // const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
+          const link = `/concerts/${concert._id}`;
 
           return {
             name: concert.city.name,

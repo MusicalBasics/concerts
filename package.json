@@ -16,6 +16,7 @@
     "@mui/lab": "^5.0.0-alpha.130",
     "@mui/material": "^5.13.1",
     "@mui/material-next": "^6.0.0-alpha.85",
+    "@portabletext/react": "^3.0.11",
     "@shopify/shopify-api": "^7.2.0",
     "@types/lodash": "^4.14.200",
     "@types/mapbox-gl": "^2.7.17",

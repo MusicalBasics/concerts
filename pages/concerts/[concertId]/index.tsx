@@ -1,6 +1,6 @@
 import Milestones from "@/components/milestones";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, Button, Stack, Typography } from "@mui/material";
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { FC, useState } from "react";
 import Layout from "@/components/layout";
@@ -15,6 +15,9 @@ import { getCityLinks } from "@/utils/concert-utils";
 import { Map, Marker, Popup } from "react-map-gl";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import { toConcertDate } from "@/utils/datetime-utils";
+import { PortableText } from "@portabletext/react";
+import ptConfig from "@/ptConfig";
+import { Router, useRouter } from "next/router";
 
 const ConcertPage: FC<ConcertPageProps> = ({
   concert,
@@ -25,6 +28,7 @@ const ConcertPage: FC<ConcertPageProps> = ({
   const { milestones } = preorder;
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
   const cityLink = `/cities/${city.slug.current}`;
+  const router = useRouter();
   const dateText = preorder.isSoldOut
     ? toConcertDate(concert.date)
     : preorder.timeFrame;
@@ -33,58 +37,77 @@ const ConcertPage: FC<ConcertPageProps> = ({
   return (
     <Layout>
       <FloatingCityList cityLinks={cityLinks} />
-      <Stack textAlign="center" my={5} spacing={1}>
-        <Box p={2}>
-          <Image
-            src={city.image.asset.url}
-            alt={city.name}
-            width={360}
-            height={240}
-          />
-        </Box>
-        <Link href={buyLink}>
-          <Typography
-            variant="h3"
-            fontWeight={700}
-            sx={{
-              cursor: "pointer",
-            }}
-          >
-            {city.name}
-          </Typography>
-        </Link>
-        <Typography variant="caption">{dateText}</Typography>
-        {preorder.isSoldOut && (
-          <Stack>
-            <Typography>{concert.venue.name}</Typography>
-            <Box p={1}>
+      <Container maxWidth="sm">
+        <Stack textAlign="center" my={3} spacing={1}>
+          {!preorder.isSoldOut && (
+            <Box p={2}>
               <Image
-                src={concert.venue.image.asset.url}
-                alt={concert.venue.name}
-                width={300}
-                height={200}
+                src={city.image.asset.url}
+                alt={city.name}
+                width={360}
+                height={240}
               />
             </Box>
-            <Typography>{concert.description}</Typography>
-          </Stack>
-        )}
-      </Stack>
-      <Box mt={3} mb={3} textAlign="center">
-        <Stack direction="row" spacing={2} justifyContent="center">
+          )}
           <Link href={buyLink}>
-            <Button size="large" variant="outlined" color="secondary">
+            <Typography
+              variant="h3"
+              fontWeight={700}
+              sx={{
+                cursor: "pointer",
+              }}
+            >
+              {city.name}
+            </Typography>
+          </Link>
+          <Typography variant="caption">{dateText}</Typography>
+          {preorder.isSoldOut && (
+            <Stack>
+              <Typography>{concert.venue.name}</Typography>
+              <Box position={"relative"} height={300} mt={3}>
+                <Image
+                  src={concert.venue.image.asset.url}
+                  alt={concert.venue.name}
+                  // width={300}
+                  // height={200}
+                  fill
+                  style={{
+                    width: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              </Box>
+            </Stack>
+          )}
+        </Stack>
+        <Box mb={5} textAlign="center">
+          <Stack direction="row" spacing={2} justifyContent="center">
+            <Button
+              size="large"
+              variant="contained"
+              color="secondary"
+              sx={{
+                fontSize: "1.25rem",
+                fontWeight: "bold",
+              }}
+              fullWidth
+              onClick={() => {
+                router.push(buyLink);
+              }}
+            >
               Buy Tickets
             </Button>
-          </Link>
-          {/* {preorder.isSoldOut && (
+            {/* {preorder.isSoldOut && (
             <Link href={`/concerts/${concert._id}/redeem`}>
-              <Button size="large" variant="outlined" color="secondary">
-                Redeem Tickets
-              </Button>
+            <Button size="large" variant="outlined" color="secondary">
+            Redeem Tickets
+            </Button>
             </Link>
           )} */}
-        </Stack>
-      </Box>
+          </Stack>
+        </Box>
+        <PortableText value={concert.description} />
+      </Container>
       {!preorder.isSoldOut && (
         <Milestones milestones={milestones} presales={ticketsSold} />
       )}
@@ -257,6 +280,8 @@ export const getStaticProps = (async (context) => {
   const inventoryTickets = await getInventory(goldenTicketProductiGid);
   const ticketsSold = totalTickets - inventoryTickets;
   const cityLinks = await getCityLinks();
+
+  // console.log("description", concert.description);
 
   return {
     props: {
