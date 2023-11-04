@@ -65,6 +65,7 @@ const ConcertPage: FC<ConcertPageProps> = ({
                 height={200}
               />
             </Box>
+            <Typography>{concert.description}</Typography>
           </Stack>
         )}
       </Stack>
@@ -176,6 +177,7 @@ export const getStaticProps = (async (context) => {
     slug,
     date,
     buyLink,
+    description,
     venue-> {
       name,
       address,
