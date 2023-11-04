@@ -3,7 +3,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createTicket } from "@/utils/ticket-utils";
 import { sanityClient } from "@/utils/sanity";
-import { getFormattedDate } from "@/utils/concert-utils";
 import { toConcertDate } from "@/utils/datetime-utils";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
