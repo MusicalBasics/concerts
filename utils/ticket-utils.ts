@@ -1,6 +1,7 @@
 import type { Template } from "@pdfme/common";
 import { generate } from "@pdfme/generator";
 import { text, image, barcodes } from "@pdfme/schemas";
+import fs from "fs";
 
 const template: Template = require("./ticket-template.json");
 
@@ -17,7 +18,7 @@ export const createTicket = async ({
   const plugins = { text, image, qrcode: barcodes.qrcode };
   const inputs = [
     {
-      concertName,
+      concertName: concertName.toUpperCase(),
       ticketNumber,
       credits,
       venueAddress,
@@ -28,10 +29,18 @@ export const createTicket = async ({
     },
   ];
 
+  // const font = {
+  //   RobotoBold: {
+  //     data: fs.readFileSync("./RobotoBold.ttf"),
+  //     fallback: true,
+  //   },
+  // };
+
   const ticketPdf = await generate({
     template,
     plugins,
     inputs,
+    // options: { font },
   });
 
   return ticketPdf;
