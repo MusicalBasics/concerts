@@ -1,6 +1,6 @@
+//pages/sitemap.xml.ts
 import { GetServerSideProps } from "next";
 
-//pages/sitemap.xml.ts
 const EXTERNAL_DATA_URL = "https://jsonplaceholder.typicode.com/posts";
 
 function generateSiteMap(posts: any[]) {

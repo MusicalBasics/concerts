@@ -13,8 +13,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { validateTicket } from "@/utils/ticket-utils";
-import { validateTicketNumbers } from "@/utils/concert-utils";
+import { isInvalidateTicket } from "@/utils/ticket-utils";
+import axios from "axios";
 
 const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
   const [copiedId, setCopiedId] = useState(null);
@@ -31,6 +31,45 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
       window.open(url);
     } catch (error: any) {
       alert(error.message);
+    }
+  };
+
+  const handleSend = async () => {
+    if (isInvalidateTicket(ticketNumber)) {
+      alert("Please enter a valid ticket number");
+      return;
+    }
+
+    // Make sure you have the correct URL path to your API endpoint
+    const url = `/api/ticket/${ticketNumber}/send`;
+
+    try {
+      // Prepare the body of the request if needed
+      // For example, if your API expects certain data
+      const bodyData = {
+        // to, subject, text can be included here if your API needs it
+      };
+
+      // Send a POST request to the send email endpoint
+      const response = await axios.post(url, bodyData);
+
+      // The request was successful if we get here
+      alert("Email sent successfully!");
+    } catch (error: any) {
+      console.error("Failed to send email:", error);
+      console.log(error);
+      // axios encapsulates the response error in the error object
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        alert("Failed to send email: " + error.response.data.message);
+      } else if (error.request) {
+        // The request was made but no response was received
+        alert("No response was received when attempting to send the email");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        alert("Error: " + error.message);
+      }
     }
   };
 
@@ -64,9 +103,9 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
           color="secondary"
           onChange={(e) => setTicketNumber(e.target.value)}
           value={ticketNumber}
-          error={validateTicket(ticketNumber)}
+          error={isInvalidateTicket(ticketNumber)}
           helperText={
-            validateTicket(ticketNumber) ? "Invalid Ticket Number" : ""
+            isInvalidateTicket(ticketNumber) ? "Invalid Ticket Number" : ""
           }
         />
         <Button
@@ -79,6 +118,17 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
           onClick={handleDownload}
         >
           Get Your Fucking Ticket!
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{
+            fontSize: "1.3rem",
+            fontWeight: "bold",
+          }}
+          onClick={handleSend}
+        >
+          Send Your Fucking Ticket!
         </Button>
       </Stack>
       <Typography variant="h4" gutterBottom>
