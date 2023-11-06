@@ -11,6 +11,7 @@ import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Map } from "react-map-gl";
 import { Concert } from "@/models/Concert";
+import { parseDateOrFallback } from "@/utils/datetime-utils";
 
 const HomePage: FC<HomePageProps> = ({ concerts }) => {
   return (
@@ -71,6 +72,8 @@ export const getStaticProps = (async () => {
     preorder {
       isSoldOut,
       timeFrame,
+      startDate,
+      endDate,
     },
   }`;
   const concertsData = await sanityClient.fetch(concertsQuery);
@@ -83,11 +86,22 @@ export const getStaticProps = (async () => {
     };
   }
 
-  const concerts = _.orderBy(concertsData, ["date"], ["asc"]);
+  // Use Lodash to sort the array
+  const sortedConcerts = _.orderBy(
+    concertsData,
+    [
+      (concert) => {
+        // Pass the startDate directly from preorder
+        return parseDateOrFallback(concert.date, concert.preorder.endDate);
+      },
+      (concert) => concert.city.id,
+    ],
+    ["asc", "asc"]
+  );
 
   return {
     props: {
-      concerts,
+      concerts: sortedConcerts,
     },
     revalidate: 60,
   };

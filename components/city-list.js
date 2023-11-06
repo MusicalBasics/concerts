@@ -25,7 +25,7 @@ export default function CityList({ concerts }) {
         >
           We Are One / Lionel Yu World Tour
         </Button>
-        {_.orderBy(concerts, (c) => c.city.id).map((concert) => {
+        {_.orderBy(concerts).map((concert) => {
           const city = concert.city;
           return (
             <CityListItem
