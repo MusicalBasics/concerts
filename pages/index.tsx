@@ -83,7 +83,7 @@ export const getStaticProps = (async () => {
     };
   }
 
-  const concerts = _.orderBy(concertsData, ["city.id"], ["asc"]);
+  const concerts = _.orderBy(concertsData, ["date"], ["asc"]);
 
   return {
     props: {
