@@ -7,7 +7,7 @@ import { sanityClient } from "@/utils/sanity";
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     if (req.method !== "POST") {
       res.setHeader("Allow", ["POST"]);
@@ -137,3 +137,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(500).json({ success: false, error });
   }
 };
+export default handler;

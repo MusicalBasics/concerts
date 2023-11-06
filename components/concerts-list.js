@@ -1,14 +1,14 @@
 import { Box, Button, Stack } from "@mui/material";
 import { useState } from "react";
-import CityListItem from "./city-list-item.js";
-import styles from "./concert-list.module.css";
+import ConcertsListItem from "./concerts-list-item.js";
+import styles from "./concerts-list.module.css";
 import _ from "lodash";
 import { useMap } from "react-map-gl";
 
 export const HQ = [-115.1398, 36.1699];
 
-export default function CityList({ concerts }) {
-  const [selectedCity, setSelectedCity] = useState(null);
+export default function ConcertsList({ concerts }) {
+  const [selectedConcert, setSelectedConcert] = useState(null);
   const { current: map } = useMap();
 
   return (
@@ -28,12 +28,12 @@ export default function CityList({ concerts }) {
         {_.orderBy(concerts).map((concert) => {
           const city = concert.city;
           return (
-            <CityListItem
-              key={city.id}
+            <ConcertsListItem
+              key={concert._id}
               concert={concert}
-              isSelected={selectedCity === city.id}
+              isSelected={selectedConcert === city.id}
               onSelect={(id) => {
-                setSelectedCity(id);
+                setSelectedConcert(id);
                 map.flyTo({
                   center: city.coordinates,
                   zoom: 10,

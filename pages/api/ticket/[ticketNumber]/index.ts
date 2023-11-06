@@ -5,7 +5,7 @@ import { createTicket } from "@/utils/ticket-utils";
 import { sanityClient } from "@/utils/sanity";
 import { toConcertDate } from "@/utils/datetime-utils";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { ticketNumber } = req.query;
 
@@ -109,3 +109,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 };
+
+export default handler;

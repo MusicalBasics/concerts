@@ -1,4 +1,4 @@
-import CityList from "@/components/city-list";
+import ConcertsList from "@/components/concerts-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 import { Box, Container } from "@mui/material";
 import { FC } from "react";
@@ -43,7 +43,7 @@ const HomePage: FC<HomePageProps> = ({ concerts }) => {
         >
           <ResponsiveAppBar />
           <Container maxWidth="xl" className={styles.contentContainer}>
-            <CityList concerts={concerts} />
+            <ConcertsList concerts={concerts} />
             <Subscribe />
           </Container>
         </Map>

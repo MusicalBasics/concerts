@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import moment from "moment";
 import Link from "next/link";
 
-export default function CityListItem({
+export default function ConcertsListItem({
   concert,
   onSelect,
   isSelected,
