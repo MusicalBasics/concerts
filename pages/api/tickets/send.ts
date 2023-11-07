@@ -1,10 +1,6 @@
 // pages/api/[ticketNumber]/send.ts
 import { NextApiRequest, NextApiResponse } from "next";
-import {
-  createTicket,
-  isInvalidEmail,
-  isInvalidateTicket,
-} from "@/utils/ticket-utils";
+import { createTicket, isInvalidateTicket } from "@/utils/ticket-utils";
 import { toConcertDate } from "@/utils/datetime-utils";
 import { sanityClient } from "@/utils/sanity";
 
@@ -186,21 +182,28 @@ async function sendEmail(ticket: any) {
       : Buffer.from(pdf.buffer);
 
     const to = email;
-    const subject = `Your ticket ${ticketNumber} for ${concertName} is here!!!`;
-    const text = `Hi ${ownerName},\n\n
-  Here's your ticket for ${concertName} at ${venueName} on ${date}.\n\n
-  Your seat is ${seat}.\n\n
-  See you there!\n\n
-  MusicalBasics Team`;
-    const html = "<h1>HTML content of the ticket</h1>";
+    //   const subject = `Your ticket ${ticketNumber} for ${concertName} is here!!!`;
+    //   const text = `Hi ${ownerName},\n\n
+    // Here's your ticket for ${concertName} at ${venueName} on ${date}.\n\n
+    // Your seat is ${seat}.\n\n
+    // See you there!\n\n
+    // MusicalBasics Team`;
+    //   const html = "<h1>HTML content of the ticket</h1>";
     const filename = `ticket-${ticketNumber}.pdf`;
 
     const emailResult = await sgMail.send({
-      to,
+      to, 
       from: "support@musicalbasics.com",
-      subject,
-      text,
-      html,
+      templateId: "d-258b2382847b44aca0ab3fa0e355fa17",
+      dynamicTemplateData: {
+        ownerName,
+        concertName,
+        seat,
+        ticketNumber,
+        date,
+        venueName,
+        venueAddress,
+      },
       attachments: [
         {
           content: pdfBuffer.toString("base64"),
