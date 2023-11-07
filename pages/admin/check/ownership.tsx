@@ -58,7 +58,7 @@ const CheckOwnershipPage: FC<CheckOwnershipPageProps> = ({
               <Typography variant="body2" color="error">
                 This ticket is assigned to customer ID{" "}
                 {ticket.assignedCustomerId}, which does not match the customer
-                ID {ticket.customerId} that it's listed under.
+                ID {ticket.customerId} that it&apos;s listed under.
               </Typography>
             </Stack>
           </ListItem>
