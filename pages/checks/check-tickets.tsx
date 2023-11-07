@@ -13,11 +13,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { isInvalidateTicket } from "@/utils/ticket-utils";
+import { isInvalidEmail, isInvalidateTicket } from "@/utils/ticket-utils";
 import axios from "axios";
 
 const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
   const [copiedId, setCopiedId] = useState(null);
+  const [enteredEmail, setEnteredEmail] = useState("");
   const [ticketNumber, setTicketNumber] = useState("");
 
   const copyToClipboard = (id: any) => {
@@ -48,6 +49,7 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
       // For example, if your API expects certain data
       const bodyData = {
         // to, subject, text can be included here if your API needs it
+        email: enteredEmail,
       };
 
       // Send a POST request to the send email endpoint
@@ -97,27 +99,39 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
           backgroundColor: "wheat",
         }}
       >
-        <TextField
-          label="Ticket Number"
-          variant="filled"
-          color="secondary"
-          onChange={(e) => setTicketNumber(e.target.value)}
-          value={ticketNumber}
-          error={isInvalidateTicket(ticketNumber)}
-          helperText={
-            isInvalidateTicket(ticketNumber) ? "Invalid Ticket Number" : ""
-          }
-        />
+        <Stack>
+          <TextField
+            label="Ticket Number"
+            variant="filled"
+            color="secondary"
+            onChange={(e) => setTicketNumber(e.target.value)}
+            value={ticketNumber}
+            error={isInvalidateTicket(ticketNumber)}
+            helperText={
+              isInvalidateTicket(ticketNumber) ? "Invalid Ticket Number" : ""
+            }
+          />
+          <TextField
+            label="Email"
+            variant="filled"
+            color="secondary"
+            onChange={(e) => setEnteredEmail(e.target.value)}
+            value={enteredEmail}
+            error={isInvalidEmail(enteredEmail)}
+            helperText={isInvalidEmail(enteredEmail) ? "Invalid Email" : ""}
+          />
+        </Stack>
         <Button
           variant="contained"
           color="primary"
           sx={{
             fontSize: "1.3rem",
             fontWeight: "bold",
+            maxWidth: "150px",
           }}
           onClick={handleDownload}
         >
-          Get Your Fucking Ticket!
+          Get Freaking Ticket!
         </Button>
         <Button
           variant="contained"
@@ -125,10 +139,11 @@ const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
           sx={{
             fontSize: "1.3rem",
             fontWeight: "bold",
+            maxWidth: "150px",
           }}
           onClick={handleSend}
         >
-          Send Your Fucking Ticket!
+          Send Freaking Ticket!
         </Button>
       </Stack>
       <Typography variant="h4" gutterBottom>

@@ -1,6 +1,6 @@
 // pages/api/[ticketNumber]/send.ts
 import { NextApiRequest, NextApiResponse } from "next";
-import { createTicket } from "@/utils/ticket-utils";
+import { createTicket, isInvalidEmail } from "@/utils/ticket-utils";
 import { toConcertDate } from "@/utils/datetime-utils";
 import { sanityClient } from "@/utils/sanity";
 
@@ -16,6 +16,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     const { ticketNumber } = req.query;
+    const { email } = req.body;
+
+    // Validate email
+    if (isInvalidEmail(email)) {
+      res.status(400).json({ message: "Invalid email" });
+      return;
+    }
 
     // Validate ticket number
     if (
@@ -98,6 +105,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       venueAddress,
       date,
       seat,
+      ticketNumber,
+      ownerName: ticket.customer.name,
     });
 
     // Ensure that pdf.buffer is a Buffer instance, as fs.writeFileSync expects a Buffer or string.
@@ -108,11 +117,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     // TODO
     // const { to, subject, text } = req.body;
     // const to = "support@musicalbasics.com";
-    const to = "yulionel829@gmail.com ";
+    const to = email;
     // const to = "thomas@mier.cat";
-    const subject = "Your fucking ticket";
+    const subject = "Your freaking ticket";
     const text = "is here!!!";
-    const html = "<h1>HTML content of the fucking ticket</h1>";
+    const html = "<h1>HTML content of the freaking ticket</h1>";
 
     const emailResult = await sgMail.send({
       to,
@@ -124,7 +133,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         {
           content: pdfBuffer.toString("base64"),
           type: "application/pdf",
-          filename: "fucking-ticket.pdf",
+          filename: "freaking-ticket.pdf",
         },
       ],
     });
