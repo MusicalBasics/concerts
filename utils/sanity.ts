@@ -74,6 +74,7 @@ export async function findDuplicateTickets() {
 }
 
 export const findMismatchedTickets = async () => {
+  // Fetch all customers with their tickets
   const customersWithTicketsQuery = `
     *[_type == "customer"]{
       _id,
@@ -85,27 +86,62 @@ export const findMismatchedTickets = async () => {
       }
     }
   `;
-  const customers = await sanityClient.fetch(customersWithTicketsQuery);
+  const customers: Customer[] = await sanityClient.fetch(
+    customersWithTicketsQuery
+  );
+
+  // Fetch all tickets with their assigned customer
+  const ticketsWithCustomerQuery = `
+    *[_type == "ticket" && defined(customer)]{
+      _id,
+      number,
+      customer->{
+        _id,
+        "tickets": tickets[]->_id
+      }
+    }
+  `;
+  const tickets = await sanityClient.fetch(ticketsWithCustomerQuery);
 
   let mismatches: any[] = [];
 
-  customers.forEach((customer: Customer) => {
-    if (!customer.tickets) {
-      return;
-    }
+  // Check for tickets not listed under the customer's tickets
+  customers
+    .filter(
+      (customer: Customer) => customer.tickets && customer.tickets.length > 0
+    )
+    .forEach((customer: Customer) => {
+      customer.tickets!.forEach((ticket: Ticket) => {
+        if (!customer.tickets!.some((t) => t._id === ticket._id)) {
+          mismatches.push({
+            customerId: customer._id,
+            customerName: customer.name,
+            ticketId: ticket._id,
+            ticketNumber: ticket.number,
+            message: `Ticket not found under customer's tickets`,
+          });
+        }
+      });
+    });
 
-    customer.tickets.forEach((ticket: Ticket) => {
-      if (ticket.assignedCustomerId !== customer._id) {
+  // Check for customers not listed on their ticket's assigned customer
+  tickets
+    .filter(
+      (ticket: Ticket) =>
+        ticket.customer &&
+        ticket.customer.tickets &&
+        ticket.customer.tickets.length > 0
+    )
+    .forEach((ticket: any) => {
+      if (!ticket.customer.tickets.includes(ticket._id)) {
         mismatches.push({
-          customerId: customer._id,
-          customerName: customer.name,
           ticketId: ticket._id,
           ticketNumber: ticket.number,
-          assignedCustomerId: ticket.assignedCustomerId,
+          assignedCustomerId: ticket.customer._id,
+          message: `Customer's tickets do not include this ticket`,
         });
       }
     });
-  });
 
   return mismatches;
 };

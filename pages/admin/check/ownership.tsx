@@ -40,10 +40,10 @@ const CheckOwnershipPage: FC<CheckOwnershipPageProps> = ({
           <ListItem key={ticket.ticketId} sx={{ marginBottom: 2 }}>
             <Stack spacing={1}>
               <Typography variant="subtitle1">
-                Customer ID: <strong>{ticket.customerId}</strong>
+                Customer ID: <strong>{ticket.customerId || "null"}</strong>
               </Typography>
               <Typography variant="subtitle1">
-                Customer Name: <strong>{ticket.customerName}</strong>
+                Customer Name: <strong>{ticket.customerName || "null"}</strong>
               </Typography>
               <Typography variant="subtitle1">
                 Ticket ID: <strong>{ticket.ticketId}</strong>
