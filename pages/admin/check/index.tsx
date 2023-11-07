@@ -17,17 +17,17 @@ const Checks = ({ children }: ChecksProps) => {
       spacing={4}
     >
       <Button variant="contained">
-        <Link href="/checks/check-concerts" passHref>
+        <Link href="/admin/check/concerts" passHref>
           Check Concerts
         </Link>
       </Button>
       <Button variant="contained">
-        <Link href="/checks/check-customers" passHref>
+        <Link href="/admin/check/customers" passHref>
           Check Customers
         </Link>
       </Button>
       <Button variant="contained">
-        <Link href="/checks/check-tickets" passHref>
+        <Link href="/admin/check/tickets" passHref>
           Check Tickets
         </Link>
       </Button>

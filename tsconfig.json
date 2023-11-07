@@ -31,6 +31,6 @@
     "**/*.tsx",
     "pages/api/reserveGolden.ts",
     "utils/concert-utils.js"
-  ],
+, "pages/concerts/[concertId]/redeem/general.js"  ],
   "exclude": ["node_modules"]
 }

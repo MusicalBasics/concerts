@@ -36,8 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Fetch ticket data from Sanity
-    const query = `
-  *[_type == "ticket" && number == $ticketNumber] {
+    const query = `*[_type == "ticket" && number == $ticketNumber] {
       number,
       concert-> {
         name,

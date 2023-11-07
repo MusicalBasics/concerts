@@ -32,18 +32,17 @@ import {
 import Link from "next/link";
 
 export default function GenerelTicketPage({ concert }) {
-  
   const router = useRouter();
-  
+
+  const [name, setName] = useState(""); // Name of the person redeeming the tickets
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [ticketCount, setTicketCount] = useState(0);
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [reservationSuccess, setReservationSuccess] = useState(false);
   const [ticketNumbers, setTicketNumbers] = useState("");
   const [ticketIds, setTicketIds] = useState([]);
-  
+
   const venue = concert.venue;
   const concertId = concert._id;
   const seatingChart = concert.seatingChart;
@@ -55,10 +54,6 @@ export default function GenerelTicketPage({ concert }) {
 
   const handleToggle = () => {
     setShowMap((prev) => !prev);
-  };
-
-  const handleNameInputChange = (event) => {
-    setName(event.target.value);
   };
 
   const handleEmailInputChange = (event) => {
@@ -84,13 +79,13 @@ export default function GenerelTicketPage({ concert }) {
   };
 
   const handleSubmitTickets = async () => {
-    if (!name || !email || !ticketNumbers) {
+    if (!email || !ticketNumbers) {
       alert("Please fill out all fields!");
       return;
     }
 
-    if (!validateName(name) || !validateEmail(email)) {
-      alert("Please enter valid name and email!");
+    if (!validateEmail(email)) {
+      alert("Please enter valid email!");
       return;
     }
 
@@ -105,8 +100,7 @@ export default function GenerelTicketPage({ concert }) {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/checkTickets", {
-        name,
+      const response = await axios.post("/api/check-tickets", {
         email,
         concertId,
         ticketNumbers: uniqueTicketNumbers,
@@ -122,7 +116,7 @@ export default function GenerelTicketPage({ concert }) {
         return;
       }
 
-      const { totalTicketCount, ticketIds } = data;
+      const { totalTicketCount, ticketIds, name } = data;
 
       if (totalTicketCount === 0) {
         alert("No valid tickets.");
@@ -132,7 +126,7 @@ export default function GenerelTicketPage({ concert }) {
 
       // console.log(`Found ${totalTicketCount} tickets for ${email}.`);
       // console.log(`Ticket IDs: ${ticketIds}`);
-
+      setName(name); // Update state with the name of the person redeeming the tickets
       setTicketIds(ticketIds); // Update state with the found ticket IDs
       setTicketCount(totalTicketCount);
       setIsVerified(true); // set isVerified to true once ticket numbers are verified
@@ -151,7 +145,6 @@ export default function GenerelTicketPage({ concert }) {
     try {
       const response = await axios.post("/api/reserveGeneral", {
         concertId,
-        name,
         email,
         ticketIds,
         selectedSeats,
@@ -231,7 +224,6 @@ export default function GenerelTicketPage({ concert }) {
           </Box>
         ) : (
           <Stack alignItems="center" justifyContent="center" spacing={2}>
-            <NameInput value={name} onChange={handleNameInputChange} />
             <EmailInput value={email} onChange={handleEmailInputChange} />
             <Stack>
               <Typography>Please enter your ticket number(s).</Typography>

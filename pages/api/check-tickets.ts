@@ -1,24 +1,16 @@
 import { HttpStatusCode } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "next-sanity";
 import { getLogger } from "@/utils/logging-utils";
+import { sanityAdminClient } from "@/utils/sanity";
+import _ from "lodash";
 
 // Initialize the Sanity client
-const sanityClient = createClient({
-  projectId: "zqcyefig",
-  dataset: "production",
-  apiVersion: "2023-03-01",
-  token:
-    "skHhHg8CnSmPV5G1Zduibkq2PKZ8HEqElBQofLLHNzojqu4n1zR8MBpkjdRbFNZuMvIEodoe2tWG7UkQLsuk6mjDnwHgrcdNlHQKFzPvhBosMLAwulZuyqWb37leLpSvHS9dEMo6Vbvg6rjSamY1J4IxIOMZCMo0PP2XghiyTvQNmV38r6ZH",
-  useCdn: false, // Disable for authenticated requests
-});
-
 const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
   const logger = getLogger("api/checkTickets");
 
-  const { name, email, concertId, ticketNumbers } = req.body;
+  const { email, concertId, ticketNumbers } = req.body;
 
-  if (!name || !email || !ticketNumbers || !concertId) {
+  if (!email || !ticketNumbers || !concertId) {
     res
       .status(HttpStatusCode.BadRequest)
       .json({ message: "All fields are required" });
@@ -63,7 +55,7 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     }`;
     const ticketsParams = { ticketNumbers, concertId };
-    const tickets: Ticket[] = await sanityClient.fetch(
+    const tickets: Ticket[] = await sanityAdminClient.fetch(
       ticketsQuery,
       ticketsParams
     );
@@ -104,23 +96,37 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     // Find the customer by name and email, or create a new customer if one doesn't exist
-    const customerQuery = `*[_type == "customer" && name == $name && email == $email]`;
-    const customerParams = { name, email };
-    const customers: Customer[] = await sanityClient.fetch(
+    const customerQuery = `*[_type == "customer" && email == $email] {
+      _id,
+      name,
+      email,
+      tickets[] -> {
+        _id,
+        number,
+        redeemed,
+        concert -> {
+          _id
+        },
+        customer -> {
+          _id
+        }
+      }
+    }`;
+    const customerParams = { email };
+    const customers: Customer[] = await sanityAdminClient.fetch(
       customerQuery,
       customerParams
     );
 
-    let customer: Customer;
-    if (customers.length === 0) {
-      customer = await sanityClient.create({
-        _type: "customer",
-        name,
-        email,
-      });
-    } else {
-      customer = customers[0];
+    // Customer not found, return an error
+    if (!customers || customers.length === 0) {
+      res
+        .status(HttpStatusCode.NotFound)
+        .json({ message: "Customer not found" });
+      return;
     }
+
+    const customer = customers[0];
     const customerId = customer._id;
 
     if (!customer) {
@@ -136,28 +142,23 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     // If the customer doesn't have the tickets, add them
     logger.debug(customer, "customer");
 
-    const ticketsToAdd = ticketIds.map((ticketId) => ({
-      _ref: ticketId,
-      _type: "reference",
-    }));
+    const newTickets = _.chain(ticketIds)
+      .map((ticketId) => ({ _ref: ticketId, _type: "reference" }))
+      .filter(
+        (ticketToAdd) => !_.some(customer.tickets, ["_ref", ticketToAdd._ref])
+      )
+      .value(); // This executes the chain
 
-    const filteredTicketsToAdd = ticketsToAdd.filter(
-      (ticketToAdd) =>
-        !customer.tickets?.some(
-          (customerTicket) => customerTicket._ref === ticketToAdd._ref
-        )
-    );
-
-    const updatedCustomer = await sanityClient
+    const updatedCustomer = await sanityAdminClient
       .patch(customerId)
       .setIfMissing({ tickets: [] })
-      .append("tickets", filteredTicketsToAdd)
+      .append("tickets", newTickets)
       .commit({ autoGenerateArrayKeys: true });
 
     // For each ticket, set set customer reference
     const updatedTickets = await Promise.all(
       ticketIds.map(async (ticketId) => {
-        const ticket = await sanityClient
+        const ticket = await sanityAdminClient
           .patch(ticketId)
           .set({ customer: { _ref: customerId, _type: "reference" } })
           .commit({ autoGenerateArrayKeys: true });
@@ -176,7 +177,12 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     // Respond with the total ticket count
     res
       .status(HttpStatusCode.Ok)
-      .json({ success: true, totalTicketCount, ticketIds });
+      .json({
+        success: true,
+        totalTicketCount,
+        ticketIds,
+        name: customer.name,
+      });
   } catch (error) {
     console.error(error);
     res
