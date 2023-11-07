@@ -1,4 +1,5 @@
 import { Customer } from "@/models/Customer";
+import { SeatingMap as SeatingChart } from "@/models/SeatingMap";
 import { DuplicateTicket, Ticket } from "@/models/Ticket";
 import { createClient } from "next-sanity";
 
@@ -145,3 +146,146 @@ export const findMismatchedTickets = async () => {
 
   return mismatches;
 };
+
+export async function findMismatchedRedemptions() {
+  const redeemedTicketsQuery = `*[_type == "ticket" && redeemed == true]{
+    _id,
+    number,
+    redeemed,
+    seat {
+      short,
+      section,
+      row,
+      number
+    },
+    concert->{
+      seatingChart->{
+        _id,
+        name,
+        sections[]{
+          sectionName,
+          rows[]{
+            id,
+            seats[]{
+              number,
+              isReserved,
+            }
+          }
+        }
+      }
+    }
+  }`;
+  // console.log("redeemedTicketsQuery", redeemedTicketsQuery);
+  const redeemedTickets = await sanityAdminClient.fetch(redeemedTicketsQuery);
+  const mismatchedSeats = [];
+
+  for (const ticket of redeemedTickets) {
+    if (ticket.seat?.short) {
+      const { section, row, number } = ticket.seat;
+      const seatInMap = await findSeatInSeatingChart(
+        ticket.concert.seatingChart._id,
+        section,
+        row,
+        number
+      );
+
+      if (
+        !seatInMap ||
+        seatInMap.section.sectionName !== section ||
+        seatInMap.row.id !== row ||
+        seatInMap.seat.number !== number
+      ) {
+        mismatchedSeats.push({
+          redeemed: ticket.redeemed,
+          ticketId: ticket._id,
+          ticketNumber: ticket.number,
+          expectedSeat: ticket.seat.short,
+          foundSeat: seatInMap
+            ? `${seatInMap.section.sectionName}-${seatInMap.row.id}${seatInMap.seat.number}`
+            : "Not found",
+        });
+      }
+    } else {
+      // If there's no seat.short, it's a mismatch by default since the ticket is redeemed
+      mismatchedSeats.push({
+        redeemed: ticket.redeemed,
+        ticketId: ticket._id,
+        ticketNumber: ticket.number,
+        expectedSeat: "N/A",
+        foundSeat: "Not found",
+      });
+    }
+  }
+
+  // TODO Two way check from the other direction
+
+  // Return or process the list of mismatchedSeats
+  return mismatchedSeats;
+}
+
+async function findSeatInSeatingChart(
+  seatingChartId: string,
+  sectionName: string,
+  rowId: string,
+  seatNumber: string
+) {
+  // console.log("seatingChartId", seatingChartId);
+  // console.log("sectionName", sectionName);
+  // console.log("rowId", rowId);
+  // console.log("seatNumber", seatNumber);
+
+  // Define the GROQ query
+  const query = `*[_type == "seatingChart" && _id == $seatingChartId]{
+    sections[]{
+      _key,
+      sectionName,
+      rows[]{
+        _key,
+        id,
+        seats[]{
+          _key,
+          number
+        }
+      }
+    }
+  }[0]`;
+
+  // Define the parameters for the query
+  const params = {
+    seatingChartId,
+  };
+
+  try {
+    // Fetch the seating chart from Sanity
+    const seatingChart: SeatingChart = await sanityClient.fetch(query, params);
+
+    // Find the section
+    const section = seatingChart.sections.find(
+      (s) => s.sectionName === sectionName
+    );
+    if (!section) {
+      console.error("Section not found");
+      return null;
+    }
+
+    // Find the row within the section
+    const row = section.rows.find((r) => r.id === rowId);
+    if (!row) {
+      console.error("Row not found");
+      return null;
+    }
+
+    // Find the seat within the row
+    const seat = row.seats.find((s) => s.number === seatNumber);
+    if (!seat) {
+      console.error("Seat not found");
+      return null;
+    }
+
+    // console.log("Seat found:", seat);
+    return { section, row, seat };
+  } catch (error: any) {
+    console.error(`Failed to find seat in seating map: ${error.message}`);
+    return null;
+  }
+}
