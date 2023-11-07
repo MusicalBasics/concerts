@@ -71,7 +71,7 @@ const Unredeem = () => {
         disabled={isSubmitting}
         style={{ marginTop: "16px" }}
       >
-        {isSubmitting ? <CircularProgress size={24} /> : "Reset Ticket"}
+        {isSubmitting ? <CircularProgress size={24} /> : "Unredeem Ticket"}
       </Button>
     </AdminContainer>
   );
