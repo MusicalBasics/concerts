@@ -1,25 +1,20 @@
-import { sanityClient } from "@/utils/sanity";
-import { GetServerSideProps, GetStaticProps } from "next";
+import { findDuplicateTickets } from "@/utils/sanity";
+import { GetServerSideProps } from "next";
 import React, { FC } from "react";
-import _, { orderBy } from "lodash";
+import _ from "lodash";
 import { useState } from "react";
 import {
   Button,
   Container,
-  Input,
   List,
   ListItem,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
-import { isInvalidEmail, isInvalidateTicket } from "@/utils/ticket-utils";
-import axios from "axios";
+import { DuplicateTicket } from "@/models/Ticket";
 
 const CheckTicketsPage: FC<CheckTicketsPageProps> = ({ duplicateTickets }) => {
   const [copiedId, setCopiedId] = useState(null);
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [ticketNumber, setTicketNumber] = useState("");
 
   const copyToClipboard = (id: any) => {
     navigator.clipboard.writeText(id);
@@ -90,30 +85,6 @@ export const getServerSideProps = (async () => {
   };
 }) satisfies GetServerSideProps;
 
-async function findDuplicateTickets() {
-  try {
-    const query = '*[_type == "ticket"]{number, _id}';
-    const tickets = await sanityClient.fetch(query);
-    const groupedTickets = _.groupBy(tickets, "number");
-    const duplicates: DuplicateTicket[] = [];
-    _.forEach(groupedTickets, (ticketGroup, number) => {
-      if (ticketGroup.length > 1) {
-        const ids = ticketGroup.map((ticket) => ticket._id);
-        duplicates.push({ number, ids });
-      }
-    });
-
-    return _.orderBy(duplicates, "number");
-  } catch (error: any) {
-    console.error("Error fetching tickets:", error.message);
-  }
-}
-
-// Type Definitions
-interface DuplicateTicket {
-  number: string;
-  ids: string[];
-}
 interface CheckTicketsPageProps {
   duplicateTickets: DuplicateTicket[];
 }

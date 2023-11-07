@@ -1,16 +1,12 @@
 // models/ticket.ts
 
 import { Concert } from "./Concert";
+import { Customer } from "./Customer";
 import Seat from "./Seat";
 
-interface Customer {
-  _id: string;
-  name: string;
-  email: string;
-  tickets?: Ticket[];
-}
-
 interface Ticket {
+  _id?: string;
+  assignedCustomerId?: string;
   number: string;
   concert: Concert;
   redeemed: boolean;
@@ -19,4 +15,17 @@ interface Ticket {
   seat: Seat;
 }
 
-export type { Ticket };
+interface DuplicateTicket {
+  number: string;
+  ids: string[];
+}
+
+interface MismatchedTicket {
+  customerId: string;
+  customerName: string;
+  ticketId: string;
+  ticketNumber: string;
+  assignedCustomerId: string;
+}
+
+export type { Ticket, DuplicateTicket, MismatchedTicket };
