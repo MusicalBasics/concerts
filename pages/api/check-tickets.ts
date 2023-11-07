@@ -126,6 +126,13 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       return;
     }
 
+    if (customers.length > 1) {
+      res
+        .status(HttpStatusCode.InternalServerError)
+        .json({ message: "Multiple customers found! Please contact support" });
+      return;
+    }
+
     const customer = customers[0];
     const customerId = customer._id;
 
@@ -175,14 +182,12 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     logger.debug(unredeemedTickets, "tickets");
     logger.debug(totalTicketCount, "totalTicketCount");
     // Respond with the total ticket count
-    res
-      .status(HttpStatusCode.Ok)
-      .json({
-        success: true,
-        totalTicketCount,
-        ticketIds,
-        name: customer.name,
-      });
+    res.status(HttpStatusCode.Ok).json({
+      success: true,
+      totalTicketCount,
+      ticketIds,
+      name: customer.name,
+    });
   } catch (error) {
     console.error(error);
     res

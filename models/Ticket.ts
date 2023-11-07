@@ -7,6 +7,7 @@ interface Customer {
   _id: string;
   name: string;
   email: string;
+  tickets?: Ticket[];
 }
 
 interface Ticket {

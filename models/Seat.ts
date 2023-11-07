@@ -1,4 +1,5 @@
 export type Seat = {
+  _key?: string;
   number: string;
   isReserved: boolean;
   isReservable: boolean;
