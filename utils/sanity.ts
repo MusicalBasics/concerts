@@ -1,6 +1,7 @@
 import { Customer } from "@/models/Customer";
 import { SeatingMap as SeatingChart } from "@/models/SeatingMap";
 import { DuplicateTicket, Ticket } from "@/models/Ticket";
+import _ from "lodash";
 import { createClient } from "next-sanity";
 
 export const sanityClient = createClient({
