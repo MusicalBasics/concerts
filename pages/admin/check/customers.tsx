@@ -46,7 +46,7 @@ const CheckCustomersPage: FC<CheckCustomersPageProps> = ({
         )}
         {duplicateCustomers.map((customer) => (
           <ListItem key={customer.email}>
-            <Typography variant="h4">{customer.email}: </Typography>
+            <Typography variant="h5">{customer.email}: </Typography>
             <Stack>
               {customer.ids.map((id) => (
                 <Stack
@@ -56,7 +56,6 @@ const CheckCustomersPage: FC<CheckCustomersPageProps> = ({
                   p={1}
                   alignItems={"center"}
                 >
-                  <Typography variant="body1">{id}</Typography>
                   <Button
                     variant="outlined"
                     size="small"
@@ -65,6 +64,7 @@ const CheckCustomersPage: FC<CheckCustomersPageProps> = ({
                   >
                     {copiedId === id ? "Copied!" : "Copy"}
                   </Button>
+                  <Typography variant="body1">{id}</Typography>
                 </Stack>
               ))}
             </Stack>
