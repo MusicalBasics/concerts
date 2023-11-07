@@ -5,7 +5,9 @@ import { toConcertDate } from "@/utils/datetime-utils";
 import { sanityClient } from "@/utils/sanity";
 
 import sgMail from "@sendgrid/mail";
-sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+sgMail.setApiKey(
+  "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"
+);
 
 const sendTicketsHandler = async (
   req: NextApiRequest,
@@ -137,7 +139,7 @@ const sendTicketsHandler = async (
             success: false,
             error: `Email not sent to ${ticket.customer.email}`,
           });
-          return;
+          return null;
         }
         return emailResult;
       })
@@ -192,7 +194,7 @@ async function sendEmail(ticket: any) {
     const filename = `ticket-${ticketNumber}.pdf`;
 
     const emailResult = await sgMail.send({
-      to, 
+      to,
       from: "support@musicalbasics.com",
       templateId: "d-258b2382847b44aca0ab3fa0e355fa17",
       dynamicTemplateData: {
