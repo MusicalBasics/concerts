@@ -144,6 +144,7 @@ export default function GenerelTicketPage({ concert }) {
     setLoading(true);
     try {
       const response = await axios.post("/api/reserveGeneral", {
+        name,
         concertId,
         email,
         ticketIds,

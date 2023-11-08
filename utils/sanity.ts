@@ -148,6 +148,83 @@ export const findMismatchedTickets = async () => {
   return mismatches;
 };
 
+export async function findDuplicateRedemptions() {
+  try {
+    const redeemedTicketsQuery = `*[_type == "ticket" && redeemed == true]{
+      _id,
+      number,
+      seat {
+        short,
+        section,
+        row,
+        number
+      },
+      concert->{
+        seatingChart->{
+          _id,
+          sections[]{
+            sectionName,
+            rows[]{
+              id,
+              seats[]{
+                number,
+                isReserved,
+                reservedBy->{
+                  _id,
+                  name,
+                  email
+                }
+              }
+            }
+          }
+        }
+      }
+    }`;
+    const redeemedTickets: Ticket[] = await sanityClient.fetch(
+      redeemedTicketsQuery
+    );
+
+    // Create a map to track the seats and their associated tickets
+    const seatTicketMap: { [key: string]: Ticket[] } = {};
+
+    // Iterate over each ticket to find their seat in the seating chart
+    for (const ticket of redeemedTickets) {
+      const seatingChart: SeatingChart = ticket.concert.seatingChart;
+      for (const section of seatingChart.sections) {
+        for (const row of section.rows) {
+          for (const seat of row.seats) {
+            // Check if the seat has a redeemed ticket
+            if (seat.redeemedTicket === ticket._id) {
+              // Create a unique identifier for the seat
+              const seatIdentifier = `${seatingChart._id}-${section.sectionName}-${row.id}-${seat.number}`;
+
+              if (!seatTicketMap[seatIdentifier]) {
+                seatTicketMap[seatIdentifier] = [];
+              }
+              seatTicketMap[seatIdentifier].push(ticket);
+            }
+          }
+        }
+      }
+    }
+
+
+
+    // Find all seat identifiers with more than one associated ticket
+    const duplicateRedemptions: any[] = Object.entries(seatTicketMap)
+      .filter(([, tickets]) => tickets.length > 1) // Filter for seats with more than one ticket
+      .map(([seatIdentifier, tickets]) => ({
+        seatIdentifier,
+        tickets,
+      }));
+
+    return duplicateRedemptions;
+  } catch (error: any) {
+    console.error(`Failed to find duplicate redemptions: ${error.message}`);
+    throw error; // Rethrow the error to be handled by the caller
+  }
+}
+
 export async function findMismatchedRedemptions() {
   const redeemedTicketsQuery = `*[_type == "ticket" && redeemed == true]{
     _id,
@@ -218,7 +295,7 @@ export async function findMismatchedRedemptions() {
     }
   }
 
-  // TODO Two way check from the other direction
+  // TODO Check if any tickets are pointing to the same seat
 
   // Return or process the list of mismatchedSeats
   return mismatchedSeats;
