@@ -141,7 +141,7 @@ export const redeemTickets = async ({
 
     // Update the seat to be reserved by the customer
     const updatedSeat = await sanityAdminClient
-      .patch(seatId)
+      .patch(seatId!)
       .set({
         isReserved: true,
         reservedBy: {

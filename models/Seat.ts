@@ -1,5 +1,5 @@
 export type Seat = {
-  _id: string;
+  _id?: string;
   _key?: string;
   number: string;
   row: string;
