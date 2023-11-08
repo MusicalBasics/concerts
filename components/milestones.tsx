@@ -10,7 +10,6 @@ import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import { FC } from "react";
-import { Milestones } from "@/models/milestone";
 import Link from "next/link";
 
 const Milestones: FC<MilestonesProps> = ({ milestones, presales }) => {
@@ -83,6 +82,6 @@ const Milestones: FC<MilestonesProps> = ({ milestones, presales }) => {
 export default Milestones;
 
 export interface MilestonesProps {
-  milestones: Milestones;
+  milestones: any[];
   presales: number;
 }
