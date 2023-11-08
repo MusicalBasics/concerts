@@ -7,7 +7,7 @@ import _ from "lodash"; // Import lodash
 import Tooltip from "./tooltip";
 
 interface SeatingMapProps {
-  sections: Section[];
+  sections: Section;
   curve?: number;
   stageWidthOffset?: number;
   stageRectHeight?: number;
