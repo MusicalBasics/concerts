@@ -1,4 +1,4 @@
-import { Venue } from "@/models/Venue";
+import { Venue } from "@/models/venue";
 import { Box, Grid, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";

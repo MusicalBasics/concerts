@@ -1,8 +1,8 @@
 // models/ticket.ts
 
-import { Concert } from "./Concert";
-import { Customer } from "./Customer";
-import Seat from "./Seat";
+import { Concert } from "./concert";
+import { Customer } from "./customer";
+import Seat from "./seat";
 
 interface Ticket {
   _id?: string;

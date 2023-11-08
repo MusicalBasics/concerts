@@ -1,7 +1,7 @@
-import { SeatingMap } from "./SeatingMap";
-import { Preorder } from "./Preorder";
-import City from "./City";
-import { Venue } from "./Venue";
+import { SeatingMap } from "./seating-chart";
+import { Preorder } from "./preorder";
+import City from "./city";
+import { Venue } from "./venue";
 
 export type Concert = {
   _id: string;

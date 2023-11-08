@@ -9,7 +9,7 @@ import { sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import RegularButton from "@/components/concerts/regular-button";
 import Layout from "@/components/layout";
-import { Concert } from "@/models/Concert";
+import { Concert } from "@/models/concert";
 import { Map } from "react-map-gl";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 

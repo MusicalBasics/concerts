@@ -1,4 +1,4 @@
-import City from "./City";
+import City from "./city";
 
 // Venue.ts
 export type Venue = {

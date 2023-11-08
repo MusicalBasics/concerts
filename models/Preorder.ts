@@ -1,4 +1,4 @@
-import { Milestone } from "./Milestone";
+import { Milestone } from "./milestone";
 
 export type Preorder = {
   totalTickets: number;

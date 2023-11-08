@@ -1,4 +1,4 @@
-import { Row } from "./Row";
+import { Row } from "./row";
 
 export type Section = {
   _key?: string;

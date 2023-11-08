@@ -7,7 +7,7 @@ import Image from "next/image";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import { Venue } from "@/models/Venue";
+import { Venue } from "@/models/venue";
 import { Map, Marker } from "react-map-gl";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 

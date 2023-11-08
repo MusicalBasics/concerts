@@ -4,7 +4,7 @@ import Layout from "@/components/layout";
 import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import { Venue } from "@/models/Venue";
+import { Venue } from "@/models/venue";
 import VenuesGrid from "@/components/venues/venuesGrid";
 
 const VenuesPage: FC<VenuesPageProps> = ({ cities }) => {

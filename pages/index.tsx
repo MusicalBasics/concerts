@@ -10,7 +10,7 @@ import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Map } from "react-map-gl";
-import { Concert } from "@/models/Concert";
+import { Concert } from "@/models/concert";
 import { parseDateOrFallback } from "@/utils/datetime-utils";
 
 const HomePage: FC<HomePageProps> = ({ concerts }) => {

@@ -2,7 +2,7 @@ import React, { FC, useState } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import Box from "@mui/material/Box";
 import Seat from "./seat";
-import { Section } from "@/models/Section";
+import { Section } from "@/models/section";
 import _ from "lodash"; // Import lodash
 import Tooltip from "./tooltip";
 

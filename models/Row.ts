@@ -1,4 +1,4 @@
-import { Seat } from "./Seat";
+import { Seat } from "./seat";
 
 export type Row = {
   _key?: string;

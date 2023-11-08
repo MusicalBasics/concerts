@@ -1,4 +1,4 @@
-import { Venue } from "./Venue";
+import { Venue } from "./venue";
 
 export type Milestone = {
   venue: Venue;

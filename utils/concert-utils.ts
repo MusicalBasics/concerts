@@ -1,27 +1,27 @@
-import axios from "axios";
 import moment from "moment";
 import _ from "lodash";
 import { sanityClient } from "./sanity";
+import { Seats } from "@/models/seat";
 
-export const toSeatsText = (seats) => {
-  return seats.map((seat) => `${seat.rowId}${seat.seatNumber}`).join(", ");
+export const toSeatsText = (seats: Seats) => {
+  return seats.map((seat) => `${seat.row}${seat.number}`).join(", ");
 };
 
-export const getFormattedDate = (date) => {
+export const getFormattedDate = (date: string) => {
   return moment(date).format("MMMM Do YYYY").toString();
 };
 
-export const validateEmail = (email) => {
+export const validateEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-export const validateName = (name) => {
+export const validateName = (name: string) => {
   // Make sure name is not empty and less than 50 characters
   return name.length > 0 && name.length < 50;
 };
 
-export const validateTicketNumbers = (ticketNumbers) => {
+export const validateTicketNumbers = (ticketNumbers: string) => {
   if (!ticketNumbers || ticketNumbers.trim().length === 0) {
     return false;
   }
@@ -53,7 +53,7 @@ export const validateTicketNumbers = (ticketNumbers) => {
 
   // Check if each ticket number is valid
   const isValid = cleanedTicketNumbers.every((ticketNumber) =>
-    ticketNumberRegex.test(ticketNumber)
+    ticketNumberRegex.test(ticketNumber as any)
   );
 
   return isValid;
@@ -115,5 +115,25 @@ export const getCityLinks = async () => {
     return cityLinks;
   } catch (error) {
     console.error("Error:", error);
+  }
+};
+
+export const toConcertDate = (date: any): string => {
+  return moment(date).format("MMMM D, YYYY, h:mm a");
+};
+
+// Custom function to handle the date logic
+export const parseDateOrFallback = (
+  concertDate: string,
+  preorderEndDate: string
+) => {
+  if (concertDate) {
+    // Parse the provided date string
+    return moment(concertDate).toDate();
+  } else {
+    // Since startDate is always provided, parse it assuming it's in the 'MMM YYYY' format
+    // This will set the date to the first day of the specified month and year
+
+    return moment(preorderEndDate, "MMM YYYY").endOf("month").toDate();
   }
 };

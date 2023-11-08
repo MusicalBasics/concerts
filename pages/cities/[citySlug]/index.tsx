@@ -12,7 +12,7 @@ import FloatingCityList from "@/components/floating-city-list";
 import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/City";
+import City from "@/models/city";
 import { Map, Marker } from "react-map-gl";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 

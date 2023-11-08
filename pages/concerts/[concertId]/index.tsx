@@ -10,11 +10,11 @@ import FloatingCityList from "@/components/floating-city-list";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import { Concert } from "@/models/Concert";
+import { Concert } from "@/models/concert";
 import { getCityLinks } from "@/utils/concert-utils";
 import { Map, Marker, Popup } from "react-map-gl";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
-import { toConcertDate } from "@/utils/datetime-utils";
+import { toConcertDate } from "@/utils/concert-utils";
 import { PortableText } from "@portabletext/react";
 import { Router, useRouter } from "next/router";
 

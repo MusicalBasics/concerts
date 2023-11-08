@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import Image from "next/image";
 import TheaterComedyIcon from "@mui/icons-material/TheaterComedy";
 import { FC } from "react";
-import Milestone from "@/models/Milestone";
+import Milestone from "@/models/milestone";
 import Link from "next/link";
 
 const Milestones: FC<MilestonesProps> = ({ milestones, presales }) => {

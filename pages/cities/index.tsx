@@ -8,7 +8,7 @@ import Image from "next/image";
 import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/City";
+import City from "@/models/city";
 
 mapboxgl!.accessToken = MAPBOX_ACCESS_TOKEN;
 
