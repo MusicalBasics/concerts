@@ -1,11 +1,9 @@
 import { Venue } from "./venue";
 
-export type Milestone = {
+interface Milestone {
   venue: Venue;
   level: number;
   threshold: number;
-};
+}
 
-export type Milestones = Milestone[];
-
-export default Milestone;
+export type { Milestone };

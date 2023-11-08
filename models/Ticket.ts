@@ -2,7 +2,7 @@
 
 import { Concert } from "./concert";
 import { Customer } from "./customer";
-import Seat from "./seat";
+import { Seat } from "./seat";
 import { SeatingChart } from "./seating-chart";
 
 interface Ticket {

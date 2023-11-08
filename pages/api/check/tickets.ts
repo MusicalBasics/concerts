@@ -5,8 +5,6 @@ import _ from "lodash";
 
 // Initialize the Sanity client
 const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
-  const logger = getLogger("api/checkTickets");
-
   const { email, concertId, ticketNumbers } = req.body;
 
   if (!email || !ticketNumbers || !concertId) {
@@ -146,8 +144,6 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     const ticketIds = unredeemedTickets.map((ticket) => ticket._id);
 
     // If the customer doesn't have the tickets, add them
-    logger.debug(customer, "customer");
-
     const newTickets = _.chain(ticketIds)
       .map((ticketId) => ({ _ref: ticketId, _type: "reference" }))
       .filter(
@@ -172,14 +168,8 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       })
     );
 
-    logger.debug(updatedTickets, "updatedTickets");
-    logger.debug(updatedCustomer, "updatedCustomer");
-
     const totalTicketCount = unredeemedTickets.length;
 
-    logger.debug(ticketIds, "ticketIds");
-    logger.debug(unredeemedTickets, "tickets");
-    logger.debug(totalTicketCount, "totalTicketCount");
     // Respond with the total ticket count
     res.status(HttpStatusCode.Ok).json({
       success: true,

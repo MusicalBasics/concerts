@@ -1,4 +1,4 @@
-export type Seat = {
+interface Seat {
   _id?: string;
   _key?: string;
   number: string;
@@ -8,8 +8,6 @@ export type Seat = {
   isReservable?: boolean;
   redeemedTicket?: { _ref?: string };
   reservedBy?: { _ref?: string; name?: string; email?: string };
-};
+}
 
-export type Seats = Seat[];
-
-export default Seat;
+export type { Seat };

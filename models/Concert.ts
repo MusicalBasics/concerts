@@ -1,9 +1,9 @@
 import { SeatingChart } from "./seating-chart";
 import { Preorder } from "./preorder";
-import City from "./city";
+import { City } from "./city";
 import { Venue } from "./venue";
 
-export type Concert = {
+interface Concert {
   _id: string;
   _ref?: string;
   name: string;
@@ -15,4 +15,6 @@ export type Concert = {
   description: any;
   seatingChart: SeatingChart;
   preorder: Preorder;
-};
+}
+
+export type { Concert };

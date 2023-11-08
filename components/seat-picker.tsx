@@ -10,8 +10,8 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import Seat from "@/models/seat";
-import Section from "@/models/section";
+import { Seat } from "../models/seat";
+import { Section } from "../models/section";
 import { toSeatString } from "@/utils/seating-utils";
 
 interface SeatProps {

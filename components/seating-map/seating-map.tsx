@@ -4,10 +4,10 @@ import Box from "@mui/material/Box";
 import Seat from "./seat";
 import _ from "lodash"; // Import lodash
 import Tooltip from "./tooltip";
-import type { Section, Sections } from "@/models/section";
+import type { Section } from "@/models/section";
 
 interface SeatingMapProps {
-  sections: Sections;
+  sections: Section[];
   ticketCount: number;
   onSubmit: any;
   curve?: number;

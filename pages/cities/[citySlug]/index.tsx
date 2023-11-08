@@ -1,18 +1,13 @@
 import * as mapboxgl from "mapbox-gl"; // eslint-disable-line import/no-webpack-loader-syntax
-import Milestones from "@/components/milestones";
-import VenueList from "@/components/venue-list";
 import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
-import Link from "next/link";
-import { FC, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Box, Stack, Typography } from "@mui/material";
+import { FC } from "react";
 import Layout from "@/components/layout";
-import { getInventory } from "@/utils/shopify-utils";
 import Image from "next/image";
-import FloatingCityList from "@/components/floating-city-list";
-import { GetServerSideProps, GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
-import City from "@/models/city";
+import { City } from "@/models/city";
 import { Map, Marker } from "react-map-gl";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 

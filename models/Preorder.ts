@@ -1,6 +1,6 @@
 import { Milestone } from "./milestone";
 
-export type Preorder = {
+interface Preorder {
   totalTickets: number;
   goldenTicketProduct: goldenTicketProduct;
   otherTicketProducts: { _ref: string }[];
@@ -10,12 +10,12 @@ export type Preorder = {
   startDate: string;
   endDate: string;
   timeFrame: string;
-};
-
-export default Preorder;
+}
 
 type goldenTicketProduct = {
   store: {
     gid: string;
   };
 };
+
+export type { Preorder };

@@ -1,4 +1,4 @@
-import Seat from "@/models/seat";
+import { Seat } from "@/models/seat";
 
 export function toLongSeatString(seat: Seat) {
   const seatString = toSeatString(seat);

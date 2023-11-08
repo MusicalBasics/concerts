@@ -1,9 +1,9 @@
 import moment from "moment";
 import _ from "lodash";
 import { sanityClient } from "./sanity";
-import { Seats } from "@/models/seat";
+import { Seat } from "@/models/seat";
 
-export const toSeatsText = (seats: Seats) => {
+export const toSeatsText = (seats: Seat[]) => {
   return seats.map((seat) => `${seat.row}${seat.number}`).join(", ");
 };
 

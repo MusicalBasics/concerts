@@ -3,7 +3,7 @@ import _ from "lodash";
 import { NextApiRequest, NextApiResponse } from "next";
 import { redeemTickets, sanityAdminClient } from "@/utils/sanity";
 import { Ticket } from "@/models/ticket";
-import Seat from "@/models/seat";
+import { Seat } from "@/models/seat";
 
 interface reserveGoldenNextApiRequest extends NextApiRequest {
   body: {

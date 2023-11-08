@@ -1,12 +1,10 @@
-import { Customer } from "@/models/customer";
-import { SeatingChart as SeatingChart } from "@/models/seating-chart";
-import { DuplicateTicket, Ticket } from "@/models/ticket";
+import { Ticket } from "@/models/ticket";
 import { HttpStatusCode } from "axios";
 import _ from "lodash";
 import { createClient } from "next-sanity";
 import { toLongSeatString } from "./seating-utils";
 import { Concert } from "@/models/concert";
-import Seat from "@/models/seat";
+import { Seat } from "@/models/seat";
 
 export const sanityClient = createClient({
   projectId: "zqcyefig",

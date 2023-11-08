@@ -1,11 +1,9 @@
-import { createClient } from "next-sanity";
 import axios, { HttpStatusCode } from "axios";
 import {
   Box,
   Stack,
   Typography,
   ToggleButton,
-  TextField,
   Button,
   Dialog,
   DialogTitle,
@@ -14,10 +12,9 @@ import {
   DialogActions,
   CircularProgress,
 } from "@mui/material";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
 import Layout from "@/components/layout";
 import SeatPicker from "@/components/seat-picker";
 import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
@@ -27,7 +24,7 @@ import EmailInput from "@/components/concerts/email-input";
 import Link from "next/link";
 import { GetServerSideProps } from "next";
 import { Concert } from "@/models/concert";
-import Seat from "@/models/seat";
+import { Seat } from "@/models/seat";
 
 interface GoldenTicketPageProps {
   concert: Concert;

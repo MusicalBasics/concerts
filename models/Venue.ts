@@ -1,7 +1,7 @@
-import City from "./city";
+import { City } from "./city";
 
 // Venue.ts
-export type Venue = {
+interface Venue {
   _id: string;
   name: string;
   slug: { current: string };
@@ -12,4 +12,6 @@ export type Venue = {
   };
   image: { asset: { url: string } };
   city: City;
-};
+}
+
+export type { Venue };
