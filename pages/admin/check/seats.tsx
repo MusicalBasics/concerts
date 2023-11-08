@@ -73,7 +73,7 @@ const CheckSeatsPage: FC<CheckSeatsPageProps> = ({ mismatchedSeats }) => {
                         </Typography>
                       ) : (
                         <Typography color="error">
-                          "No redeemed ticket found!"
+                          No redeemed ticket found!
                         </Typography>
                       )}
                       <Typography variant="body2" color="error">

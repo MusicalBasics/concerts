@@ -20,7 +20,7 @@ export default function MaintenancePage() {
           Maintenance Mode
         </Typography>
         <Typography variant="h4" gutterBottom>
-          We're working hard to bring you the best experience possible.
+          We are working hard to bring you the best experience possible.
         </Typography>
         <Typography variant="body1" paragraph>
           Something big is coming soon! In the meantime, check out our Official
