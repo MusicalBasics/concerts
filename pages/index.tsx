@@ -11,7 +11,7 @@ import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Map } from "react-map-gl";
 import { Concert } from "@/models/concert";
-import { parseDateOrFallback } from "@/utils/datetime-utils";
+import { parseDateOrFallback } from "@/utils/concert-utils";
 
 const HomePage: FC<HomePageProps> = ({ concerts }) => {
   return (
