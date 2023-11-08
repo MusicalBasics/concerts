@@ -492,3 +492,84 @@ export const findMismatchedSeats = async () => {
 
   return mismatches;
 };
+
+export const getAllFormatedSeats = async () => {
+  try {
+    const seatingCharts: SeatingChart[] = await sanityAdminClient.fetch(
+      `*[_type == "seatingChart"]{
+        venue->{
+          _id,
+          name,
+        },
+        sections[] {
+          name,
+          rows[] {
+            id,
+            seats[] {
+              number,
+              isReserved,
+              isReservable,
+              row,
+              section,
+              reservedBy->{
+                _id,
+                name,
+                email,
+              },
+              redeemedTicket->{
+                _id,
+                number,
+              }, 
+            },
+          },
+        },
+      }
+    `
+    );
+
+    let formatedSeats: FormatedSeat[] = [];
+
+    if (!seatingCharts || seatingCharts.length === 0) {
+      throw new Error("No seating charts found");
+    }
+
+    seatingCharts.forEach((seatingChart) => {
+      seatingChart.sections.forEach((section) => {
+        section.rows.forEach((row) => {
+          row.seats.forEach((seat) => {
+            formatedSeats.push({
+              number: seat.number,
+              isReserved: seat.isReserved,
+              isReservable: seat.isReservable,
+              redeemedTicket: seat.redeemedTicket,
+              reservedBy: seat.reservedBy,
+              venue: {
+                name: seatingChart.venue.name,
+                _ref: seatingChart.venue._id,
+              },
+              row: row.id,
+              section: section.name,
+            });
+          });
+        });
+      });
+    });
+
+    return formatedSeats;
+  } catch (error) {
+    console.error("Error fetching and filtering seats:", error);
+    throw error;
+  }
+};
+
+export type FormatedSeat = {
+  _key?: string;
+  number: string;
+  isReserved: boolean;
+  isReservable: boolean;
+  redeemedTicket: { _ref?: string; number?: string };
+  reservedBy: { _ref?: string; name?: string; email?: string };
+  venue: { _ref?: string; name?: string };
+  row: string;
+  section: string;
+};
