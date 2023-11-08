@@ -5,3 +5,7 @@ export type Section = {
   name: string;
   rows: Row[];
 };
+
+export type Sections = Section[];
+
+export default Section;

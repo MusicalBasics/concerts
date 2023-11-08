@@ -277,6 +277,9 @@ export const getStaticProps = (async (context) => {
   const goldenTicketProductiGid = goldenTicketProduct.store.gid;
 
   const inventoryTickets = await getInventory(goldenTicketProductiGid);
+
+  console.log("inventoryTickets", inventoryTickets);
+
   const ticketsSold = totalTickets - inventoryTickets;
   const cityLinks = await getCityLinks();
 
