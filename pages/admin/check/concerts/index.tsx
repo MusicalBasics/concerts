@@ -58,7 +58,7 @@ const CheckConcertsPage: FC<CheckConcertsPageProps> = ({ concerts }) => {
               }}
               disabled={!concert.seatingChart}
               onClick={() => {
-                router.push(`/checks/check-concerts/${concert._id}`);
+                router.push(`admin/check/concerts/${concert._id}`);
               }}
             >
               Check Concert
