@@ -208,8 +208,6 @@ export async function findDuplicateRedemptions() {
       }
     }
 
-
-
     // Find all seat identifiers with more than one associated ticket
     const duplicateRedemptions: any[] = Object.entries(seatTicketMap)
       .filter(([, tickets]) => tickets.length > 1) // Filter for seats with more than one ticket
@@ -367,3 +365,130 @@ async function findSeatInSeatingChart(
     return null;
   }
 }
+
+async function getFilteredSeats() {
+  const seatQuery = `
+  *[_type == "seatingChart"]{
+      _id,
+      sections[]{
+        sectionName,
+        rows[]{
+          id,
+          seats[]{
+            number,
+            isReserved,
+            redeemedTicket->{
+              seat {
+                short,
+                section,
+                row,
+                number
+              },
+              customer->{
+                _id,
+                name,
+                email
+              }
+            },
+            reservedBy->{
+              _id,
+              name,
+              email
+            }
+          }
+        }
+      }
+    }
+  `;
+  try {
+    const seatingCharts = await sanityClient.fetch(seatQuery);
+
+    let filteredSeats: any[] = [];
+
+    // Use lodash to iterate over the sections and rows
+    _.forEach(seatingCharts, (chart) => {
+      _.forEach(chart.sections, (section) => {
+        _.forEach(section.rows, (row) => {
+          // Filter the seats within the current row
+          const seats = _.filter(
+            row.seats,
+            (seat) => seat.isReserved || seat.reservedBy || seat.redeemedTicket
+          );
+          // Map and keep necessary details
+          const detailedSeats = _.map(seats, (seat) => ({
+            ...seat,
+            seatingChartId: chart._id,
+            rowId: row.id,
+            sectionName: section.sectionName,
+          }));
+          // Merge the detailed seats into the filteredSeats array
+          filteredSeats = _.concat(filteredSeats, detailedSeats);
+        });
+      });
+    });
+
+    return filteredSeats;
+  } catch (error) {
+    console.error("Error fetching and filtering seats:", error);
+    throw error;
+  }
+}
+export const findMismatchedSeats = async () => {
+  // Fetch all tickets with their seat
+  const filteredSeats = await getFilteredSeats();
+
+  let mismatches: any[] = [];
+
+  filteredSeats.forEach((seat) => {
+    if (seat.isReserved && seat.reservedBy) {
+      if (!seat.redeemedTicket) {
+        mismatches.push({
+          seat,
+          message: `Seat is reserved by someone but has no redeemedTicket`,
+        });
+      } else if (!seat.redeemedTicket.customer) {
+        mismatches.push({
+          seat,
+          message: `Seat is reserved but has a redeemedTicket with no customer`,
+        });
+      } else if (seat.reservedBy._id !== seat.redeemedTicket.customer._id) {
+        mismatches.push({
+          seat,
+          message: `Seat is reserved but has a reservedBy that doesn't match the redeemedTicket's customer`,
+        });
+      }
+    }
+
+    if (seat.isReserved && seat.redeemedTicket) {
+      const { section, row, number } = seat.redeemedTicket.seat;
+      if (
+        seat.sectionName !== section ||
+        seat.rowId !== row ||
+        seat.number !== number
+      ) {
+        mismatches.push({
+          seat,
+          message: `Seat is reserved but has a redeemedTicket that doesn't match`,
+        });
+      }
+    }
+
+    if (!seat.isReserved && seat.reservedBy) {
+      mismatches.push({
+        seat,
+        message: `Seat is not reserved but has a reservedBy`,
+      });
+    }
+
+    if (!seat.isReserved && seat.redeemedTicket) {
+      mismatches.push({
+        seat,
+        message: `Seat is not reserved but has a redeemedTicket`,
+      });
+    }
+  });
+
+  console.log("mismatches", mismatches);
+
+  return mismatches;
+};
