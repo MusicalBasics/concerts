@@ -10,8 +10,8 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
-import { Sections } from "@/models/section";
 import Seat from "@/models/seat";
+import Section from "@/models/section";
 import { toSeatString } from "@/utils/seating-utils";
 
 interface SeatProps {
@@ -60,7 +60,7 @@ const getAlignment = (sectionName: string) => {
 };
 
 interface SeatPickerProps {
-  sections: Sections;
+  sections: Section[];
   ticketCount: number;
   onSubmit: any;
   selectedSeats: Seat[];
