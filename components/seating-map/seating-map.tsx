@@ -7,7 +7,7 @@ import _ from "lodash"; // Import lodash
 import Tooltip from "./tooltip";
 
 interface SeatingMapProps {
-  sections: Section;
+  sections: Section[];
   curve?: number;
   stageWidthOffset?: number;
   stageRectHeight?: number;
@@ -180,7 +180,7 @@ const SeatingMap: FC<SeatingMapProps> = ({
             section.rows.map((row, rowIndex) =>
               row.seats.map((seat, seatIndex) => {
                 const seatNumber = `${row.id}${seat.number}`;
-                const key = `${section.sectionName}-${seatNumber}`;
+                const key = `${section.name}-${seatNumber}`;
                 const { x, y } = getSeatPosition(
                   rowIndex,
                   seatIndex,
