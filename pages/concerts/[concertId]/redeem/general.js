@@ -100,7 +100,7 @@ export default function GenerelTicketPage({ concert }) {
     setLoading(true);
 
     try {
-      const response = await axios.post("/api/check-tickets", {
+      const response = await axios.post("/api/check/tickets", {
         email,
         concertId,
         ticketNumbers: uniqueTicketNumbers,
@@ -143,7 +143,7 @@ export default function GenerelTicketPage({ concert }) {
   const handleReserve = async (selectedSeats) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/reserveGeneral", {
+      const response = await axios.post("/api/reserve/general", {
         name,
         concertId,
         email,
@@ -164,7 +164,7 @@ export default function GenerelTicketPage({ concert }) {
       setReservationSuccess(true);
 
       // Send confrimation eamils
-      const emailResponse = await axios.post("/api/sendConfirmation", {
+      const emailResponse = await axios.post("/api/send/confirmation", {
         email,
         concertName: concert.name,
         concertDate: getFormattedDate(concert.date),

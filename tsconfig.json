@@ -29,7 +29,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "pages/api/reserveGolden.ts",
+    "pages/api/reserve/golden.ts",
     "utils/concert-utils.ts"
 , "pages/concerts/[concertId]/redeem/general.js"  ],
   "exclude": ["node_modules"]

@@ -10,8 +10,23 @@ import {
   DialogContentText,
   DialogActions,
 } from "@mui/material";
+import { Sections } from "@/models/section";
+import Seat from "@/models/seat";
+import { toSeatString } from "@/utils/seating-utils";
 
-const Seat = ({ number, isReserved, isSelected, onSelect }) => (
+interface SeatProps {
+  number: string;
+  isReserved: boolean;
+  isSelected: boolean;
+  onSelect: any;
+}
+
+const Seat: React.FC<SeatProps> = ({
+  number,
+  isReserved,
+  isSelected,
+  onSelect,
+}) => (
   <Box
     sx={{
       width: 24,
@@ -31,7 +46,7 @@ const Seat = ({ number, isReserved, isSelected, onSelect }) => (
   </Box>
 );
 
-const getAlignment = (sectionName) => {
+const getAlignment = (sectionName: string) => {
   switch (sectionName) {
     case "left":
       return "flex-end";
@@ -44,7 +59,15 @@ const getAlignment = (sectionName) => {
   }
 };
 
-const SeatPicker = ({
+interface SeatPickerProps {
+  sections: Sections;
+  ticketCount: number;
+  onSubmit: any;
+  selectedSeats: Seat[];
+  setSelectedSeats: Function;
+}
+
+const SeatPicker: React.FC<SeatPickerProps> = ({
   sections,
   ticketCount,
   onSubmit,
@@ -53,26 +76,36 @@ const SeatPicker = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleSeatClick = (sectionName, rowId, seatNumber) => {
-    const seatId = { sectionName, rowId, seatNumber };
-    setSelectedSeats((prev) => {
+  const handleSeatClick = (
+    sectionName: string,
+    rowId: string,
+    seatNumber: string
+  ) => {
+    const newSeat: Seat = {
+      section: sectionName,
+      row: rowId,
+      number: seatNumber,
+    };
+    console.log("newSeat", newSeat);
+    console.log("prev", selectedSeats);
+    setSelectedSeats((prev: Seat[]) => {
       const isAlreadySelected = prev.some(
         (seat) =>
-          seat.sectionName === sectionName &&
-          seat.rowId === rowId &&
-          seat.seatNumber === seatNumber
+          seat.section === sectionName &&
+          seat.row === rowId &&
+          seat.number === seatNumber
       );
       if (isAlreadySelected) {
         return prev.filter(
           (seat) =>
             !(
-              seat.sectionName === sectionName &&
-              seat.rowId === rowId &&
-              seat.seatNumber === seatNumber
+              seat.section === sectionName &&
+              seat.row === rowId &&
+              seat.number === seatNumber
             )
         );
       } else if (prev.length < ticketCount) {
-        return [...prev, seatId];
+        return [...prev, newSeat];
       }
       return prev;
     });
@@ -98,7 +131,7 @@ const SeatPicker = ({
       </Typography>
       <Typography variant="h6" sx={{ mt: 2 }}>
         {`Selected Seats: ${selectedSeats
-          .map((seat) => `${seat.rowId}${seat.seatNumber}`)
+          .map((seat) => toSeatString(seat))
           .join(", ")}`}
       </Typography>
       <Typography variant="h2" align="center" color="white" sx={{ mb: 3 }}>
@@ -113,7 +146,7 @@ const SeatPicker = ({
                 item
                 key={rowIndex}
                 alignItems="flex-end"
-                justifyContent={getAlignment(section.sectionName)}
+                justifyContent={getAlignment(section.name)}
               >
                 <Grid item>
                   <Typography variant="body1" sx={{ mr: 1 }}>
@@ -124,21 +157,20 @@ const SeatPicker = ({
                   <Grid item key={seatIndex}>
                     <Seat
                       number={seat.number}
-                      isReserved={seat.isReserved}
+                      isReserved={seat.isReserved!}
                       isSelected={selectedSeats.some((s) => {
                         return (
-                          s.sectionName === section.sectionName &&
-                          s.rowId === row.id &&
-                          s.seatNumber === seat.number
+                          s.section === section.name &&
+                          s.row === row.id &&
+                          s.number === seat.number
                         );
                       })}
-                      onSelect={() =>
-                        handleSeatClick(
-                          section.sectionName,
-                          row.id,
-                          seat.number
-                        )
-                      }
+                      onSelect={() => {
+                        console.log("clicked");
+                        console.log(section.name, row.id, seat.number);
+
+                        handleSeatClick(section.name, row.id, seat.number);
+                      }}
                     />
                   </Grid>
                 ))}
@@ -185,11 +217,7 @@ const SeatPicker = ({
             <br />
             Your Selected Seats Are:
             <br />
-            <b>
-              {selectedSeats
-                .map((seat) => `${seat.rowId}${seat.seatNumber}`)
-                .join(", ")}
-            </b>
+            <b>{selectedSeats.map((seat) => toSeatString(seat)).join(", ")}</b>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

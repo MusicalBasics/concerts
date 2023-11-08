@@ -3,16 +3,18 @@
 import { Concert } from "./concert";
 import { Customer } from "./customer";
 import Seat from "./seat";
+import { SeatingChart } from "./seating-chart";
 
 interface Ticket {
-  _id?: string;
-  assignedCustomerId?: string;
-  number: string;
+  _id: string;
   concert: Concert;
+  number: string;
   redeemed: boolean;
   type: string;
-  customer: Customer;
-  seat: Seat;
+  seatingChart?: SeatingChart;
+  customer?: Customer;
+  redeemedSeat?: Seat;
+  assignedCustomerId?: string;
 }
 
 interface DuplicateTicket {

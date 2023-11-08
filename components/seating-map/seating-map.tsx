@@ -8,16 +8,21 @@ import type { Section, Sections } from "@/models/section";
 
 interface SeatingMapProps {
   sections: Sections;
+  ticketCount: number;
+  onSubmit: any;
   curve?: number;
   stageWidthOffset?: number;
   stageRectHeight?: number;
   stageHeightMultiplier?: number;
   rowGap?: number;
   gapBetweenSeats?: number;
+  selectedSeats?: any;
+  setSelectedSeats?: any;
 }
 
 const SeatingMap: FC<SeatingMapProps> = ({
   sections = [],
+  ticketCount,
   curve = 0.0002,
   stageWidthOffset = 35,
   stageRectHeight = 100,
@@ -25,7 +30,6 @@ const SeatingMap: FC<SeatingMapProps> = ({
   rowGap = 8,
   gapBetweenSeats = 5,
 }) => {
-  const [selectedSeats, setSelectedSeats] = useState({});
   const [hoveredSeat, setHoveredSeat] = useState<string | null | undefined>(
     null
   );
@@ -193,8 +197,8 @@ const SeatingMap: FC<SeatingMapProps> = ({
                     y={y}
                     width={seatWidth}
                     height={rowHeight}
-                    isReserved={seat.isReserved}
-                    isReservable={seat.isReservable}
+                    isReserved={seat.isReserved!}
+                    isReservable={seat.isReservable!}
                     seatNumber={seatNumber}
                     onMouseEnter={() =>
                       handleMouseEnter({ key, seat, seatNumber, x, y })

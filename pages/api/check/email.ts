@@ -2,7 +2,6 @@
 import { createClient } from "next-sanity";
 import { HttpStatusCode } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getLogger } from "@/utils/logging-utils";
 
 // Initialize the Sanity client
 const client = createClient({
@@ -12,9 +11,7 @@ const client = createClient({
   useCdn: false, // Disable for authenticated requests
 });
 
-const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
-  const logger = getLogger("api/checkEmail");
-
+const checkEmailHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { email, concertId } = req.body;
 
   if (!email || !concertId) {
@@ -125,7 +122,7 @@ const checkEmail = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 };
 
-export default checkEmail;
+export default checkEmailHandler;
 
 // Type Definitions
 interface Customer {

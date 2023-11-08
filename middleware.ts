@@ -28,7 +28,8 @@ export async function middleware(req: NextRequest) {
 
   try {
     // Check whether the maintenance page should be shown
-    const isInMaintenanceMode = await get<boolean>("isInMaintenanceMode");
+    const isInMaintenanceMode = false;
+    // const isInMaintenanceMode = await get<boolean>("isInMaintenanceMode");
 
     // If is in maintenance mode, point the url pathname to the maintenance page
     if (isInMaintenanceMode) {

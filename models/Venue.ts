@@ -2,6 +2,7 @@ import City from "./city";
 
 // Venue.ts
 export type Venue = {
+  _id: string;
   name: string;
   slug: { current: string };
   address: string;

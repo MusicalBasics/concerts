@@ -1,12 +1,13 @@
 export type Seat = {
+  _id: string;
   _key?: string;
   number: string;
-  isReserved: boolean;
-  isReservable: boolean;
   row: string;
   section: string;
-  redeemedTicket: { _ref?: string };
-  reservedBy: { _ref?: string; name?: string; email?: string };
+  isReserved?: boolean;
+  isReservable?: boolean;
+  redeemedTicket?: { _ref?: string };
+  reservedBy?: { _ref?: string; name?: string; email?: string };
 };
 
 export type Seats = Seat[];

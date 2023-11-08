@@ -1,6 +1,5 @@
 import { HttpStatusCode } from "axios";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getLogger } from "@/utils/logging-utils";
 import { sanityAdminClient } from "@/utils/sanity";
 import _ from "lodash";
 

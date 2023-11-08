@@ -1,8 +1,8 @@
 import { Section } from "./section";
 
-export type SeatingMap = {
+export type SeatingChart = {
   _id: string;
   sections: Section[];
   venue: { _ref: string; _id: string };
-  referenceImage: { asset: { _ref: string } };
+  referenceImage: { asset: { _ref: string; url: string } };
 };

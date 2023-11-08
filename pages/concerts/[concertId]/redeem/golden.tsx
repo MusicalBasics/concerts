@@ -14,7 +14,7 @@ import {
   DialogActions,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
@@ -25,10 +25,17 @@ import { sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import EmailInput from "@/components/concerts/email-input";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import { Concert } from "@/models/concert";
+import Seat from "@/models/seat";
 
-export default function GoldenTicketPage({ concert }) {
+interface GoldenTicketPageProps {
+  concert: Concert;
+}
+
+const GoldenTicketPage: React.FC<GoldenTicketPageProps> = ({ concert }) => {
   const router = useRouter();
-  const [selectedSeats, setSelectedSeats] = useState([]);
+  const [selectedSeats, setSelectedSeats] = useState<Seat[]>([]);
 
   const venue = concert.venue;
   const seatingChart = concert.seatingChart;
@@ -48,7 +55,7 @@ export default function GoldenTicketPage({ concert }) {
     setShowMap((prev) => !prev);
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
 
@@ -78,7 +85,7 @@ export default function GoldenTicketPage({ concert }) {
 
     try {
       // rewrite this to use axios
-      const response = await axios.post("/api/checkEmail", {
+      const response = await axios.post("/api/check/email", {
         email,
         concertId: concert._id,
       });
@@ -110,7 +117,7 @@ export default function GoldenTicketPage({ concert }) {
       setName(customerName);
       setTicketCount(totalTicketCount);
       setTicketIds(ticketIds);
-    } catch (error) {
+    } catch (error: any) {
       // Get the error message
       const { message } = error.response.data;
       alert(`Error: ${message}`);
@@ -120,10 +127,10 @@ export default function GoldenTicketPage({ concert }) {
     setLoading(false);
   };
 
-  const handleReserve = async (selectedSeats) => {
+  const handleReserve = async (selectedSeats: Seat[]) => {
     setLoading(true);
     try {
-      const response = await axios.post("/api/reserveGolden", {
+      const response = await axios.post("/api/reserve/golden", {
         concertId: concert._id,
         name,
         email,
@@ -144,7 +151,7 @@ export default function GoldenTicketPage({ concert }) {
       setReservationSuccess(true);
 
       // Send confrimation eamils
-      const emailResponse = await axios.post("/api/sendConfirmation", {
+      const emailResponse = await axios.post("/api/send/confirmation", {
         email,
         concertName: concert.name,
         concertDate: getFormattedDate(concert.date),
@@ -159,7 +166,7 @@ export default function GoldenTicketPage({ concert }) {
       }
 
       alert("Confirmation email sent.");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       const { message } = error.response.data;
       alert("There was an error reserving your seats." + message);
@@ -311,10 +318,12 @@ export default function GoldenTicketPage({ concert }) {
       )}
     </Layout>
   );
-}
+};
+
+export default GoldenTicketPage;
 
 // Data Fetching
-export async function getServerSideProps(context) {
+const getServerSideProps = (async (context) => {
   // Get cityId from the URL
   const { concertId } = context.query;
 
@@ -324,7 +333,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const concerts = await sanityClient.fetch(
+  const concerts: Concert[] = await sanityClient.fetch(
     `*[_type == "concert" && _id == "${concertId}"]{
       _id,
       name,
@@ -344,7 +353,18 @@ export async function getServerSideProps(context) {
       },
       date,
       seatingChart->{
-        sections[],
+        sections[] {
+          name,
+          rows[] {
+            id,
+            seats[]->{
+              _id,
+              number,
+              isReserved,
+              isReservable
+            }
+          },
+        },
         referenceImage {
           asset-> {
             url
@@ -369,4 +389,6 @@ export async function getServerSideProps(context) {
       concert, // now concert includes dereferenced city and venue
     },
   };
-}
+}) satisfies GetServerSideProps;
+
+export { getServerSideProps };
