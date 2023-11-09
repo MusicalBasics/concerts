@@ -76,7 +76,7 @@ const reserveGeneralHandler = async (
       number,
       redeemed,
       concert -> {
-        _ref
+        _id
       }
     }`;
     const ticketsParams = { ticketIds };
@@ -95,8 +95,10 @@ const reserveGeneralHandler = async (
       return;
     }
 
+    console.log("Before concert check: tickets", tickets);
+
     // Make sure all the tickets belong to the given concert
-    if (tickets.some((ticket) => ticket.concert._ref !== concertId)) {
+    if (tickets.some((ticket) => ticket.concert._id !== concertId)) {
       res
         .status(HttpStatusCode.BadRequest)
         .json({ message: "Some tickets do not belong to this concert" });

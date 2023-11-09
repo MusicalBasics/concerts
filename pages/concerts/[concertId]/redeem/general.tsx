@@ -12,9 +12,9 @@ import {
   DialogActions,
   CircularProgress,
 } from "@mui/material";
-import { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import Image from "next/image";
-import { sanityClient } from "@/utils/sanity";
+import { getConcertsById } from "@/utils/sanity";
 import { useRouter } from "next/router";
 
 import Layout from "@/components/layout";
@@ -22,16 +22,20 @@ import SeatPicker from "@/components/seat-picker";
 import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
 import RegularButton from "@/components/concerts/regular-button";
 import EmailInput from "@/components/concerts/email-input";
-import NameInput from "@/components/concerts/name-input";
 import TicketsInput from "@/components/concerts/tickets-input";
-import {
-  validateName,
-  validateEmail,
-  validateTicketNumbers,
-} from "@/utils/concert-utils";
+import { validateEmail, validateTicketNumbers } from "@/utils/concert-utils";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+import { Concert } from "@/models/concert";
+import { Seat } from "@/models/seat";
 
-export default function GenerelTicketPage({ concert }) {
+interface RedeemGeneralTicketPageProps {
+  concert: Concert;
+}
+
+const RedeemGenerelTicketPage: React.FC<RedeemGeneralTicketPageProps> = ({
+  concert,
+}) => {
   const router = useRouter();
 
   const [name, setName] = useState(""); // Name of the person redeeming the tickets
@@ -56,11 +60,11 @@ export default function GenerelTicketPage({ concert }) {
     setShowMap((prev) => !prev);
   };
 
-  const handleEmailInputChange = (event) => {
+  const handleEmailInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value);
   };
 
-  const handleTicketsInputChange = (event) => {
+  const handleTicketsInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTicketNumbers(event.target.value);
   };
 
@@ -95,7 +99,7 @@ export default function GenerelTicketPage({ concert }) {
     }
     const ticketNumberArray = ticketNumbers.split("\n");
     const ticketNumberSet = new Set(ticketNumberArray);
-    const uniqueTicketNumbers = [...ticketNumberSet];
+    const uniqueTicketNumbers = [...Array.from(ticketNumberSet)];
 
     setLoading(true);
 
@@ -130,7 +134,7 @@ export default function GenerelTicketPage({ concert }) {
       setTicketIds(ticketIds); // Update state with the found ticket IDs
       setTicketCount(totalTicketCount);
       setIsVerified(true); // set isVerified to true once ticket numbers are verified
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       // Get error message from response
       const { message } = error.response.data;
@@ -140,7 +144,7 @@ export default function GenerelTicketPage({ concert }) {
     }
   };
 
-  const handleReserve = async (selectedSeats) => {
+  const handleReserve = async (selectedSeats: Seat[]) => {
     setLoading(true);
     try {
       const response = await axios.post("/api/reserve/general", {
@@ -176,7 +180,7 @@ export default function GenerelTicketPage({ concert }) {
       }
 
       alert("Confirmation email sent.");
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
       // Get error message from response
       const { message } = error.response.data;
@@ -332,10 +336,12 @@ export default function GenerelTicketPage({ concert }) {
       )}
     </Layout>
   );
-}
+};
+
+export default RedeemGenerelTicketPage;
 
 // Data Fetching
-export async function getServerSideProps(context) {
+export const getServerSideProps = (async (context) => {
   // Get cityId from the URL
   const { concertId } = context.query;
 
@@ -345,49 +351,16 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const concerts = await sanityClient.fetch(
-    `*[_type == "concert" && _id == "${concertId}"]{
-      _id,
-      name,
-      city->{
-        name,
-        image {
-          asset-> {
-            url
-          }
-        },
-        _id
-      },
-      venue->{
-        name,
-        address,
-        _id
-      },
-      date,
-      seatingChart->{
-        sections[],
-        referenceImage {
-          asset-> {
-            url
-          }
-        },
-      },
-    }
-  `,
-    { concertId }
-  );
+  const concert = await getConcertsById(concertId as string);
 
-  if (!concerts || concerts.length === 0) {
+  if (!concert) {
     return {
       notFound: true,
     };
   }
-
-  const concert = concerts[0];
-
   return {
     props: {
       concert, // now concert includes dereferenced city and venue
     },
   };
-}
+}) satisfies GetServerSideProps;

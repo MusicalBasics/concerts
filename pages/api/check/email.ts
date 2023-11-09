@@ -22,21 +22,27 @@ const checkEmailHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const customerQuery = `*[_type == "customer" && email == $email]{
+    const customerQuery = `*[_type == "customer" && email == $email] {
+      _id,
       name,
       email,
-      "tickets": tickets[]->{
+      tickets[] -> {
         _id,
         type,
         number,
         redeemed,
         concert-> {
           _id
-        }
-      }
+        },
+      },
     }`;
-    const params = { email };
-    const customers: Customer[] = await client.fetch(customerQuery, params);
+    const customersParams = { email };
+    const customers: Customer[] = await client.fetch(
+      customerQuery,
+      customersParams
+    );
+
+    console.log("customers", customers);
 
     if (customers.length === 0) {
       res

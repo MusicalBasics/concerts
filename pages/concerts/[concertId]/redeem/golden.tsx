@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 import Layout from "@/components/layout";
 import SeatPicker from "@/components/seat-picker";
 import { toSeatsText, getFormattedDate } from "@/utils/concert-utils";
-import { sanityClient } from "@/utils/sanity";
+import { getConcertsById, sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import EmailInput from "@/components/concerts/email-input";
 import Link from "next/link";
@@ -330,56 +330,13 @@ const getServerSideProps = (async (context) => {
     };
   }
 
-  const concerts: Concert[] = await sanityClient.fetch(
-    `*[_type == "concert" && _id == "${concertId}"]{
-      _id,
-      name,
-      city->{
-        name,
-        image {
-          asset-> {
-            url
-          }
-        },
-        _id
-      },
-      venue->{
-        name,
-        address,
-        _id
-      },
-      date,
-      seatingChart->{
-        sections[] {
-          name,
-          rows[] {
-            id,
-            seats[]->{
-              _id,
-              number,
-              isReserved,
-              isReservable
-            }
-          },
-        },
-        referenceImage {
-          asset-> {
-            url
-          }
-        },
-      },
-    }
-  `,
-    { concertId }
-  );
+  const concert = await getConcertsById(concertId as string);
 
-  if (!concerts || concerts.length === 0) {
+  if (!concert) {
     return {
       notFound: true,
     };
   }
-
-  const concert = concerts[0];
 
   return {
     props: {

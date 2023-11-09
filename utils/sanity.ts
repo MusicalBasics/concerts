@@ -197,3 +197,54 @@ export const redeemTickets = async ({
     message: `Tickets redeemed`,
   };
 };
+
+export const getConcertsById = async (concertId: string) => {
+  const concerts: Concert[] = await sanityClient.fetch(
+    `*[_type == "concert" && _id == $concertId]{
+      _id,
+      name,
+      city->{
+        name,
+        image {
+          asset-> {
+            url
+          }
+        },
+        _id
+      },
+      venue->{
+        name,
+        address,
+        _id
+      },
+      date,
+      seatingChart->{
+        sections[] {
+          name,
+          rows[] {
+            id,
+            seats[]->{
+              _id,
+              number,
+              isReserved,
+              isReservable
+            }
+          },
+        },
+        referenceImage {
+          asset-> {
+            url
+          }
+        },
+      },
+    }
+  `,
+    { concertId }
+  );
+
+  if (!concerts || concerts.length === 0) {
+    return null;
+  }
+
+  return concerts[0];
+};
