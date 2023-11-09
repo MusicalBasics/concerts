@@ -58,7 +58,7 @@ const reserveGoldenHandler = async (
     // Get all the tickets for the customer by ticket ids
     const ticketsQuery = `*[_type == "ticket" && _id in $ticketIds] {
         _id,
-        type,`;
+    }`;
     const ticketsParams = { ticketIds };
     const goldenTickets: Ticket[] = await sanityAdminClient.fetch(
       ticketsQuery,

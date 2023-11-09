@@ -5,6 +5,7 @@ import { createClient } from "next-sanity";
 import { toLongSeatString } from "./seating-utils";
 import { Concert } from "@/models/concert";
 import { Seat } from "@/models/seat";
+import { log } from "console";
 
 export const sanityClient = createClient({
   projectId: "zqcyefig",
@@ -69,7 +70,7 @@ export const redeemTickets = async ({
       },
       seatingChart -> {
         _id,
-      }
+      },
     }[0]`;
   const concertParams = { concertId };
   const concert: Concert = await sanityAdminClient.fetch(
@@ -104,7 +105,11 @@ export const redeemTickets = async ({
     }
 
     const ticketId = ticket._id;
+
+    // TODO Find the seat by seat number
     const { _id: seatId } = seat;
+
+    console.log("seat", seat);
 
     const seatQuery = `*[_type == "seat" && _id == $seatId]{
       _id,
@@ -123,8 +128,8 @@ export const redeemTickets = async ({
         redeemed,
         concert -> {
           _id
-        }
-      }
+        },
+      },
     }[0]`;
     const seatParams = { seatId };
     const seatData = await sanityAdminClient.fetch(seatQuery, seatParams);
@@ -171,7 +176,7 @@ export const redeemTickets = async ({
       .patch(ticketId!)
       .set({
         redeemed: true,
-        seat: {
+        redeemedSeat: {
           _type: "reference",
           _ref: seatId,
         },

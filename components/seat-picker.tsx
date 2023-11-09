@@ -77,11 +77,13 @@ const SeatPicker: React.FC<SeatPickerProps> = ({
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSeatClick = (
+    id: string,
     sectionName: string,
     rowId: string,
     seatNumber: string
   ) => {
     const newSeat: Seat = {
+      _id: id,
       section: sectionName,
       row: rowId,
       number: seatNumber,
@@ -91,9 +93,10 @@ const SeatPicker: React.FC<SeatPickerProps> = ({
     setSelectedSeats((prev: Seat[]) => {
       const isAlreadySelected = prev.some(
         (seat) =>
-          seat.section === sectionName &&
-          seat.row === rowId &&
-          seat.number === seatNumber
+          seat._id === newSeat._id ||
+          (seat.section === sectionName &&
+            seat.row === rowId &&
+            seat.number === seatNumber)
       );
       if (isAlreadySelected) {
         return prev.filter(
@@ -168,8 +171,12 @@ const SeatPicker: React.FC<SeatPickerProps> = ({
                       onSelect={() => {
                         console.log("clicked");
                         console.log(section.name, row.id, seat.number);
-
-                        handleSeatClick(section.name, row.id, seat.number);
+                        handleSeatClick(
+                          seat._id!,
+                          section.name,
+                          row.id,
+                          seat.number
+                        );
                       }}
                     />
                   </Grid>
