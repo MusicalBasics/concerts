@@ -81,8 +81,8 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
       (ticket) => !ticket.redeemed
     );
 
-    console.log(publishedTickets, "publishedTickets");
-    console.log(unredeemedTickets, "unredeemedTickets");
+    // console.log(publishedTickets, "publishedTickets");
+    // console.log(unredeemedTickets, "unredeemedTickets");
 
     // If there are no unredeemed tickets, respond with an error
     if (unredeemedTickets.length === 0) {
@@ -146,9 +146,13 @@ const checkTickets = async (req: NextApiRequest, res: NextApiResponse) => {
     // If the customer doesn't have the tickets, add them
     const newTickets = _.chain(ticketIds)
       .map((ticketId) => ({ _ref: ticketId, _type: "reference" }))
-      .filter(
-        (ticketToAdd) => !_.some(customer.tickets, ["_ref", ticketToAdd._ref])
-      )
+      .filter((ticketToAdd) => {
+        // If the customer already has the ticket, don't add it
+        // console.log("customer.tickets", customer.tickets);
+        // console.log("ticketToAdd", ticketToAdd);
+
+        return !_.some(customer.tickets, ["_id", ticketToAdd._ref]);
+      })
       .value(); // This executes the chain
 
     const updatedCustomer = await sanityAdminClient
