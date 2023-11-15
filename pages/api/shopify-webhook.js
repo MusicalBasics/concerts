@@ -20,11 +20,16 @@ export default function handler(req, res) {
       .update(bodyString, 'utf8', 'hex')
       .digest('base64');
 
+    // Log the HMAC values for comparison
+    console.log('Received HMAC:', hmacHeader);
+    console.log('Generated HMAC:', generatedHash);
+
     if (generatedHash === hmacHeader) {
       console.log('Webhook verified and received:', bodyString);
       res.status(200).json({ message: 'Webhook received and verified' });
     } else {
       console.log('Webhook verification failed');
+      console.log('Mismatch between received and generated HMAC');
       res.status(401).json({ message: 'Unauthorized - Webhook verification failed' });
     }
   } else {
