@@ -43,7 +43,12 @@ export default function handler(req, res) {
         
         const data = JSON.parse(rawData);
         const lineItems = data.line_items || [];
-        const ticketItem = lineItems.find(item => item.name === "General Ticket: Los Angeles - Zipper Hall January 20, 2024 at 7:30pm");
+        const ticketNames = [
+          "General Ticket: Los Angeles - Zipper Hall January 20, 2024 at 7:30pm",
+          "General Ticket: Amstelkerk, December 2, 2023 at 20:00",
+          "Silver Ticket: New York"
+        ];
+        const ticketItem = lineItems.some(item => ticketNames.includes(item.name));
 
         if (ticketItem) {
           const customerName = `${data.customer.first_name} ${data.customer.last_name}`;
@@ -80,5 +85,7 @@ const createOrUpdateCustomer = async (customerName, customerEmail) => {
     email: cleanedEmail,
     tickets: []
   };
-  return await client.create(newCustomer);
+  const createdCustomer = await client.create(newCustomer);
+  console.log('New customer created:', createdCustomer);
+  return createdCustomer;
 };
