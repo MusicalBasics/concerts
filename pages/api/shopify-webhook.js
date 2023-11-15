@@ -6,7 +6,7 @@ const client = createClient({
   apiVersion: '2022-03-25',
   projectId: 'zqcyefig',
   dataset: 'production',
-  token: 'skcEET1oF0tK6FltENUhc87cmaJ3DgMngWVFCbO6UgLz8VieuUI4s817z3vuROMGwuPngGI9GkicV4xqZssf0wRWFRjKsWOHEv4eJzPCPScsncs1Lsnt3KdLTtjQSLfKvSp5fEaOwCthl1l6tAR02VHXRU4fJlG2gCosIsbESvwWxUn357ob',
+  token: process.env.SANITY_TOKEN
 });
 
 export const config = {
@@ -27,7 +27,7 @@ export default function handler(req, res) {
       console.log('Headers:', req.headers);
       console.log('Raw Body:', rawData);
 
-      const SHOPIFY_SECRET = '37ccffd436511de0f2b580de1d6a70672b0d6c3d8f82cd9ca9ea00fa90e18db5';
+      const SHOPIFY_SECRET = process.env.SHOPIFY_SECRET;
 
       const hmacHeader = req.headers['x-shopify-hmac-sha256'];
       const generatedHash = crypto
