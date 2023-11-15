@@ -3,19 +3,25 @@ import crypto from 'crypto';
 
 export default function handler(req, res) {
   if (req.method === 'POST') {
+
+    // Convert the request body to a string for logging
+    const bodyString = JSON.stringify(req.body);
+
+    console.log('Headers:', req.headers);
+    console.log('Body:', bodyString);
+
     // Your Shopify secret used for HMAC verification
     const SHOPIFY_SECRET = '37ccffd436511de0f2b580de1d6a70672b0d6c3d8f82cd9ca9ea00fa90e18db5';
 
     // Extract the HMAC from the headers
     const hmacHeader = req.headers['x-shopify-hmac-sha256'];
-    const body = JSON.stringify(req.body);
     const generatedHash = crypto
       .createHmac('sha256', SHOPIFY_SECRET)
-      .update(body, 'utf8', 'hex')
+      .update(bodyString, 'utf8', 'hex')
       .digest('base64');
 
     if (generatedHash === hmacHeader) {
-      console.log('Webhook verified and received:', req.body);
+      console.log('Webhook verified and received:', bodyString);
       res.status(200).json({ message: 'Webhook received and verified' });
     } else {
       console.log('Webhook verification failed');
