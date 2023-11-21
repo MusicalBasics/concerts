@@ -25,7 +25,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       const hmacHeader = req.headers["x-shopify-hmac-sha256"];
       const generatedHash = crypto
-        .createHmac("sha256", SHOPIFY_SECRET)
+        .createHmac("sha256", SHOPIFY_SECRET!)
         .update(rawData, "utf8", "hex")
         .digest("base64");
 
