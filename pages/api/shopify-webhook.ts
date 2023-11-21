@@ -1,4 +1,3 @@
-import type { Ticket } from "@/models/ticket";
 import { NextApiResponse, NextApiRequest } from "next";
 import crypto from "crypto";
 import { validateEmail } from "@/utils/concert-utils";
@@ -38,7 +37,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         const data = JSON.parse(rawData);
         const lineItems = data.line_items || [];
-        const ticketItem = lineItems.some((item: Ticket) =>
+        const ticketItem = lineItems.some((item: any) =>
           item.name.toLowerCase().includes("ticket")
         );
 
