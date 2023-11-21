@@ -5,7 +5,7 @@ import { createClient } from "next-sanity";
 import { toLongSeatString } from "./seating-utils";
 import { Concert } from "@/models/concert";
 import { Seat } from "@/models/seat";
-import { log } from "console";
+
 
 export const sanityClient = createClient({
   projectId: "zqcyefig",

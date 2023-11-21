@@ -10,8 +10,6 @@ import GoldenButton from "@/components/concerts/golden-button";
 import RegularButton from "@/components/concerts/regular-button";
 import Layout from "@/components/layout";
 import { Concert } from "@/models/concert";
-import { Map } from "react-map-gl";
-import { MAPBOX_ACCESS_TOKEN } from "@/constants/api";
 
 const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   const { venue, _id: concertId } = concert;
