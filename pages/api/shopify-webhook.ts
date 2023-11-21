@@ -1,3 +1,4 @@
+import type { Ticket } from "@/models/ticket";
 import { NextApiResponse, NextApiRequest } from "next";
 import crypto from "crypto";
 import { validateEmail } from "@/utils/concert-utils";
@@ -26,7 +27,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const hmacHeader = req.headers["x-shopify-hmac-sha256"];
       const generatedHash = crypto
         .createHmac("sha256", SHOPIFY_SECRET!)
-        .update(rawData, "utf8", "hex")
+        .update(rawData)
         .digest("base64");
 
       console.log("Received HMAC:", hmacHeader);
@@ -37,7 +38,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
         const data = JSON.parse(rawData);
         const lineItems = data.line_items || [];
-        const ticketItem = lineItems.some((item) =>
+        const ticketItem = lineItems.some((item: Ticket) =>
           item.name.toLowerCase().includes("ticket")
         );
 
