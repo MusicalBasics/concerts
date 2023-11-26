@@ -299,6 +299,7 @@ export const getStaticPaths = (async () => {
   const concerts: Concert[] = await sanityClient.fetch(
     `*[_type == "concert"]{
       _id,
+      name,
     }
   `
   );
