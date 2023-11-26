@@ -104,6 +104,8 @@ export const getStaticProps = (async () => {
     return !concert.name.includes("Test");
   });
 
+  console.log(filteredConcerts);
+
   return {
     props: {
       concerts: filteredConcerts,

@@ -303,8 +303,13 @@ export const getStaticPaths = (async () => {
   `
   );
 
+  // Filter out test
+  const filteredConcerts = concerts.filter((concert) => {
+    return !concert.name.includes("Test");
+  });
+
   return {
-    paths: concerts.map((concert) => ({
+    paths: filteredConcerts.map((concert) => ({
       params: {
         concertId: concert._id,
       },
