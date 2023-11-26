@@ -99,9 +99,14 @@ export const getStaticProps = (async () => {
     ["asc", "asc"]
   );
 
+  // Filter out test
+  const filteredConcerts = sortedConcerts.filter((concert) => {
+    return !concert.name.includes("Test");
+  });
+
   return {
     props: {
-      concerts: sortedConcerts,
+      concerts: filteredConcerts,
     },
     revalidate: 60,
   };
