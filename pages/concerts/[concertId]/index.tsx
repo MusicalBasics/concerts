@@ -301,6 +301,8 @@ export const getStaticPaths = (async () => {
     `*[_type == "concert"]{
       _id,
       name,
+      date,
+      timeZone,
     }
   `
   );

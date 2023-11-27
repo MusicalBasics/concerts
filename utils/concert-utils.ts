@@ -119,6 +119,13 @@ export const getCityLinks = async () => {
 };
 
 export const toConcertDate = (date: string, timeZone: string): string => {
+  if (!date || !timeZone) {
+    return "To be announced";
+  }
+
+  console.log("date", date);
+  console.log("timeZone", timeZone);
+
   const dateMoment = moment(date).tz(timeZone);
   const formattedDate = dateMoment.format("dddd, MMMM Do YYYY");
   const formattedTime = dateMoment.format("H:mm z");

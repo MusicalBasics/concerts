@@ -61,6 +61,7 @@ export const getStaticProps = (async () => {
     name,
     slug,
     date,
+    timeZone,
     buyLink,
     city->{
       _id,
@@ -104,7 +105,7 @@ export const getStaticProps = (async () => {
     return !concert.name.includes("Test");
   });
 
-  console.log(filteredConcerts);
+  // console.log(filteredConcerts);
 
   return {
     props: {
