@@ -29,7 +29,7 @@ const ConcertPage: FC<ConcertPageProps> = ({
   const cityLink = `/cities/${city.slug.current}`;
   const router = useRouter();
   const dateText = preorder.isSoldOut
-    ? toConcertDate(concert.date)
+    ? toConcertDate(concert.date, concert.timeZone)
     : preorder.timeFrame;
 
   // Use MUI Box component to wrap the content
@@ -198,6 +198,7 @@ export const getStaticProps = (async (context) => {
     name,
     slug,
     date,
+    timeZone,
     buyLink,
     description,
     venue-> {

@@ -37,6 +37,7 @@
     "lodash": "^4.17.21",
     "mapbox-gl": "^2.15.0",
     "moment": "^2.29.4",
+    "moment-timezone": "^0.5.43",
     "next": "13.4.3",
     "next-sanity": "^5.5.7",
     "next-sanity-image": "^6.1.0",

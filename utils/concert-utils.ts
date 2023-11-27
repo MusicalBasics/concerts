@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from "moment-timezone";
 import _ from "lodash";
 import { sanityClient } from "./sanity";
 import { Seat } from "@/models/seat";
@@ -118,8 +118,11 @@ export const getCityLinks = async () => {
   }
 };
 
-export const toConcertDate = (date: any): string => {
-  return moment(date).format("MMMM D, YYYY, h:mm a");
+export const toConcertDate = (date: string, timeZone: string): string => {
+  const dateMoment = moment(date).tz(timeZone);
+  const formattedDate = dateMoment.format("dddd, MMMM Do YYYY");
+  const formattedTime = dateMoment.format("H:mm z");
+  return `${formattedDate}, ${formattedTime}`;
 };
 
 // Custom function to handle the date logic

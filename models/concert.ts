@@ -11,6 +11,7 @@ interface Concert {
   city: City;
   venue: Venue;
   date: string;
+  timeZone: string;
   buyLink: string;
   description: any;
   seatingChart: SeatingChart;
