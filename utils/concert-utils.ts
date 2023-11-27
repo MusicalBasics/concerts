@@ -123,8 +123,8 @@ export const toConcertDate = (date: string, timeZone: string): string => {
     return "To be announced";
   }
 
-  console.log("date", date);
-  console.log("timeZone", timeZone);
+  // console.log("date", date);
+  // console.log("timeZone", timeZone);
 
   const dateMoment = moment(date).tz(timeZone);
   const formattedDate = dateMoment.format("dddd, MMMM Do YYYY");
