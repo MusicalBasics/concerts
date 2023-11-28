@@ -18,7 +18,11 @@ export default function ConcertsListItem({
   const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
   const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
 
-  const dateText = isSoldOut ? toConcertDate(concert.date) : timeFrame;
+  const dateText = isSoldOut
+    ? toConcertDate(concert.date, concert.timeZone)
+    : timeFrame;
+
+  console.log(concert);
 
   const LearnMoreButton = () => {
     return (
