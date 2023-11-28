@@ -180,6 +180,17 @@ const RedeemGenerelTicketPage: React.FC<RedeemGeneralTicketPageProps> = ({
       }
 
       alert("Confirmation email sent.");
+
+      // Send tickets
+      if (!concert.handledByVenue) {
+        const ticketsResponse = await axios.post("/api/send/tickets", {
+          ticketIds,
+        });
+
+        if (ticketsResponse.status !== HttpStatusCode.Ok) {
+          alert("There was an error sending the tickets.");
+        }
+      }
     } catch (error: any) {
       console.error(error);
       // Get error message from response

@@ -218,6 +218,8 @@ export const getConcertsById = async (concertId: string) => {
         _id
       },
       date,
+      timeZone,
+      handledByVenue,
       seatingChart->{
         sections[] {
           name,

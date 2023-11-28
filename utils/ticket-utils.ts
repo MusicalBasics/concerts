@@ -1,3 +1,7 @@
+import type { Template } from "@pdfme/common";
+import { generate } from "@pdfme/generator";
+import { text, image, barcodes } from "@pdfme/schemas";
+
 export const isInvalidateTicket = (ticketNumber: string) => {
   return (
     !ticketNumber || ticketNumber.length !== 9 || !/^\d+$/.test(ticketNumber)
@@ -9,4 +13,44 @@ export const isInvalidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   // Test the email against the regex. If it doesn't match, it's invalid.
   return !emailRegex.test(email);
+};
+
+
+
+const template: Template = require("./ticket-template.json");
+
+export const createTicket = async ({
+  credits = "MUSICALBASICS PRODUCTIONS PRESENTS",
+  concertName = "{CONCERT NAME ASASDASDSADSA}",
+  ticketNumber = "000000000",
+  venueAddress = "{Venue Address, City, State}",
+  ticketQR = "000000000",
+  venueName = "{Venue Name}",
+  date = "{DateTime}",
+  seat = "B165",
+  ownerName = "Lionel Yu",
+}) => {
+  const plugins = { text, image, qrcode: barcodes.qrcode };
+  const inputs = [
+    {
+      concertName: concertName.toUpperCase(),
+      ticketNumber,
+      credits,
+      venueAddress,
+      ticketQR,
+      venueName,
+      date,
+      seat,
+      ownerName,
+    },
+  ];
+
+  const ticketPdf = await generate({
+    template,
+    plugins,
+    inputs,
+    // options: { font },
+  });
+
+  return ticketPdf;
 };
