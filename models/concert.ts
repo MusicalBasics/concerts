@@ -12,6 +12,7 @@ interface Concert {
   venue: Venue;
   date: string;
   timeZone: string;
+  status: string;
   handledByVenue: boolean;
   buyLink: string;
   description: any;

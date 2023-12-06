@@ -62,6 +62,7 @@ export const getStaticProps = (async () => {
     slug,
     date,
     timeZone,
+    status,
     buyLink,
     city->{
       _id,
@@ -102,7 +103,12 @@ export const getStaticProps = (async () => {
 
   // Filter out test
   const filteredConcerts = sortedConcerts.filter((concert) => {
-    return !concert.name.includes("Test");
+    return (
+      (concert.status === "upcoming" ||
+        concert.status === "ongoing" ||
+        concert.status === "soldout") &&
+      !concert.name.includes("Test")
+    );
   });
 
   // console.log(filteredConcerts);
