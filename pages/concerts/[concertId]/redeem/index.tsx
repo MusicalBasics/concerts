@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { GetStaticPaths, GetStaticProps } from "next";
 
-import { getFormattedDate } from "@/utils/concert-utils";
+import { getFormattedDate, isInRedemptionWindow } from "@/utils/concert-utils";
 import { sanityClient } from "@/utils/sanity";
 import GoldenButton from "@/components/concerts/golden-button";
 import RegularButton from "@/components/concerts/regular-button";
@@ -13,6 +13,35 @@ import { Concert } from "@/models/concert";
 
 const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
   const { venue, _id: concertId } = concert;
+
+  let RedemptionStack = (
+    <Stack
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      spacing={2}
+    >
+      <Typography>Select Your Ticket Type</Typography>
+      <Stack direction="row" justifyContent="center" spacing={2}>
+        <Link href={`/concerts/${concertId}/redeem/golden`}>
+          <GoldenButton>Golden</GoldenButton>
+        </Link>
+        <Link href={`/concerts/${concertId}/redeem/general`}>
+          <RegularButton>General</RegularButton>
+        </Link>
+      </Stack>
+    </Stack>
+  );
+
+  if (!isInRedemptionWindow(concert)) {
+    RedemptionStack = (
+      <Stack direction="row" justifyContent="center" spacing={2}>
+        <Typography variant="h6">
+          Redemption Window Closed. Please contact support for assistance.
+        </Typography>
+      </Stack>
+    );
+  }
 
   return (
     <Layout>
@@ -32,15 +61,7 @@ const ConcertPage: FC<ConcertPageProps> = ({ concert }) => {
           {getFormattedDate(concert.date)}
         </Typography>
         <Box p={1} />
-        <Typography>Select Your Ticket Type</Typography>
-        <Stack direction="row" justifyContent="center" spacing={2}>
-          <Link href={`/concerts/${concertId}/redeem/golden`}>
-            <GoldenButton>Golden</GoldenButton>
-          </Link>
-          <Link href={`/concerts/${concertId}/redeem/general`}>
-            <RegularButton>General</RegularButton>
-          </Link>
-        </Stack>
+        {RedemptionStack}
       </Stack>
     </Layout>
   );
@@ -82,6 +103,8 @@ export const getStaticProps = (async (context) => {
         _id
       },
       date,
+      timeZone,
+      redepmtionBuffer,
     }
   `,
     { concertId }
@@ -106,7 +129,7 @@ export const getStaticProps = (async (context) => {
 export const getStaticPaths = (async () => {
   const concerts = await sanityClient.fetch(
     `*[_type == "concert" && venue != null]{
-      _id
+      _id,
     }
   `
   );

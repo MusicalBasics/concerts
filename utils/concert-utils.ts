@@ -2,6 +2,7 @@ import moment from "moment-timezone";
 import _ from "lodash";
 import { sanityClient } from "./sanity";
 import { Seat } from "@/models/seat";
+import { Concert } from "@/models/concert";
 
 export const toSeatsText = (seats: Seat[]) => {
   return seats.map((seat) => `${seat.row}${seat.number}`).join(", ");
@@ -116,6 +117,16 @@ export const getCityLinks = async () => {
   } catch (error) {
     console.error("Error:", error);
   }
+};
+
+export const isInRedemptionWindow = (concert: Concert) => {
+  const { date, timeZone, redemptionBuffer } = concert;
+  const concertDate = moment(date).tz(timeZone);
+  const redemptionWindowEnds = concertDate
+    .clone()
+    .subtract(redemptionBuffer, "hours");
+  const now = moment();
+  return now.isSameOrBefore(redemptionWindowEnds);
 };
 
 export const toConcertDate = (date: string, timeZone: string): string => {

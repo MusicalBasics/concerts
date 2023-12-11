@@ -6,7 +6,6 @@ import { toLongSeatString } from "./seating-utils";
 import { Concert } from "@/models/concert";
 import { Seat } from "@/models/seat";
 
-
 export const sanityClient = createClient({
   projectId: "zqcyefig",
   dataset: "production",
@@ -249,4 +248,53 @@ export const getConcertsById = async (concertId: string) => {
   }
 
   return concerts[0];
+};
+
+export const getPastConcerts = async () => {
+  const concerts: Concert[] = await sanityClient.fetch(
+    `*[_type == "concert" && status == "past"]{
+      _id,
+      name,
+      city->{
+        name,
+        image {
+          asset-> {
+            url
+          }
+        },
+        _id
+      },
+      venue->{
+        name,
+        address,
+        _id
+      },
+      date,
+      timeZone,
+      redemptionBuffer,
+      handledByVenue,
+      seatingChart->{
+        sections[] {
+          name,
+          rows[] {
+            id,
+            seats[]->{
+              _id,
+              number,
+              isReserved,
+              isReservable
+            }
+          },
+        },
+        referenceImage {
+          asset-> {
+            url
+          }
+        },
+      },
+    }
+  `
+  );
+
+  return concerts;
 };
