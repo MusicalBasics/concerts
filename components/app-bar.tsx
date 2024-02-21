@@ -1,4 +1,4 @@
-"use client";
+// Import statements remain the same
 import MenuIcon from "@mui/icons-material/Menu";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -13,7 +13,14 @@ import Link from "next/link";
 import * as React from "react";
 import Logo from "./logo";
 
-const pages = [
+// Typing for pages array
+type Page = {
+  name: string;
+  link: string;
+  newTab: boolean;
+};
+
+const pages: Page[] = [
   { name: "Home", link: "/", newTab: false },
   { name: "Main Site", link: "https://musicalbasics.com", newTab: true },
   {
@@ -23,19 +30,21 @@ const pages = [
   },
   {
     name: "We Are One",
-    link: "https://www.youtube.com/@We_Are_One_Official",
+    link: "https://www.youtube.com/@WeAreOnePiano",
     newTab: true,
   },
 ];
 
-function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
+const ResponsiveAppBar: React.FC = () => {
+  const [anchorElNav, setAnchorElNav] = React.useState<HTMLElement | null>(
+    null
+  );
 
-  const handleOpenNavMenu = (event) => {
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
 
-  const handleCloseNavMenu = (link) => {
+  const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
@@ -158,5 +167,5 @@ function ResponsiveAppBar() {
       </Container>
     </AppBar>
   );
-}
+};
 export default ResponsiveAppBar;
