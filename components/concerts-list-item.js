@@ -17,14 +17,15 @@ export default function ConcertsListItem({
 
   const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
   const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
+  const isExternalLink = /^https?:\/\//.test(link);
 
-  const dateText = isSoldOut
+  const dateText = concert.displayDate || (isSoldOut
     ? toConcertDate(concert.date, concert.timeZone)
-    : timeFrame;
-
-  console.log(concert);
+    : timeFrame);
 
   const LearnMoreButton = () => {
+    if (concert.hideLearnMore) return null;
+
     return (
       <Link href={`/concerts/${concert._id}`}>
         <Button variant="contained">Learn More</Button>
@@ -67,7 +68,11 @@ export default function ConcertsListItem({
             {dateText}
           </Typography>
           <Stack direction="row" spacing={1}>
-            <Link href={link}>
+            <Link
+              href={link}
+              target={isExternalLink ? "_blank" : undefined}
+              rel={isExternalLink ? "noopener noreferrer" : undefined}
+            >
               <Button variant="contained">{linkText}</Button>
             </Link>
             {isSoldOut && <LearnMoreButton />}

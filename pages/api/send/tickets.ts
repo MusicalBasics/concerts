@@ -6,9 +6,6 @@ import { sanityClient } from "@/utils/sanity";
 
 import sgMail from "@sendgrid/mail";
 import type { Ticket } from "@/models/ticket";
-sgMail.setApiKey(
-  "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"
-);
 
 export const maxDuration = 30; // Vercel timeout
 
@@ -160,6 +157,12 @@ export default sendTicketsHandler;
 
 async function sendEmail(ticket: any) {
   try {
+    const sendGridApiKey = process.env.SENDGRID_API_KEY;
+    if (!sendGridApiKey) {
+      throw new Error("SENDGRID_API_KEY is not configured");
+    }
+    sgMail.setApiKey(sendGridApiKey);
+
     // Generate PDF
     const email = ticket.customer.email;
     const credits = "MUSICALBASICS PRODUCTIONS PRESENTS";

@@ -2,6 +2,12 @@ import { Box, Button } from "@mui/material";
 import Link from "next/link";
 
 export default function Subscribe() {
+  const subscribeUrl = process.env.NEXT_PUBLIC_CONCERTS_SUBSCRIBE_URL;
+
+  if (!subscribeUrl) {
+    return null;
+  }
+
   return (
     <Box
       position={{ xs: "relative", md: "absolute" }}
@@ -15,7 +21,7 @@ export default function Subscribe() {
       }}
     >
       <Link
-        href="https://omniform1.com/forms/v1/landingPage/63217d1f23c4cf3c70415ee0/63ce2bd4053377993329da53"
+        href={subscribeUrl}
         passHref
         target="_blank"
         rel="noopener noreferrer"

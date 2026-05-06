@@ -2,7 +2,6 @@ import { Box, Button, Stack } from "@mui/material";
 import { useState } from "react";
 import ConcertsListItem from "./concerts-list-item.js";
 import styles from "./concerts-list.module.css";
-import _ from "lodash";
 import { useMap } from "react-map-gl";
 
 export const HQ = [-115.1398, 36.1699];
@@ -25,7 +24,7 @@ export default function ConcertsList({ concerts }) {
         >
           We Are One / Lionel Yu World Tour
         </Button>
-        {_.orderBy(concerts).map((concert) => {
+        {concerts.map((concert) => {
           const city = concert.city;
           return (
             <ConcertsListItem

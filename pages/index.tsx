@@ -10,8 +10,63 @@ import { GetStaticProps } from "next";
 import { sanityClient } from "@/utils/sanity";
 import _ from "lodash";
 import { Map } from "react-map-gl";
-import { Concert } from "@/models/concert";
 import { parseDateOrFallback } from "@/utils/concert-utils";
+
+interface HomepageConcert {
+  _id: string;
+  name: string;
+  slug?: { current: string };
+  date: string;
+  timeZone: string;
+  status: string;
+  buyLink: string;
+  displayDate?: string;
+  hideLearnMore?: boolean;
+  city: {
+    _id: string;
+    id: string;
+    name: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+    slug?: { current: string };
+  };
+  preorder: {
+    isSoldOut: boolean;
+    timeFrame: string;
+    startDate?: string;
+    endDate: string;
+  };
+}
+
+const BELGIUM_CONCERT: HomepageConcert = {
+  _id: "belgium-june-11-2026",
+  name: "Belgium Concert",
+  slug: { current: "belgium-june-11-2026" },
+  date: "2026-06-11",
+  timeZone: "Europe/Brussels",
+  status: "upcoming",
+  buyLink: "https://belgium.musicalbasics.com",
+  displayDate: "June 11, 2026",
+  hideLearnMore: true,
+  city: {
+    _id: "belgium",
+    id: "belgium",
+    name: "Belgium",
+    coordinates: {
+      lat: 50.5039,
+      lng: 4.4699,
+    },
+    slug: { current: "belgium" },
+  },
+  preorder: {
+    isSoldOut: true,
+    timeFrame: "June 11, 2026",
+    startDate: "2026-06-11",
+    endDate: "2026-06-11",
+  },
+};
 
 const HomePage: FC<HomePageProps> = ({ concerts }) => {
   return (
@@ -83,7 +138,7 @@ export const getStaticProps = (async () => {
   if (!concertsData.length) {
     return {
       props: {
-        concerts: [],
+        concerts: [BELGIUM_CONCERT],
       },
     };
   }
@@ -111,11 +166,20 @@ export const getStaticProps = (async () => {
     );
   });
 
-  // console.log(filteredConcerts);
+  const homepageConcerts = _.orderBy(
+    [...filteredConcerts, BELGIUM_CONCERT],
+    [
+      (concert) => {
+        return parseDateOrFallback(concert.date, concert.preorder.endDate);
+      },
+      (concert) => concert.city.id,
+    ],
+    ["asc", "asc"]
+  );
 
   return {
     props: {
-      concerts: filteredConcerts,
+      concerts: homepageConcerts,
     },
     revalidate: 60,
   };
@@ -123,5 +187,5 @@ export const getStaticProps = (async () => {
 
 // Type definitions
 interface HomePageProps {
-  concerts: Concert[];
+  concerts: HomepageConcert[];
 }

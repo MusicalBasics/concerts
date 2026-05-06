@@ -2,10 +2,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import axios, { HttpStatusCode } from "axios";
 
-const SSC_EVENT_ID = "6535ee3a500e946233c6fb86";
-const OMNISEND_API_KEY =
-  "63217d1f23c4cf3c70415ee0-GYSiRXMum8GJ1v676IK2LhMa2RkyVEYa4wx2AdT8l0lCU13A9J";
-
 const sendConfirmationHandler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Ensure this is a post request
   if (req.method !== "POST") {
@@ -16,6 +12,15 @@ const sendConfirmationHandler = async (req: NextApiRequest, res: NextApiResponse
   }
 
   const { email, concertName, concertDate, seats } = req.body;
+  const omnisendEventId = process.env.OMNISEND_CONFIRMATION_EVENT_ID;
+  const omnisendApiKey = process.env.OMNISEND_API_KEY;
+
+  if (!omnisendEventId || !omnisendApiKey) {
+    res
+      .status(HttpStatusCode.InternalServerError)
+      .json({ message: "Omnisend environment variables are not configured" });
+    return;
+  }
 
   let data = JSON.stringify({
     fields: {
@@ -29,9 +34,9 @@ const sendConfirmationHandler = async (req: NextApiRequest, res: NextApiResponse
   let config = {
     method: "POST",
     maxBodyLength: Infinity,
-    url: `https://api.omnisend.com/v3/events/${SSC_EVENT_ID}`,
+    url: `https://api.omnisend.com/v3/events/${omnisendEventId}`,
     headers: {
-      "X-API-KEY": OMNISEND_API_KEY,
+      "X-API-KEY": omnisendApiKey,
       accept: "application/json",
       "content-type": "application/json",
     },

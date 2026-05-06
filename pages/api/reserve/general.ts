@@ -9,8 +9,7 @@ const sanityClient = createClient({
   projectId: "zqcyefig",
   dataset: "production",
   apiVersion: "2023-03-01",
-  token:
-    "skcEET1oF0tK6FltENUhc87cmaJ3DgMngWVFCbO6UgLz8VieuUI4s817z3vuROMGwuPngGI9GkicV4xqZssf0wRWFRjKsWOHEv4eJzPCPScsncs1Lsnt3KdLTtjQSLfKvSp5fEaOwCthl1l6tAR02VHXRU4fJlG2gCosIsbESvwWxUn357ob",
+  token: process.env.SANITY_RESERVE_GENERAL_TOKEN || process.env.SANITY_API_TOKEN,
   useCdn: false, // Disable for authenticated requests
 });
 
