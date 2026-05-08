@@ -22,6 +22,7 @@ type Page = {
 
 const pages: Page[] = [
   { name: "Home", link: "/", newTab: false },
+  { name: "Request a Show", link: "/request-a-show", newTab: false },
   { name: "Main Site", link: "https://musicalbasics.com", newTab: true },
   {
     name: "How It Works",
