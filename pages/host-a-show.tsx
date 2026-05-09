@@ -4,7 +4,11 @@ import {
   Button,
   CircularProgress,
   Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
   Paper,
+  Select,
   Stack,
   TextField,
   Typography,
@@ -16,18 +20,38 @@ import { FC, useState } from "react";
 import ResponsiveAppBar from "@/components/app-bar";
 import RootLayout from "@/components/root-layout";
 
+const REQUESTER_TYPES = [
+  { value: "venue", label: "Venue / theater" },
+  { value: "promoter", label: "Promoter / agency" },
+  { value: "school", label: "School / university" },
+  { value: "other", label: "Other" },
+];
+
+const AUDIENCE_SIZES = [
+  { value: "<100", label: "Fewer than 100" },
+  { value: "100-500", label: "100 – 500" },
+  { value: "500-2000", label: "500 – 2,000" },
+  { value: "2000+", label: "More than 2,000" },
+  { value: "not-sure", label: "Not sure" },
+];
+
 const NOTES_MAX = 1000;
 
 const initialForm = {
   name: "",
   email: "",
+  org_name: "",
+  requester_type: "",
   city: "",
   country: "",
+  audience_size: "",
+  target_date: "",
+  website_url: "",
   notes: "",
   website: "", // honeypot
 };
 
-const RequestAShowPage: FC = () => {
+const HostAShowPage: FC = () => {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -47,7 +71,22 @@ const RequestAShowPage: FC = () => {
       const response = await fetch("/api/request-a-show", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, requester_type: "fan" }),
+        body: JSON.stringify({
+          // Map website_url → website (real field), keep honeypot field
+          // labelled `website` only on the request-a-show page. Here we send
+          // the real org website under a clearer key on the wire.
+          name: form.name,
+          email: form.email,
+          city: form.city,
+          country: form.country,
+          requester_type: form.requester_type,
+          org_name: form.org_name,
+          audience_size: form.audience_size,
+          target_date: form.target_date,
+          org_website: form.website_url,
+          notes: form.notes,
+          website: form.website, // honeypot
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -72,15 +111,15 @@ const RequestAShowPage: FC = () => {
   return (
     <RootLayout>
       <Head>
-        <title>Request a Show | MusicalBasics</title>
+        <title>Host a Show | MusicalBasics</title>
         <meta
           name="description"
-          content="Tell Lionel Yu where you'd like to see him play next. Suggest a city for an upcoming MusicalBasics concert."
+          content="Venues, promoters, agencies, and schools: invite Lionel Yu (MusicalBasics) to perform at your space."
         />
-        <meta property="og:title" content="Request a Show | MusicalBasics" />
+        <meta property="og:title" content="Host a Show | MusicalBasics" />
         <meta
           property="og:description"
-          content="Where should I play next? Suggest a city for an upcoming MusicalBasics concert."
+          content="Invite Lionel Yu to perform at your venue, festival, school, or event."
         />
         <meta
           property="og:image"
@@ -89,7 +128,7 @@ const RequestAShowPage: FC = () => {
         <meta property="og:type" content="website" />
         <meta
           property="og:url"
-          content="https://concerts.musicalbasics.com/request-a-show"
+          content="https://concerts.musicalbasics.com/host-a-show"
         />
       </Head>
 
@@ -116,7 +155,7 @@ const RequestAShowPage: FC = () => {
                 lineHeight: 1.1,
               }}
             >
-              Where should I play next?
+              Host a show.
             </Typography>
             <Typography
               sx={{
@@ -125,8 +164,9 @@ const RequestAShowPage: FC = () => {
                 maxWidth: "640px",
               }}
             >
-              Tell me where you&rsquo;d like to see me play and I&rsquo;ll
-              consider it for my upcoming tour planning.
+              Venues, promoters, agencies, and schools &mdash; tell me about
+              your space and I&rsquo;ll get back to you personally if there is
+              a fit.
             </Typography>
             <Typography
               sx={{
@@ -134,15 +174,15 @@ const RequestAShowPage: FC = () => {
                 color: "rgba(255,255,255,0.6)",
               }}
             >
-              Representing a venue, promoter, school, or agency?{" "}
+              Are you a fan?{" "}
               <Link
-                href="/host-a-show"
+                href="/request-a-show"
                 style={{
                   color: "rgba(255,255,255,0.95)",
                   textDecoration: "underline",
                 }}
               >
-                Use the host-a-show form instead
+                Use the request-a-show form instead
               </Link>
               .
             </Typography>
@@ -171,8 +211,8 @@ const RequestAShowPage: FC = () => {
                 </Typography>
                 <Typography sx={{ color: "rgba(0,0,0,0.7)" }}>
                   You&rsquo;ll hear from me if it&rsquo;s a fit. In the
-                  meantime, you can keep an eye on upcoming dates on the
-                  homepage.
+                  meantime, feel free to share the request-a-show link with
+                  your audience.
                 </Typography>
                 <Box sx={{ paddingTop: 1 }}>
                   <Link href="/" passHref>
@@ -184,7 +224,7 @@ const RequestAShowPage: FC = () => {
               </Stack>
             ) : (
               <Box component="form" onSubmit={handleSubmit} noValidate>
-                {/* Honeypot — hidden from users, bots fill it in */}
+                {/* Honeypot */}
                 <Box
                   aria-hidden="true"
                   sx={{
@@ -244,6 +284,37 @@ const RequestAShowPage: FC = () => {
                     spacing={{ xs: 3, md: 2 }}
                   >
                     <TextField
+                      label="Organization or venue name"
+                      required
+                      fullWidth
+                      value={form.org_name}
+                      onChange={(e) => update("org_name")(e.target.value)}
+                      inputProps={{ maxLength: 200 }}
+                    />
+                    <FormControl required fullWidth>
+                      <InputLabel id="requester-type-label">Role</InputLabel>
+                      <Select
+                        labelId="requester-type-label"
+                        label="Role"
+                        value={form.requester_type}
+                        onChange={(e) =>
+                          update("requester_type")(e.target.value as string)
+                        }
+                      >
+                        {REQUESTER_TYPES.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Stack>
+
+                  <Stack
+                    direction={{ xs: "column", md: "row" }}
+                    spacing={{ xs: 3, md: 2 }}
+                  >
+                    <TextField
                       label="City"
                       required
                       fullWidth
@@ -260,6 +331,48 @@ const RequestAShowPage: FC = () => {
                       inputProps={{ maxLength: 120 }}
                     />
                   </Stack>
+
+                  <FormControl fullWidth>
+                    <InputLabel id="audience-size-label">
+                      Approximate audience size (optional)
+                    </InputLabel>
+                    <Select
+                      labelId="audience-size-label"
+                      label="Approximate audience size (optional)"
+                      value={form.audience_size}
+                      onChange={(e) =>
+                        update("audience_size")(e.target.value as string)
+                      }
+                    >
+                      <MenuItem value="">
+                        <em>No preference</em>
+                      </MenuItem>
+                      {AUDIENCE_SIZES.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+
+                  <TextField
+                    label="Target date or date range (optional)"
+                    placeholder="Summer 2026, Q4, flexible…"
+                    fullWidth
+                    value={form.target_date}
+                    onChange={(e) => update("target_date")(e.target.value)}
+                    inputProps={{ maxLength: 200 }}
+                  />
+
+                  <TextField
+                    label="Website (optional)"
+                    placeholder="https://…"
+                    fullWidth
+                    type="url"
+                    value={form.website_url}
+                    onChange={(e) => update("website_url")(e.target.value)}
+                    inputProps={{ maxLength: 500 }}
+                  />
 
                   <TextField
                     label="Anything else you'd like me to know (optional)"
@@ -298,4 +411,4 @@ const RequestAShowPage: FC = () => {
   );
 };
 
-export default RequestAShowPage;
+export default HostAShowPage;
