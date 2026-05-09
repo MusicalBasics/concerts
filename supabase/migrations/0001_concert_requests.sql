@@ -1,8 +1,13 @@
 -- Run this once in the Supabase SQL editor for the project that holds concert
 -- request submissions. The /api/request-a-show route inserts into this table
 -- using the service-role key.
+--
+-- After running, expose the `concerts` schema to the API:
+--   Project Settings → API → Data API Settings → Exposed schemas → add "concerts"
 
-create table public.concert_requests (
+create schema if not exists concerts;
+
+create table concerts.concert_requests (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   email text not null,
@@ -18,5 +23,5 @@ create table public.concert_requests (
   created_at timestamptz default now()
 );
 
-create index on public.concert_requests (created_at desc);
-create index on public.concert_requests (status);
+create index on concerts.concert_requests (created_at desc);
+create index on concerts.concert_requests (status);

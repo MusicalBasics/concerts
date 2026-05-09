@@ -1,8 +1,16 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
-let cached: SupabaseClient | null = null;
+type AdminClient = ReturnType<typeof buildClient>;
 
-export const getSupabaseAdminClient = (): SupabaseClient => {
+const buildClient = (url: string, key: string) =>
+  createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+    db: { schema: "concerts" },
+  });
+
+let cached: AdminClient | null = null;
+
+export const getSupabaseAdminClient = (): AdminClient => {
   if (cached) return cached;
 
   const url = process.env.SUPABASE_URL;
@@ -14,8 +22,6 @@ export const getSupabaseAdminClient = (): SupabaseClient => {
     );
   }
 
-  cached = createClient(url, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  cached = buildClient(url, key);
   return cached;
 };
