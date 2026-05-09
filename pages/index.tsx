@@ -72,23 +72,10 @@ const HomePage: FC<HomePageProps> = ({ concerts }) => {
   return (
     <RootLayout>
       <MapProvider>
-        <Box
-          width="100%"
-          height="100vh"
-          position="relative"
-          sx={{ overflow: "hidden", backgroundColor: "#1c1c1c" }}
-        >
-          {/* Background map layer. If the Mapbox token is missing it fails
-              silently and the rest of the page (nav, concerts list, CTAs)
-              still renders. */}
+        <Box width="100%" height="100vh" position="relative">
           {MAPBOX_ACCESS_TOKEN && (
             <Box
-              position="absolute"
-              top={0}
-              left={0}
-              right={0}
-              bottom={0}
-              zIndex={0}
+              sx={{ position: "absolute", inset: 0, zIndex: 0 }}
             >
               <Map
                 id="concertsMap"
@@ -111,14 +98,11 @@ const HomePage: FC<HomePageProps> = ({ concerts }) => {
             </Box>
           )}
 
-          {/* Foreground UI overlaid on top of the map. */}
-          <Box position="relative" zIndex={1}>
-            <ResponsiveAppBar />
-            <Container maxWidth="xl" className={styles.contentContainer}>
-              <ConcertsList concerts={concerts} />
-              <Subscribe />
-            </Container>
-          </Box>
+          <ResponsiveAppBar />
+          <Container maxWidth="xl" className={styles.contentContainer}>
+            <ConcertsList concerts={concerts} />
+            <Subscribe />
+          </Container>
         </Box>
       </MapProvider>
     </RootLayout>
@@ -174,9 +158,16 @@ export const getStaticProps = (async () => {
     ["asc", "asc"]
   );
 
-  // Filter out test
+  // Drop concerts that have already happened (1-day buffer for ongoing day-of
+  // shows) plus anything not in a current status or marked as a test.
+  const cutoff = Date.now() - 24 * 60 * 60 * 1000;
   const filteredConcerts = sortedConcerts.filter((concert) => {
+    const concertTime = parseDateOrFallback(
+      concert.date,
+      concert.preorder.endDate
+    ).getTime();
     return (
+      concertTime >= cutoff &&
       (concert.status === "upcoming" ||
         concert.status === "ongoing" ||
         concert.status === "soldout") &&

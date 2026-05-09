@@ -1,6 +1,15 @@
 import { Box, Button, Stack } from "@mui/material";
 import Link from "next/link";
 
+const ctaSx = {
+  paddingX: 3,
+  paddingY: 1.5,
+  fontSize: { xs: "0.95rem", md: "1.05rem" },
+  fontWeight: 600,
+  textTransform: "none",
+  borderRadius: 2,
+};
+
 export default function Subscribe() {
   const subscribeUrl = process.env.NEXT_PUBLIC_CONCERTS_SUBSCRIBE_URL;
 
@@ -9,21 +18,32 @@ export default function Subscribe() {
       position={{ xs: "relative", md: "absolute" }}
       marginTop={{ xs: ".5rem", md: "0" }}
       textAlign={{ xs: "left", md: "right" }}
-      bottom={{
-        md: "5%",
-      }}
-      right={{
-        md: "5%",
-      }}
+      bottom={{ md: "5%" }}
+      right={{ md: "5%" }}
     >
       <Stack
-        direction={{ xs: "column", md: "column" }}
-        spacing={1}
+        direction="column"
+        spacing={1.5}
         alignItems={{ xs: "flex-start", md: "flex-end" }}
       >
         <Link href="/request-a-show" passHref>
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={ctaSx}
+          >
             Request a show in your city
+          </Button>
+        </Link>
+        <Link href="/host-a-show" passHref>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={ctaSx}
+          >
+            Host a show at your venue
           </Button>
         </Link>
         {subscribeUrl && (
@@ -33,8 +53,8 @@ export default function Subscribe() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button variant="contained" color="primary">
-              Subscribe to concerts mailing list
+            <Button variant="outlined" color="secondary" size="small">
+              Subscribe to mailing list
             </Button>
           </Link>
         )}
