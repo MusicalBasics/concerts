@@ -8,7 +8,11 @@ export const HQ = [-115.1398, 36.1699];
 
 export default function ConcertsList({ concerts }) {
   const [selectedConcert, setSelectedConcert] = useState(null);
-  const { current: map } = useMap();
+  const { concertsMap } = useMap();
+
+  const flyTo = (options) => {
+    concertsMap?.flyTo(options);
+  };
 
   return (
     <Box overflow={{ xs: "scroll" }} height={{ xs: "60vh" }}>
@@ -16,7 +20,7 @@ export default function ConcertsList({ concerts }) {
         <Button
           variant="contained"
           onClick={() => {
-            map.current.flyTo({
+            flyTo({
               center: HQ,
               zoom: 2,
             });
@@ -33,7 +37,7 @@ export default function ConcertsList({ concerts }) {
               isSelected={selectedConcert === city.id}
               onSelect={(id) => {
                 setSelectedConcert(id);
-                map.flyTo({
+                flyTo({
                   center: city.coordinates,
                   zoom: 10,
                   essential: true, // this animation is considered essential with respect to prefers-reduced-motion
