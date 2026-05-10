@@ -4,6 +4,9 @@
 --
 -- After running, expose the `concerts` schema to the API:
 --   Project Settings → API → Data API Settings → Exposed schemas → add "concerts"
+--
+-- Also run migration 0003_grant_service_role.sql — exposing the schema in
+-- the dashboard does not grant the service_role Postgres user access to it.
 
 create schema if not exists concerts;
 
