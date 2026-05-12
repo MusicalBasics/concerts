@@ -167,7 +167,7 @@ const RequestAShowPage: FC = () => {
                     fontSize: { xs: "1.5rem", md: "2rem" },
                   }}
                 >
-                  Thanks &mdash; I&rsquo;ll personally read this.
+                  Thanks. I&rsquo;ll personally read this.
                 </Typography>
                 <Typography sx={{ color: "rgba(0,0,0,0.7)" }}>
                   You&rsquo;ll hear from me if it&rsquo;s a fit. In the

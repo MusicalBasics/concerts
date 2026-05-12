@@ -109,7 +109,7 @@ const buildNotificationEmail = (record: RequestRecord) => {
     REQUESTER_LABELS[record.requester_type] || record.requester_type;
   const audienceLabel = record.audience_size
     ? AUDIENCE_LABELS[record.audience_size] || record.audience_size
-    : "—";
+    : "-";
   const isPro = record.requester_type !== "fan";
 
   const lines = [
@@ -120,16 +120,16 @@ const buildNotificationEmail = (record: RequestRecord) => {
     `Country: ${record.country}`,
   ];
   if (isPro) {
-    lines.push(`Organization: ${record.org_name || "—"}`);
+    lines.push(`Organization: ${record.org_name || "-"}`);
     lines.push(`Audience size: ${audienceLabel}`);
-    lines.push(`Target date: ${record.target_date || "—"}`);
-    lines.push(`Website: ${record.website || "—"}`);
+    lines.push(`Target date: ${record.target_date || "-"}`);
+    lines.push(`Website: ${record.website || "-"}`);
   }
   lines.push("");
   lines.push("Notes:");
-  lines.push(record.notes || "—");
+  lines.push(record.notes || "-");
   lines.push("");
-  lines.push("—");
+  lines.push("---");
   lines.push(`IP: ${record.ip_address}`);
   lines.push(`User agent: ${record.user_agent}`);
 
@@ -137,13 +137,13 @@ const buildNotificationEmail = (record: RequestRecord) => {
 
   const proRows = isPro
     ? `
-        <tr><td><strong>Organization</strong></td><td>${escapeHtml(record.org_name || "—")}</td></tr>
+        <tr><td><strong>Organization</strong></td><td>${escapeHtml(record.org_name || "-")}</td></tr>
         <tr><td><strong>Audience size</strong></td><td>${escapeHtml(audienceLabel)}</td></tr>
-        <tr><td><strong>Target date</strong></td><td>${escapeHtml(record.target_date || "—")}</td></tr>
+        <tr><td><strong>Target date</strong></td><td>${escapeHtml(record.target_date || "-")}</td></tr>
         <tr><td><strong>Website</strong></td><td>${
           record.website
             ? `<a href="${escapeHtml(record.website)}">${escapeHtml(record.website)}</a>`
-            : "—"
+            : "-"
         }</td></tr>`
     : "";
 
@@ -160,7 +160,7 @@ const buildNotificationEmail = (record: RequestRecord) => {
         <tr><td><strong>Country</strong></td><td>${escapeHtml(record.country)}</td></tr>${proRows}
       </table>
       <h3 style="margin:24px 0 8px 0;">Notes</h3>
-      <p style="white-space:pre-wrap;">${escapeHtml(record.notes || "—")}</p>
+      <p style="white-space:pre-wrap;">${escapeHtml(record.notes || "-")}</p>
       <hr style="margin:24px 0; border:none; border-top:1px solid #ddd;" />
       <p style="font-size:12px; color:#888;">
         IP: ${escapeHtml(record.ip_address)}<br/>
@@ -305,7 +305,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const subjectPrefix = isPro
         ? "New host request"
         : "New concert request";
-      const subjectOrg = isPro && org_name ? ` — ${org_name}` : "";
+      const subjectOrg = isPro && org_name ? ` (${org_name})` : "";
       await sgMail.send({
         to: NOTIFICATION_TO,
         from: NOTIFICATION_FROM,
