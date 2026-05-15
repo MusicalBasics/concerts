@@ -66,7 +66,7 @@ const sanitize = (value: unknown, max: number): string => {
 };
 
 const REQUESTER_LABELS: Record<string, string> = {
-  fan: "Fan organizing",
+  fan: "Email signup",
   venue: "Venue / theater",
   promoter: "Promoter / agency",
   school: "School / university",
@@ -90,9 +90,9 @@ const escapeHtml = (input: string): string =>
     .replace(/'/g, "&#39;");
 
 type RequestRecord = {
-  name: string;
+  name: string | null;
   email: string;
-  city: string;
+  city: string | null;
   country: string;
   requester_type: string;
   audience_size: string | null;
@@ -113,21 +113,25 @@ const buildNotificationEmail = (record: RequestRecord) => {
   const isPro = record.requester_type !== "fan";
 
   const lines = [
-    `Name: ${record.name}`,
     `Email: ${record.email}`,
     `Who: ${requesterLabel}`,
-    `City: ${record.city}`,
+    `City: ${record.city || "(not provided)"}`,
     `Country: ${record.country}`,
   ];
+  if (record.name) {
+    lines.unshift(`Name: ${record.name}`);
+  }
   if (isPro) {
     lines.push(`Organization: ${record.org_name || "-"}`);
     lines.push(`Audience size: ${audienceLabel}`);
     lines.push(`Target date: ${record.target_date || "-"}`);
     lines.push(`Website: ${record.website || "-"}`);
   }
-  lines.push("");
-  lines.push("Notes:");
-  lines.push(record.notes || "-");
+  if (record.notes) {
+    lines.push("");
+    lines.push("Notes:");
+    lines.push(record.notes);
+  }
   lines.push("");
   lines.push("---");
   lines.push(`IP: ${record.ip_address}`);
@@ -147,20 +151,31 @@ const buildNotificationEmail = (record: RequestRecord) => {
         }</td></tr>`
     : "";
 
-  const heading = isPro ? "New concert host request" : "New concert request";
+  const heading = isPro
+    ? "New concert host request"
+    : "New email-list signup";
+
+  const nameRow = record.name
+    ? `<tr><td><strong>Name</strong></td><td>${escapeHtml(record.name)}</td></tr>`
+    : "";
+
+  const cityRow = `<tr><td><strong>City</strong></td><td>${escapeHtml(record.city || "(not provided)")}</td></tr>`;
+
+  const notesBlock = record.notes
+    ? `<h3 style="margin:24px 0 8px 0;">Notes</h3><p style="white-space:pre-wrap;">${escapeHtml(record.notes)}</p>`
+    : "";
 
   const html = `
     <div style="font-family: Helvetica, Arial, sans-serif; color:#232323; line-height:1.5;">
       <h2 style="margin:0 0 16px 0;">${heading}</h2>
       <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;">
-        <tr><td><strong>Name</strong></td><td>${escapeHtml(record.name)}</td></tr>
+        ${nameRow}
         <tr><td><strong>Email</strong></td><td><a href="mailto:${escapeHtml(record.email)}">${escapeHtml(record.email)}</a></td></tr>
         <tr><td><strong>Who</strong></td><td>${escapeHtml(requesterLabel)}</td></tr>
-        <tr><td><strong>City</strong></td><td>${escapeHtml(record.city)}</td></tr>
+        ${cityRow}
         <tr><td><strong>Country</strong></td><td>${escapeHtml(record.country)}</td></tr>${proRows}
       </table>
-      <h3 style="margin:24px 0 8px 0;">Notes</h3>
-      <p style="white-space:pre-wrap;">${escapeHtml(record.notes || "-")}</p>
+      ${notesBlock}
       <hr style="margin:24px 0; border:none; border-top:1px solid #ddd;" />
       <p style="font-size:12px; color:#888;">
         IP: ${escapeHtml(record.ip_address)}<br/>
@@ -206,7 +221,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const org_name_raw = sanitize(body.org_name, 200);
   const org_website_raw = sanitize(body.org_website, 500);
 
-  if (!name || !email || !city || !country || !requester_type) {
+  if (!requester_type || !REQUESTER_TYPES.has(requester_type)) {
+    return res
+      .status(400)
+      .json({ ok: false, error: "Please choose a valid requester type." });
+  }
+
+  const isFan = requester_type === "fan";
+  const fanMissing = !email || !country;
+  const proMissing = !name || !email || !city || !country;
+
+  if ((isFan && fanMissing) || (!isFan && proMissing)) {
     return res
       .status(400)
       .json({ ok: false, error: "Please fill in all required fields." });
@@ -216,12 +241,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     return res
       .status(400)
       .json({ ok: false, error: "Please enter a valid email address." });
-  }
-
-  if (!REQUESTER_TYPES.has(requester_type)) {
-    return res
-      .status(400)
-      .json({ ok: false, error: "Please choose a valid requester type." });
   }
 
   if (PRO_REQUESTER_TYPES.has(requester_type) && !org_name_raw) {
@@ -257,9 +276,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       : "";
 
   const record = {
-    name,
+    name: name || null,
     email,
-    city,
+    city: city || null,
     country,
     requester_type,
     audience_size,
@@ -302,15 +321,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       sgMail.setApiKey(sendGridApiKey);
       const { text, html } = buildNotificationEmail(record);
       const isPro = requester_type !== "fan";
-      const subjectPrefix = isPro
-        ? "New host request"
-        : "New concert request";
+      const subjectPrefix = isPro ? "New host request" : "New email signup";
+      const subjectLocation = city ? `${city}, ${country}` : country;
       const subjectOrg = isPro && org_name ? ` (${org_name})` : "";
       await sgMail.send({
         to: NOTIFICATION_TO,
         from: NOTIFICATION_FROM,
         replyTo: email,
-        subject: `${subjectPrefix}: ${city}, ${country}${subjectOrg}`,
+        subject: `${subjectPrefix}: ${subjectLocation}${subjectOrg}`,
         text,
         html,
       });

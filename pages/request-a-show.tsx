@@ -9,6 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { FC, useState } from "react";
@@ -16,19 +17,17 @@ import { FC, useState } from "react";
 import ResponsiveAppBar from "@/components/app-bar";
 import RootLayout from "@/components/root-layout";
 
-const NOTES_MAX = 1000;
+interface RequestAShowProps {
+  defaultCountry: string;
+}
 
-const initialForm = {
-  name: "",
-  email: "",
-  city: "",
-  country: "",
-  notes: "",
-  website: "", // honeypot
-};
-
-const RequestAShowPage: FC = () => {
-  const [form, setForm] = useState(initialForm);
+const RequestAShowPage: FC<RequestAShowProps> = ({ defaultCountry }) => {
+  const [form, setForm] = useState({
+    email: "",
+    country: defaultCountry,
+    city: "",
+    website: "", // honeypot
+  });
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
@@ -47,7 +46,13 @@ const RequestAShowPage: FC = () => {
       const response = await fetch("/api/request-a-show", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, requester_type: "fan" }),
+        body: JSON.stringify({
+          email: form.email,
+          country: form.country,
+          city: form.city,
+          requester_type: "fan",
+          website: form.website,
+        }),
       });
 
       const data = await response.json().catch(() => ({}));
@@ -55,7 +60,7 @@ const RequestAShowPage: FC = () => {
       if (!response.ok || !data?.ok) {
         throw new Error(
           data?.error ||
-            "Something went wrong sending your request. Please try again."
+            "Something went wrong signing you up. Please try again."
         );
       }
 
@@ -64,7 +69,7 @@ const RequestAShowPage: FC = () => {
       setStatus("error");
       setErrorMessage(
         error?.message ||
-          "Something went wrong sending your request. Please try again."
+          "Something went wrong signing you up. Please try again."
       );
     }
   };
@@ -72,15 +77,18 @@ const RequestAShowPage: FC = () => {
   return (
     <RootLayout>
       <Head>
-        <title>Request a Show | MusicalBasics</title>
+        <title>Get Notified About Shows | MusicalBasics</title>
         <meta
           name="description"
-          content="Tell Lionel Yu where you'd like to see him play next. Suggest a city for an upcoming MusicalBasics concert."
+          content="Sign up for Lionel Yu's email list and get notified the next time he's playing in your city."
         />
-        <meta property="og:title" content="Request a Show | MusicalBasics" />
+        <meta
+          property="og:title"
+          content="Get Notified About Shows | MusicalBasics"
+        />
         <meta
           property="og:description"
-          content="Where should I play next? Suggest a city for an upcoming MusicalBasics concert."
+          content="Hop on the list and hear about Lionel Yu's next concert in your city."
         />
         <meta
           property="og:image"
@@ -105,28 +113,18 @@ const RequestAShowPage: FC = () => {
         <ResponsiveAppBar />
 
         <Container maxWidth="md" sx={{ paddingTop: { xs: 4, md: 8 } }}>
-          {/* Hero */}
           <Stack spacing={2} sx={{ marginBottom: { xs: 4, md: 6 } }}>
             <Typography
               component="h1"
               sx={{
                 fontWeight: 700,
                 letterSpacing: "-0.02em",
-                fontSize: { xs: "2rem", md: "3rem" },
-                lineHeight: 1.1,
+                fontSize: { xs: "1.75rem", md: "2.5rem" },
+                lineHeight: 1.15,
               }}
             >
-              Where should I play next?
-            </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: "1rem", md: "1.125rem" },
-                color: "rgba(255,255,255,0.8)",
-                maxWidth: "640px",
-              }}
-            >
-              Tell me where you&rsquo;d like to see me play and I&rsquo;ll
-              consider it for my upcoming tour planning.
+              Sign up for the email list to be notified of Lionel&rsquo;s
+              next concert in your city!
             </Typography>
             <Typography
               sx={{
@@ -148,7 +146,6 @@ const RequestAShowPage: FC = () => {
             </Typography>
           </Stack>
 
-          {/* Form / success */}
           <Paper
             elevation={0}
             sx={{
@@ -167,12 +164,11 @@ const RequestAShowPage: FC = () => {
                     fontSize: { xs: "1.5rem", md: "2rem" },
                   }}
                 >
-                  Thanks. I&rsquo;ll personally read this.
+                  You&rsquo;re on the list.
                 </Typography>
                 <Typography sx={{ color: "rgba(0,0,0,0.7)" }}>
-                  You&rsquo;ll hear from me if it&rsquo;s a fit. In the
-                  meantime, you can keep an eye on upcoming dates on the
-                  homepage.
+                  I&rsquo;ll email you when I&rsquo;m playing near{" "}
+                  {form.city ? `${form.city}, ${form.country}` : form.country}.
                 </Typography>
                 <Box sx={{ paddingTop: 1 }}>
                   <Link href="/" passHref>
@@ -184,7 +180,6 @@ const RequestAShowPage: FC = () => {
               </Stack>
             ) : (
               <Box component="form" onSubmit={handleSubmit} noValidate>
-                {/* Honeypot — hidden from users, bots fill it in */}
                 <Box
                   aria-hidden="true"
                   sx={{
@@ -214,43 +209,21 @@ const RequestAShowPage: FC = () => {
                     <Alert severity="error">{errorMessage}</Alert>
                   )}
 
-                  <Stack
-                    direction={{ xs: "column", md: "row" }}
-                    spacing={{ xs: 3, md: 2 }}
-                  >
-                    <TextField
-                      label="Your name"
-                      required
-                      fullWidth
-                      value={form.name}
-                      onChange={(e) => update("name")(e.target.value)}
-                      inputProps={{ maxLength: 200 }}
-                      autoComplete="name"
-                    />
-                    <TextField
-                      label="Email"
-                      type="email"
-                      required
-                      fullWidth
-                      value={form.email}
-                      onChange={(e) => update("email")(e.target.value)}
-                      inputProps={{ maxLength: 320 }}
-                      autoComplete="email"
-                    />
-                  </Stack>
+                  <TextField
+                    label="Email"
+                    type="email"
+                    required
+                    fullWidth
+                    value={form.email}
+                    onChange={(e) => update("email")(e.target.value)}
+                    inputProps={{ maxLength: 320 }}
+                    autoComplete="email"
+                  />
 
                   <Stack
                     direction={{ xs: "column", md: "row" }}
                     spacing={{ xs: 3, md: 2 }}
                   >
-                    <TextField
-                      label="City"
-                      required
-                      fullWidth
-                      value={form.city}
-                      onChange={(e) => update("city")(e.target.value)}
-                      inputProps={{ maxLength: 120 }}
-                    />
                     <TextField
                       label="Country"
                       required
@@ -258,19 +231,18 @@ const RequestAShowPage: FC = () => {
                       value={form.country}
                       onChange={(e) => update("country")(e.target.value)}
                       inputProps={{ maxLength: 120 }}
+                      autoComplete="country-name"
+                      helperText="Prefilled from your location"
+                    />
+                    <TextField
+                      label="City (optional)"
+                      fullWidth
+                      value={form.city}
+                      onChange={(e) => update("city")(e.target.value)}
+                      inputProps={{ maxLength: 120 }}
+                      autoComplete="address-level2"
                     />
                   </Stack>
-
-                  <TextField
-                    label="Anything else you'd like me to know (optional)"
-                    fullWidth
-                    multiline
-                    minRows={4}
-                    value={form.notes}
-                    onChange={(e) => update("notes")(e.target.value)}
-                    inputProps={{ maxLength: NOTES_MAX }}
-                    helperText={`${form.notes.length} / ${NOTES_MAX}`}
-                  />
 
                   <Box>
                     <Button
@@ -284,7 +256,7 @@ const RequestAShowPage: FC = () => {
                       {status === "submitting" ? (
                         <CircularProgress size={22} sx={{ color: "white" }} />
                       ) : (
-                        "Send request"
+                        "Sign me up"
                       )}
                     </Button>
                   </Box>
@@ -299,3 +271,26 @@ const RequestAShowPage: FC = () => {
 };
 
 export default RequestAShowPage;
+
+const countryNameFromCode = (code: string | undefined): string => {
+  if (!code) return "";
+  try {
+    return (
+      new Intl.DisplayNames(["en"], { type: "region" }).of(code) || code
+    );
+  } catch {
+    return code;
+  }
+};
+
+export const getServerSideProps: GetServerSideProps<
+  RequestAShowProps
+> = async ({ req }) => {
+  const header = req.headers["x-vercel-ip-country"];
+  const countryCode = Array.isArray(header) ? header[0] : header;
+  return {
+    props: {
+      defaultCountry: countryNameFromCode(countryCode),
+    },
+  };
+};

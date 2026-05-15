@@ -33,7 +33,7 @@ export default function Subscribe() {
             size="large"
             sx={ctaSx}
           >
-            Request a show in your city
+            Get notified about shows in your city
           </Button>
         </Link>
         <Link href="/host-a-show" passHref>
