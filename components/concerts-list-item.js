@@ -12,12 +12,18 @@ export default function ConcertsListItem({
   isSelected,
   isSoldOut,
 }) {
-  const { city, preorder, buyLink } = concert;
+  const { city, preorder, buyLink, livestreamLink } = concert;
   const { timeFrame } = preorder;
 
   const link = isSoldOut ? buyLink : `/concerts/${concert._id}`;
-  const linkText = isSoldOut ? "Buy Tickets" : "Preorder";
+  const hasLivestream = Boolean(livestreamLink);
+  const linkText = isSoldOut
+    ? hasLivestream
+      ? "Live Tickets"
+      : "Buy Tickets"
+    : "Preorder";
   const isExternalLink = /^https?:\/\//.test(link);
+  const isExternalLivestream = hasLivestream && /^https?:\/\//.test(livestreamLink);
 
   const dateText = concert.displayDate || (isSoldOut
     ? toConcertDate(concert.date, concert.timeZone)
@@ -75,6 +81,15 @@ export default function ConcertsListItem({
             >
               <Button variant="contained">{linkText}</Button>
             </Link>
+            {hasLivestream && (
+              <Link
+                href={livestreamLink}
+                target={isExternalLivestream ? "_blank" : undefined}
+                rel={isExternalLivestream ? "noopener noreferrer" : undefined}
+              >
+                <Button variant="contained">Livestream</Button>
+              </Link>
+            )}
             {isSoldOut && <LearnMoreButton />}
           </Stack>
         </CardContent>

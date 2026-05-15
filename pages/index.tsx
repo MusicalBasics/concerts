@@ -20,6 +20,7 @@ interface HomepageConcert {
   timeZone: string;
   status: string;
   buyLink: string;
+  livestreamLink?: string;
   displayDate?: string;
   hideLearnMore?: boolean;
   city: {
@@ -48,6 +49,7 @@ const BELGIUM_CONCERT: HomepageConcert = {
   timeZone: "Europe/Brussels",
   status: "upcoming",
   buyLink: "https://belgium.musicalbasics.com",
+  livestreamLink: "https://belgium.musicalbasics.com#livestream",
   displayDate: "June 11, 2026",
   hideLearnMore: true,
   city: {
@@ -121,6 +123,7 @@ export const getStaticProps = (async () => {
     timeZone,
     status,
     buyLink,
+    livestreamLink,
     city->{
       _id,
       id,
