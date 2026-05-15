@@ -49,7 +49,7 @@ const BELGIUM_CONCERT: HomepageConcert = {
   timeZone: "Europe/Brussels",
   status: "upcoming",
   buyLink: "https://belgium.musicalbasics.com",
-  livestreamLink: "https://belgium.musicalbasics.com#livestream",
+  livestreamLink: "https://belgium.musicalbasics.com/#livestream",
   displayDate: "June 11, 2026",
   hideLearnMore: true,
   city: {
